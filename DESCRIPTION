@@ -9,7 +9,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: false
 Depends: R (>= 4.1.0)
-Imports: Rcpp (>= 0.12.16), Matrix, methods, utils, raster, gdistance, stringr, tools, grDevices, terra, measurements, ggplot2, h3jsr, patchwork, scales, sf, tidyterra, svglite
+Imports: Rcpp (>= 0.12.16), Matrix, methods, utils, raster, gdistance, stringr, tools, grDevices, terra, measurements, ggplot2, h3jsr, patchwork, scales, sf, tidyterra, igraph
 Suggests: 
     knitr,
     markdown,
@@ -18,7 +18,8 @@ Suggests:
     formatR,
     withr,
     mockery,
-    vdiffr
+    vdiffr,
+    svglite
 LinkingTo: Rcpp, BH
 URL: https://github.com/project-Gen3sis/R-package
 BugReports: https://github.com/project-Gen3sis/R-package/issues

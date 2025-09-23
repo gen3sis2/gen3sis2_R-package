@@ -1,5 +1,5 @@
 ---
-title: "2.1 Creating spaces: cost functions and matrices symmetry"
+title: "3 - Creating spaces: cost functions and matrices symmetry"
 subtitle: "all you need to know about how to write nice cost functions and how to make dispersal harder in specific directions"
 date: "`r format(Sys.time(),  '%d.%m.%Y')`"
 output: rmarkdown::html_vignette

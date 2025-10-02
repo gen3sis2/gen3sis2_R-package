@@ -59,23 +59,31 @@ create_spaces_raster <- function(raster_list, # old spaces
   habitability_masks = NULL
   # @param habitability_masks either (1) a list of files or rasters starting from the present indicating the habitability of cell at that timestep.
   # #' or (2) NULL, every cell with at least one NA as envvalue(s) will be considered inhabitable 
-  
-  # prepare directories
+
+    # prepare directories
   create_directories(output_directory, overwrite_output, full_dists)
-  if (any(is.na(duration))) {
-    warning("Duration is ideally informed as a list with from, to, by and unit. 
-            Assuning default duration from -latest time to zero by 1 Ma")
-    #timesteps <- (length(raster_list[[1]]) - 1):0
-    timesteps <- (terra::nlyr(raster_list[[1]]) - 1):0
-    if(is.list(duration)) {
-      duration <- list(from=timesteps[1], to=0, by=-1, unit=duration$unit)
+  # TODO improve this test to actually work
+  if (any(is.na(duration)) || all(!names(duration) %in% c("from", "to", "by", "unit"))) {
+    warning("Duration is ideally informed as a list with from, to, by and unit.")
+    timesteps <- -(terra::nlyr(raster_list[[1]]) - 1):0
+    # if(is.list(duration)) {
+    #   duration <- list(from=timesteps[1], to=0, by=-1, unit=duration$unit)
+    # } else {
+    #   duration <- list(from=timesteps[1], to=0, by=-1, unit="Ma")
+    # }
+    if(is.list(duration) && "unit" %in% names(duration)){
+      warning("Assuming default duration from -latest time to zero by 1 in given unit.")
+      duration <- list(from=timesteps[1], to=0, by=1, unit=duration$unit)
     } else {
-      duration <- list(from=timesteps[1], to=0, by=-1, unit="Ma")
+      warning("Assuming default duration from -latest time to zero by 1 Ma.")
+      duration <- list(from=timesteps[1], to=0, by=1, unit="Ma")
     }
-  } else {
-    timesteps <- paste0(seq(duration$from, duration$to, by = duration$by), duration$unit)
-  }
+  } 
+  #else {
+  #  timesteps <- paste0(seq(duration$from, duration$to, by = duration$by), duration$unit)
+  #}
   
+  timesteps <- paste0(seq(duration$from, duration$to, by = duration$by), duration$unit)
   # if(is.null(timesteps)){
   #   timesteps <- (length(raster_list[[1]]) - 1):0
   # }
@@ -111,13 +119,12 @@ create_spaces_raster <- function(raster_list, # old spaces
   check_spaces(gs)
   # in case geodynamic is set to FALSE, double check env matrix
   if (!geodynamic){
-    # if compiled_env is dynamic, reset it
-    checked_geodym <- is_geodynamic(compiled_env) # get the geodynamic status
-    if (checked_geodym){
+    # if compiled_env is dynamic, reset it 
+    if (is_geodynamic(compiled_env)){ # get the geodynamic status
       warning("geodynamic is set to FALSE but environment says otherwise. 
           changing geodynamic to TRUE")
-      geodynamic <- checked_geodym
-      gs$meta$geodynamic <- checked_geodym
+      geodynamic <- TRUE
+      gs$meta$geodynamic <- TRUE
     }
   }
   
@@ -134,8 +141,7 @@ create_spaces_raster <- function(raster_list, # old spaces
   if (geodynamic){
     nts <- length(timesteps)
   } else {
-    nts <- 1
-    
+    nts <- 1 # to only compute the first
   }
   
   for( step in 1:nts ) {
@@ -454,15 +460,6 @@ get_transition_correction <- function(x, tr_fun, dir) {
 
   edge_list_matrix <- igraph::as_edgelist(raster_graph, names = TRUE)
   edges_values <- edge_list_matrix[,2]
-  # Iterates over graph edges to atribute values
-  # for (i in 1:igraph::ecount(raster_graph)) {
-  #   # i <- 1
-  #   edge <- igraph::E(raster_graph)[i]
-  #   from_node <- igraph::V(raster_graph)$name[igraph::tail_of(raster_graph, edge)]
-  #   to_node <- igraph::V(raster_graph)$name[igraph::head_of(raster_graph, edge)]
-  #   
-  #   edges_values[i] <- to_node
-  # }
   igraph::E(raster_graph)$weight <- edges_values
 
   transition_matrix <- igraph::as_adjacency_matrix(
@@ -472,14 +469,10 @@ get_transition_correction <- function(x, tr_fun, dir) {
   ) |> t()
   
   # BUILDS THE CORRECTION MATRIX 
-  # This section of code was adapted from Jacob van Etten implementation of gdistance::geoCorrection.
+  # This section of code was adapted from Jacob van Etten's implementation of gdistance::geoCorrection.
   scaleValue <- 1
   
   if(terra::is.lonlat(x)) {
-    #if (type != "c" & type != "r"){stop("type can only be c or r")}
-    #if (type == "r" & matrixValues(x) != "conductance"){stop("matrix of Transition object must have conductance values")}
-    #adj <- adjacencyFromTransition(x)
-    #correction <- cbind(xyFromCell(x,adj[,1]),xyFromCell(x,adj[,2]))
     correction <- cbind(terra::xyFromCell(x,adj[,1]), terra::xyFromCell(x,adj[,2]))
     
     points_A <- terra::vect(correction[, 1:2], crs = terra::crs(x))
@@ -491,10 +484,6 @@ get_transition_correction <- function(x, tr_fun, dir) {
     
   } else {
     stop("Raster must be lon/lat")
-    # adj <- adjacencyFromTransition(x)
-    # correction <- cbind(xyFromCell(x,adj[,1]),xyFromCell(x,adj[,2]))
-    # if(matrixValues(x) == "conductance") {correctionValues <- 1/(pointDistance(correction[,1:2],correction[,3:4],longlat=FALSE)/scaleValue)}
-    # if(matrixValues(x) == "resistance") {correctionValues <- pointDistance(correction[,1:2],correction[,3:4],longlat=FALSE)/scaleValue}
   }
   i <- as.integer(adj[,2] - 1)
   j <- as.integer(adj[,1] - 1)

@@ -129,7 +129,7 @@ plot_space_overview <- function(space, env_names = NULL, breaks = NULL) {
   if (space_type == "raster") {
     plot_space_overview.raster(env_names, env_vars, breaks, x_breaks, y_breaks)
   } else if (space_type == "h3") {
-    plot_space_overview.h3(env_names, env_vars, breaks, x_breaks, y_breaks)
+    plot_space_overview.h3(space, env_names, env_vars, breaks, x_breaks, y_breaks)
   } else if (space_type == "points") {
     plot_space_overview.points(env_names, env_vars, breaks, x_breaks, y_breaks)
   }
@@ -188,7 +188,7 @@ plot_space_overview.raster <- function(env_names, env_vars, breaks, x_breaks, y_
 #'
 #' @returns no return value, called for plot
 #' @noRd
-plot_space_overview.h3 <- function(env_names, env_vars, breaks, x_breaks, y_breaks){
+plot_space_overview.h3 <- function(space, env_names, env_vars, breaks, x_breaks, y_breaks){
   # construct a plot for each timestep and variable
   plot_list <- lapply(env_names, function(vari){
     # Creates a matrix with coordinates and values
@@ -202,6 +202,13 @@ plot_space_overview.h3 <- function(env_names, env_vars, breaks, x_breaks, y_brea
     # and extract the h3 cell indexes
     env_cells <- h3jsr::point_to_cell(env_points, space$meta$type_spec$res)
     polygons <- h3jsr::cell_to_polygon(env_cells)
+    
+    # wrap dateline if necessary
+    polygons <- wrap_dateline_h3(
+      polygons, 
+      space, 
+      conditional = (space$meta$area$extent[["xmin"]] >= -180 & space$meta$area$extent[["xmin"]] <= -170) & (space$meta$area$extent[["xmax"]] <= 180 & space$meta$area$extent[["xmax"]] >= 170)
+    )
     
     # a polygon with geometry and values
     polygons_sf <- sf::st_sf(
@@ -562,8 +569,8 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
   ggplot2::labs( # set labels
     shape = legend_title, ## legend
     color = legend_title, ## legend
-    x = ggplot2::element_blank(), ## nothing in x axis
-    y = ggplot2::element_blank() ## nothing in y axis 
+    x = "", ## nothing in x axis
+    y = "" ## nothing in y axis 
   )
 }
 
@@ -803,10 +810,8 @@ plot_single.gen3sis_space_h3 <- function(values, space, title="", no_data = 0, c
   
   #polygons <- h3jsr::cell_to_polygon(h3::geo_to_h3(space$coordinates, space$type_spec_res))
   # if the extent is global, wrap the dateline
-  if (space$extent[["xmin"]] == -180 & space$extent[["xmax"]]==180){
-    # wrap dateline
-    polygons <- sf::st_wrap_dateline(polygons, options= c('WRAPDATELINE=YES', 'DATELINEOFFSET=180'), quiet=TRUE)
-  }
+  polygons <- wrap_dateline_h3(polygons, space)
+  
   # Add the values to the polygons for plotting
   # polygons$values <- values  # Add the values as an attribute to polygons
 
@@ -954,6 +959,9 @@ plot_multiple.gen3sis_space_h3 <- function(values, space, col, no_data = NA) {
   env_cells <- h3jsr::point_to_cell(env_points,space$type_spec_res)
   polygons <- h3jsr::cell_to_polygon(env_cells)
   
+  # wrap dateline if necessary
+  polygons <- wrap_dateline_h3(polygons, space)
+  
   # construct the sf
   polygons_sf <- sf::st_sf(
     value = values,
@@ -1099,7 +1107,8 @@ raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
     ggplot2::theme(
         plot.title = ggplot2::element_text(hjust = 0.5),
         panel.grid.major = ggplot2::element_line(color = scales::alpha("darkgray", 0.5), linewidth = 0.2),
-        panel.grid.minor = ggplot2::element_line(color = scales::alpha("darkgray", 0.4), linewidth = 0.1)
+        panel.grid.minor = ggplot2::element_line(color = scales::alpha("darkgray", 0.4), linewidth = 0.1),
+        axis.text = element_blank()
       ),
     ggplot2::labs(
         title = title
@@ -1133,7 +1142,8 @@ sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5),
       panel.grid.major = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank()
+      panel.grid.minor = ggplot2::element_blank(),
+      axis.text = element_blank()
     ),
     ggplot2::labs(
       title = title
@@ -1141,4 +1151,23 @@ sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
   )
 }
 
-
+#' wraps dateline to plot h3 spaces
+#' @param polygons h3 polygons to be wrapped
+#' @param space h3 spaces
+#' @returns no return value, called for plot routine
+#' @noRd
+wrap_dateline_h3 <- function(
+    polygons, 
+    space, 
+    conditional = (space$extent[["xmin"]] >= -180 & space$extent[["xmin"]] <= -170) & (space$extent[["xmax"]] <= 180 & space$extent[["xmax"]] >= 170)
+    ){
+  
+  if (conditional){
+    # wrap dateline
+    # TODO fix warnings: the plot works, but sf complains about invalid geometry
+    suppressWarnings(
+      polygons <- sf::st_wrap_dateline(polygons, options= c('WRAPDATELINE=YES', 'DATELINEOFFSET=180'), quiet=TRUE)
+    )
+  }
+  return(polygons)
+}

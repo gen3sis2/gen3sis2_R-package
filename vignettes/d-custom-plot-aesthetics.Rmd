@@ -179,18 +179,18 @@ p +
 
 ## Customizing `gen3sis2` default aesthetics
 
-Default plot aesthetics in `gen3sis2` are stored as the functions `raster_plot_aesthetics`, for raster type spaces, and `sf_plot_aesthetics`, for h3 and points type spaces. This allow users to customize the aesthetics from all plots in session, by masking the functions in the environment.
+Default plot aesthetics in `gen3sis2` are stored as internal functions `.default_raster_plot_aesthetics`, for raster type spaces, and `.default_sf_plot_aesthetics`, for h3 and points type spaces. This allow users to customize the aesthetics from all plots in session, by overriding package's options:
 
-First, let's see how the `raster_plot_aesthetics` look like:
+First, let's see how the default raster aesthetics looks like:
 
 ```{r}
-raster_plot_aesthetics
+gen3sis2:::.default_raster_plot_aesthetics
 ```
 
-Now, let's mask it, defining our own aesthetics:
+Now, let's override it, defining our own aesthetics:
 
 ```{r}
-raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
+options(gen3sis2.raster_plot_aesthetics = function(space, col, x_breaks, y_breaks, title) {
   list(
     ggplot2::scale_x_continuous(
       expand = c(0, 0),
@@ -211,7 +211,7 @@ raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
     ),
     ggplot2::labs(title = "Look, mom. It's custom!") # and title.
   )
-}
+})
 ```
 
 Now the plots should have this new aesthetics:

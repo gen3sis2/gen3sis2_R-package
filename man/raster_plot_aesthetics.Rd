@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_functions.R
 \name{raster_plot_aesthetics}
 \alias{raster_plot_aesthetics}
-\title{Standard gen3sis2 plot aesthetics for raster spaces}
+\title{Provides the default gen3sis2 plot aesthetics for raster spaces}
 \usage{
 raster_plot_aesthetics(space, col, x_breaks, y_breaks, title)
 }
@@ -21,5 +21,5 @@ raster_plot_aesthetics(space, col, x_breaks, y_breaks, title)
 no return value, called for plot
 }
 \description{
-Standard gen3sis2 plot aesthetics for raster spaces
+Provides the default gen3sis2 plot aesthetics for raster spaces
 }

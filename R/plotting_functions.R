@@ -1083,7 +1083,33 @@ color_richness <- colorRampPalette(
     "#6DCD59FF", "#B4DE2CFF", "#FDE725FF", "#FFA500",   "#FF2900",   "#C40000",   "#8B0000", "#8B0000")
 )
 
-#' Standard gen3sis2 plot aesthetics for raster spaces
+
+#' set he default aesthetics for raster plot. Internal only.
+#' @noRd
+.default_raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
+  list(
+    ggplot2::scale_x_continuous(
+      expand = c(0, 0),
+      breaks = x_breaks
+    ),
+    ggplot2::scale_y_continuous(
+      expand = c(0, 0),
+      breaks = y_breaks
+    ),
+    ggplot2::theme_bw(),
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5),
+      panel.grid.major = ggplot2::element_line(color = scales::alpha("darkgray", 0.5), linewidth = 0.2),
+      panel.grid.minor = ggplot2::element_line(color = scales::alpha("darkgray", 0.4), linewidth = 0.1),
+      axis.text = element_blank()
+    ),
+    ggplot2::labs(
+      title = title
+    )
+  )
+}
+
+#' Provides the default gen3sis2 plot aesthetics for raster spaces
 #'
 #' @param space a space to plot the values onto
 #' @param col corresponds to the \link{raster} col plot parameter. This can be omitted and colors are handled by raster::plot  
@@ -1094,39 +1120,18 @@ color_richness <- colorRampPalette(
 #' @returns no return value, called for plot
 #' @export
 raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
-  list(
-    ggplot2::scale_x_continuous(
-      expand = c(0, 0),
-      breaks = x_breaks
-    ),
-    ggplot2::scale_y_continuous(
-        expand = c(0, 0),
-        breaks = y_breaks
-      ),
-    ggplot2::theme_bw(),
-    ggplot2::theme(
-        plot.title = ggplot2::element_text(hjust = 0.5),
-        panel.grid.major = ggplot2::element_line(color = scales::alpha("darkgray", 0.5), linewidth = 0.2),
-        panel.grid.minor = ggplot2::element_line(color = scales::alpha("darkgray", 0.4), linewidth = 0.1),
-        axis.text = element_blank()
-      ),
-    ggplot2::labs(
-        title = title
-      )
-  )
+  user_fun <- getOption("gen3sis2.raster_plot_aesthetics", default = NULL)
+  
+  if (is.function(user_fun)) {
+    return(user_fun(space, col, x_breaks, y_breaks, title))
+  }
+  
+  .default_raster_plot_aesthetics(space, col, x_breaks, y_breaks, title)
 }
 
-#' Standard gen3sis2 plot aesthetics for H3 and points spaces
-#'
-#' @param space a space to plot the values onto
-#' @param col corresponds to the \link{raster} col plot parameter. This can be omitted and colors are handled by raster::plot  
-#' @param x_breaks numeric. Break points of the x axis. Aesthetic only. 
-#' @param y_breaks numeric. Break points of the y axis. Aesthetic only.
-#' @param title a string with plot title
-#'
-#' @returns no return value, called for plot
-#' @export
-sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
+#' Sets the default aesthetics for h3 and points plot. Internal only.
+#' @noRd
+.default_sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
   list(
     ggplot2::scale_x_continuous(
       expand = c(0, 0),
@@ -1149,6 +1154,26 @@ sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
       title = title
     )
   )
+}
+
+#' Provides the default gen3sis2 plot aesthetics for H3 and points spaces
+#'
+#' @param space a space to plot the values onto
+#' @param col corresponds to the \link{raster} col plot parameter. This can be omitted and colors are handled by raster::plot  
+#' @param x_breaks numeric. Break points of the x axis. Aesthetic only. 
+#' @param y_breaks numeric. Break points of the y axis. Aesthetic only.
+#' @param title a string with plot title
+#'
+#' @returns no return value, called for plot
+#' @export
+sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
+  user_fun <- getOption("gen3sis2.sf_plot_aesthetics", default = NULL)
+  
+  if (is.function(user_fun)) {
+    return(user_fun(space, col, x_breaks, y_breaks, title))
+  }
+  
+  .default_sf_plot_aesthetics(space, col, x_breaks, y_breaks, title)
 }
 
 #' wraps dateline to plot h3 spaces

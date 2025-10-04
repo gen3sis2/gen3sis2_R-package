@@ -138,17 +138,47 @@ apply_evolution <- function(species, cluster_indices, space, config) {
 }
 
 
-#----------------------------------------------------------#
-#### Ecology: Environmental and Ecological Interactions ####
-#----------------------------------------------------------#
+#------------------------------------------------#
+#### Ecology: Biotic and Abiotic Interactions ####
+#------------------------------------------------#
 
-# called for every site with all occurring species, this function calculates abundances and/or 
-# who survives for each sites.
+# called for every site with all occurring species, this function calculates abundances 
+# and/or who survives for each sites.
 # returns a vector of abundances.
 # set the abundance to 0 for every species supposed to die.
 apply_ecology <- function(abundance, traits, environment, config) {
   stop("calculate species abundances and deaths here")
 }
+
+
+#--------------------------------------------#
+#### Biotic Modulation of the Environment ####
+#--------------------------------------------#
+
+# Accounts for Biospheric Feedbacks to the space
+# "modify_space" must be a list containing two functions called 
+# at the beggining and end of each time-step
+# 1. "modify_space$get_mofiers" 
+## Is called at the end of each time-step.
+## Users can set any rules to get environmental modifiers.
+## Can return any object.
+## To deactivate environmental modifiers, the function must simply return NULL.
+# 2. "modify_space$apply_modifiers"
+## Is called at the start of each time-step
+## Its used to apply the modifiers computed in the previous time-step.
+## Will recieve the space and the modifiers object.
+## Must return the "space$environment" object.
+## Only runs if modifiers are not NULL.
+
+modify_space <- list(
+  get_modifiers = function(space, all_species){
+    modifiers <- NULL
+    return(modifiers)
+  },
+  apply_modifiers = function(space, modifiers){
+    return(space$environment)
+  }
+)
 
 ')) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
 }

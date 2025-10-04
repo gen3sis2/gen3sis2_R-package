@@ -13,7 +13,6 @@
 #' @return the general vals(config, data, vars) list
 #' @noRd
 setup_inputs <- function(config, data, vars) {
-  # browser()
   data[["inputs"]] <- list()
   spaces_rds <- readRDS(file.path(config$directories$input, "spaces.rds"))
   spaces <- spaces_rds$env # TODO correct cascade of names... attention to s i.e. space is contained in spaces
@@ -107,8 +106,8 @@ setup_variables <- function(config, data, vars) {
 #' @import raster
 #' @noRd
 init_attribute_ancestor_distribution <- function(config, data, vars) {
-  oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar))
+  #oldpar <- par(no.readonly = TRUE)
+  #on.exit(par(oldpar))
   all_species <- config$gen3sis$initialization$create_ancestor_species(data$space, config)
   for (i in 1:length(all_species)){
     force(i)

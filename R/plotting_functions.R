@@ -774,16 +774,8 @@ plot_single.gen3sis_space_points <- function(values, space, title="", no_data = 
       ) +
       sf_plot_aesthetics(space, col, x_breaks, y_breaks, title = paste0(title, " ", space$timestep, " t_", space[["id"]])) # gen3sis2 standard aesthetics
   } 
-  
-  ####
-  # plot(space[["coordinates"]], 
-  #      main=paste0(title, " ", space$timestep, " t_", space[["id"]]),
-  #      xlim=space[["extent"]][c("xmin","xmax")],
-  #      ylim=space[["extent"]][c("ymin","ymax")],
-  #      col=col, pch=20)
 }
 
-# TODO update documentation
 #' Plot a single set of values onto a given space
 #'
 #' @param values a named list of values, the names must correspond to cells in the space

@@ -138,12 +138,12 @@ apply_evolution <- function(species, cluster_indices, space, config) {
 }
 
 
-#----------------------------------------------------------#
-#### Ecology: Environmental and Ecological Interactions ####
-#----------------------------------------------------------#
+#------------------------------------------------#
+#### Ecology: Biotic and Abiotic Interactions ####
+#------------------------------------------------#
 
-# called for every site with all occurring species, this function calculates abundances and/or 
-# who survives for each sites.
+# called for every site with all occurring species, this function calculates abundances 
+# and/or who survives for each sites.
 # returns a vector of abundances.
 # set the abundance to 0 for every species supposed to die.
 apply_ecology <- function(abundance, traits, environment, config) {
@@ -151,11 +151,13 @@ apply_ecology <- function(abundance, traits, environment, config) {
 }
 
 
-#------------------------------#
-#### Environmental dynamics ####
-#------------------------------#
+#--------------------------------------------#
+#### Biotic Modulation of the Environment ####
+#--------------------------------------------#
 
-# "modify_space" must be a list containing two functions.
+# Accounts for Biospheric Feedbacks to the space
+# "modify_space" must be a list containing two functions called 
+# at the beggining and end of each time-step
 # 1. "modify_space$get_mofiers" 
 ## Is called at the end of each time-step.
 ## Users can set any rules to get environmental modifiers.

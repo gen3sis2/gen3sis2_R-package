@@ -1,4 +1,4 @@
-in# Copyright (c) 2020, ETH Zurich
+# Copyright (c) 2020, ETH Zurich
 
 #' create an spaces input from a named list of rasters or raster files and user defined cost function
 #' 

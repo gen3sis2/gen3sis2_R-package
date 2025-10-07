@@ -29,6 +29,7 @@ If you inspect your spaces.rds file, you will see that it consists of an organiz
 Let's see an example:
 
 ```{r}
+library(gen3sis2)
 # Load some spaces.rds create with create_spaces_raster...
 space <- readRDS(system.file("extdata/SouthAmerica/landscape/spaces.rds", package = "gen3sis2"))
 
@@ -190,6 +191,7 @@ gen3sis2:::.default_raster_plot_aesthetics
 Now, let's override it, defining our own aesthetics:
 
 ```{r}
+library(scales)
 options(gen3sis2.raster_plot_aesthetics = function(space, col, x_breaks, y_breaks, title) {
   list(
     ggplot2::scale_x_continuous(

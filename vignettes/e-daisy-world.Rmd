@@ -3,7 +3,7 @@ title: "5. Daisy world"
 output: rmarkdown::html_vignette
 date: "`r format(Sys.time(),  '%d.%m.%Y')`"
 vignette: >
-  %\VignetteIndexEntry{3. Creating configurations (gen3sis input)}
+  %\VignetteIndexEntry{5. Daisy world}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

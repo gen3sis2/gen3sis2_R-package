@@ -1,6 +1,6 @@
 # Copyright (c) 2020, ETH Zurich
 
-#' create an spaces input from a named list of rasters or raster files and user defined cost function
+#' Create an spaces input from a named list of rasters or raster files and user defined cost function
 #' 
 #' @details This function creates the input spaces.rds files needed by the run_simulation function. 
 #' It uses as input the dynamic rasters and user defined geodesimal corrections as well as rules to define the connection costs between sites
@@ -26,7 +26,9 @@
 #' @param crs the coordinate reference system in crs format (see raster::crs). Default is defined by \code{\link{create_spaces}}
 #' @param overwrite_output TRUE or FALSE
 #' @param verbose print distance calculation progress (default: FALSE)
-#' @param duration list with from, to, by and unit. Default is from -latest time to zero by 1 Ma
+#' @param duration list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
+#' E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
+#'    \code{duration = list(from = -10, to = 10, by = 5, unit = "Ma")}
 #' @param geodynamic True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 #' i.e. deciding final value based on the input data using \code{?is_geodynamic}.
 #' @param author author of the space, see \code{?create_spaces}

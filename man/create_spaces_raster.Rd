@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_creation.R
 \name{create_spaces_raster}
 \alias{create_spaces_raster}
-\title{create an spaces input from a named list of rasters or raster files and user defined cost function}
+\title{Create an spaces input from a named list of rasters or raster files and user defined cost function}
 \usage{
 create_spaces_raster(
   raster_list,
@@ -44,7 +44,9 @@ If FALSE (default), only local distances are calculated (slower CPU time when si
 
 \item{verbose}{print distance calculation progress (default: FALSE)}
 
-\item{duration}{list with from, to, by and unit. Default is from -latest time to zero by 1 Ma}
+\item{duration}{list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
+E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
+   \code{duration = list(from = -10, to = 10, by = 5, unit = "Ma")}}
 
 \item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 i.e. deciding final value based on the input data using \code{?is_geodynamic}.}
@@ -66,7 +68,7 @@ If timesteps=NULL (default), time-steps are sequentially numbered from 0 to the 
 no return object. This function saves the space input files for gen3sis at the output_directory
 }
 \description{
-create an spaces input from a named list of rasters or raster files and user defined cost function
+Create an spaces input from a named list of rasters or raster files and user defined cost function
 }
 \details{
 This function creates the input spaces.rds files needed by the run_simulation function. 

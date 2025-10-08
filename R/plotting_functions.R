@@ -21,7 +21,6 @@ plot_species_presence <- function(species, space, col=NULL) {
     col <- set_color(all_presence, type=space$`type`)
   }
   
-  #browser()
   conditional_plot(title = paste0("species_presence_", species$id), # title
                    plot_fun = plot_single, # plot_fun
                    space = space, # space
@@ -587,7 +586,6 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
 conditional_plot <- function(title, plot_fun, ...){
   space <- list(...)$space
   
-  #browser()
   fun_calls <- sys.calls()
   if (any(sapply(fun_calls, FUN = function(x){ is(x[[1]], "name") && "call_main_observer" == x[[1]]}))){
     # run during simulation save plot to file
@@ -621,7 +619,6 @@ conditional_plot <- function(title, plot_fun, ...){
 
 # Generic plot single function
 plot_single <- function(no_data = 0, legend = TRUE, ...) {
-  #browser()
   # Convert '...' to a list to access additional arguments
   args <- list(...)
   check_args(args)
@@ -655,7 +652,6 @@ plot_single <- function(no_data = 0, legend = TRUE, ...) {
 #' 
 #' @noRd
 plot_single.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
-  #browser()
   
   space <- list(...)$space
   values <- list(...)$values
@@ -896,7 +892,6 @@ plot_single.gen3sis_space_h3 <- function(no_data = 0, legend = TRUE, ...) {
 
 # Generic plot multiple function 
 plot_multiple <- function(no_data = 0, legend = TRUE, ...) {
-  #browser()
   # Convert '...' to a list to access additional arguments
   args <- list(...)
   check_args(args)

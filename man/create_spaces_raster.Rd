@@ -51,18 +51,13 @@ E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep co
 \item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 i.e. deciding final value based on the input data using \code{?is_geodynamic}.}
 
-\item{...}{additional arguments to be passed to the \code{\link{create_spaces}} function}
-
-\item{timesteps}{vector of names for every time-step to represent the time-step at gen3sis ready space. 
-If timesteps=NULL (default), time-steps are sequentially numbered from 0 to the latest time-step.}
-
-\item{crs}{the coordinate reference system in crs format (see raster::crs). Default is defined by \code{\link{create_spaces}}}
-
-\item{author}{author of the space, see \code{?create_spaces}}
-
-\item{source}{source of the space, see \code{?create_spaces}}
-
-\item{description}{list with env and methods, see \code{?create_spaces}}
+\item{...}{additional arguments to be passed to the \code{\link{create_spaces}} function. Possible arguments include:
+\itemize{
+   \item \code{author}: author of the space, see \code{?create_spaces}
+   \item \code{source}: source of the space, see \code{?create_spaces}
+   \item \code{crs}: the coordinate reference system in crs format (see raster::crs). Default is defined by \code{\link{create_spaces}}
+   \item \code{description}: list with env and methods, see \code{?create_spaces}
+}}
 }
 \value{
 no return object. This function saves the space input files for gen3sis at the output_directory

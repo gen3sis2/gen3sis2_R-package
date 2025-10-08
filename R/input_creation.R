@@ -17,13 +17,10 @@
 #' **dest** is a vector of environmental conditions for the destination site, dest_habitable  (TRUE or FALSE) for habitable condition of the destination cell
 #' @param directions 4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see gistance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16. 
 #' @param output_directory path for storing the gen3sis ready space (i.e. space.rds, metadata.txt and full- and/or local_distance folders) 
-#' @param timesteps vector of names for every time-step to represent the time-step at gen3sis ready space. 
-#' If timesteps=NULL (default), time-steps are sequentially numbered from 0 to the latest time-step.
 #' @param full_dists should a full distance matrix be calculated? TRUE or FALSE? Default is FALSE.
 #' If TRUE calculates the entire distance matrix for every time-step and between all habitable cells 
 #' (faster CPU time, higher storage required). 
 #' If FALSE (default), only local distances are calculated (slower CPU time when simulating but smaller gen3sis space size)
-#' @param crs the coordinate reference system in crs format (see raster::crs). Default is defined by \code{\link{create_spaces}}
 #' @param overwrite_output TRUE or FALSE
 #' @param verbose print distance calculation progress (default: FALSE)
 #' @param duration list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
@@ -31,10 +28,13 @@
 #'    \code{duration = list(from = -10, to = 10, by = 5, unit = "Ma")}
 #' @param geodynamic True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 #' i.e. deciding final value based on the input data using \code{?is_geodynamic}.
-#' @param author author of the space, see \code{?create_spaces}
-#' @param source source of the space, see \code{?create_spaces}
-#' @param description list with env and methods, see \code{?create_spaces}
-#' @param ... additional arguments to be passed to the \code{\link{create_spaces}} function
+#' @param ... additional arguments to be passed to the \code{\link{create_spaces}} function. Possible arguments include:
+#' \itemize{
+#'    \item \code{author}: author of the space, see \code{?create_spaces}
+#'    \item \code{source}: source of the space, see \code{?create_spaces}
+#'    \item \code{crs}: the coordinate reference system in crs format (see raster::crs). Default is defined by \code{\link{create_spaces}}
+#'    \item \code{description}: list with env and methods, see \code{?create_spaces}
+#' }
 #' @return no return object. This function saves the space input files for gen3sis at the output_directory
 #' @importFrom gdistance transition costDistance
 #' @example inst/examples/create_spaces_raster_help.R

@@ -91,7 +91,7 @@ run_simulation <- function(config = NA,
   ####### User defined variables (config.R) ############
   #----------------------------------------------------#
   system_time_start <- Sys.time() #Starting timer
-
+  
   # Checking save_states
   recognized_save_states <- c("all", "last")
   if(!all(is.na(save_state)) && 
@@ -121,12 +121,15 @@ run_simulation <- function(config = NA,
     stop("this is not a known config, please provide either a config file or a config object")
   }
   
+  
   if(!verify_config(config)){
     stop("config verification failed")
   } else {
     cat("\nUsing config:",config$gen3sis$general$config_name,"\n")
   }
 
+  browser()
+  
   val <- list("data" = list(),
               "vars" = list(),
               "config" = config)
@@ -141,9 +144,14 @@ run_simulation <- function(config = NA,
   # #---------------------------------------------------------#
   # ###### ATTRIBUTE ANCESTOR DISTRIBUTION (simulation.R) #####
   # #---------------------------------------------------------#
+  browser()
   val <- setup_inputs(val$config, val$data, val$vars)
   val <- setup_variables(val$config, val$data, val$vars)
   val <- setup_space(val$config, val$data, val$vars)
+  
+  # getsa multiplier which expresses how many times events described in config happen in a single timestep
+  val$config$user$.TIME <- simulation_timeframe(val$config$user$sim_time$x, val$config$user$sim_time$unit, val$data$space)
+
   # conceptually the result of the initialization is the "end" of a previous timestep
   val$data$space$id <- val$data$space$id + 1
   

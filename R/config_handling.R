@@ -100,7 +100,6 @@ prepare_directories <- function(config_file = NA,
 #' @example inst/examples/create_input_config_help.R
 #' @export
 create_input_config <- function(config_file = NA, config_name = NULL) {
-  
   # Verify config name
   if (!is.null(config_name)) {
     if (length(config_name) != 1) {
@@ -163,7 +162,12 @@ internal_categories <- c("general",
 #' @noRd
 populate_config <- function(config, config_file) {
   user_config_env <- new.env()
-  source(config_file, chdir=TRUE, local=user_config_env)
+  
+  machine_config <- config_interpreter(config, config_file)
+  
+  eval(machine_config$machine_config, envir = user_config_env)
+  
+  #source(config_file, chdir=TRUE, local=user_config_env)
   for ( category in internal_categories) {
     config[["gen3sis"]][[category]] <- populate_settings_list(config[["gen3sis"]][[category]], user_config_env)
   }
@@ -185,6 +189,10 @@ populate_config <- function(config, config_file) {
       config[["user"]][[i]] <- user_config_env[[i]]
     }
   }
+  
+  # set config flags
+  config$user$flags$time_flags <- machine_config$time_flags
+  
   return(invisible(config))
 }
 
@@ -265,6 +273,14 @@ verify_config <- function(config) {
       message()
     return(FALSE)
   }
+  
+  # check if time_unit is accepted 
+  if(!time_unit_check(config$user$sim_time$unit)){
+    c("Time unit is not accepted. \n") |>
+      message()
+    return(FALSE)
+  }
+  
   return(TRUE)
 }
 
@@ -357,5 +373,106 @@ write_config_skeleton <- function(file_path = "./config_skeleton.R", overwrite =
     writeLines(skeleton_config(), new_file)
     close(new_file)
     return(TRUE)
+  }
+}
+
+#
+simulation_timeframe <- function(timestep, time_unit, space = space) {
+  space_timestep <- space$duration$by
+  space_tunit <- space$duration$unit
+  
+  .TIME <- (measurements::conv_unit(1, from = space_tunit, to = time_unit) * space_timestep)/timestep
+  
+  if (time_unit != space_tunit){
+    message(
+      paste0(
+        'Space time unit is "',space_tunit,'" but config time unit is "', time_unit,'".\n',
+        '1 ',space_tunit,' = ',measurements::conv_unit(1, from = space_tunit, to = time_unit),' ',time_unit,'\n',
+        'Each space timestep comprises ', space_timestep,' ', space_tunit, '\n',
+        'Simulation time multiplier (config$user$.TIME) set to ', .TIME
+      )
+    )  
+  }
+  
+  if (.TIME > 10 | .TIME < 0.1) {
+    warning(
+      "Significant mismatch between space time and config time. Review recommended."
+    )
+  }
+  
+  return(.TIME)
+}
+
+#
+config_interpreter <- function(config, config_file){
+  # read the config from the file
+  human_config <- readLines(config_file)
+  
+  # clean comments -> paste in a single text
+  human_config <- human_config[!grepl("^\\s*#",human_config)]
+  
+  # construct sim_time use flags  
+  flags <- c("get_dispersal_values", "get_divergence_factor")
+  flags_pos <- sapply(flags, function(flag){grep(paste0("^",flag),human_config)})
+  flags <- sapply(flags_pos, function(flag){
+    brackets_flag <- grepl("\\{",human_config[flag])
+    inside <- FALSE
+    
+    module_lines <- c(flag)
+    for (i in (flag+1):length(human_config)) {
+      if(!inside){
+        if(grepl("\\{",human_config[i])){
+          inside <- TRUE
+        } else if (grepl("\\}",human_config[i])) {
+          module_lines <- c(module_lines, i)
+          break
+        }
+      } else {
+        if(grepl("\\}",human_config[i])){
+          inside <- FALSE
+        } 
+      }
+    }
+    
+    module_lines <- module_lines[1]:module_lines[2]
+    
+    sim_time_used <- sapply(module_lines, function(ml){
+      grepl("sim_time",human_config[ml])
+    }) |> any()
+    
+    return(sim_time_used)
+  })
+  
+  flags <- c(flags, c(divergence_threshold = grepl("sim_time", human_config[grepl("^divergence_threshold", human_config)])))
+  flags <- !flags # TRUE means that gen3si2 will have to scale
+  
+  # Adapt to machine config
+  # which lines call "sim_time"? Except the line defyning it
+  def_line <- grep("sim_time <-",human_config)
+  sim_lines <- grep("sim_time",human_config)
+  sim_lines <- setdiff(sim_lines, def_line)
+  
+  machine_config <- human_config
+  machine_config[sim_lines] <- gsub("sim_time","config$user$.TIME",human_config[sim_lines])
+  
+  machine_config <- parse(text = paste(machine_config,collapse = "\n"))
+  
+  return_list <- list(
+    machine_config = machine_config,
+    time_flags = flags
+  )
+  return(return_list)
+}
+
+# 
+time_unit_check <- function(time_unit=NULL){
+  dur_units <- c("day", "days", "wk", "week", "mon", "month", "yr", "year", "dec", "decade", "cen", "century", "mil", "millenium", "Ma")
+  accepted_timeunits <- dur_units[dur_units%in%measurements::conv_unit_options$duration]
+  
+  if(is.null(time_unit)){
+    return(accepted_timeunits)
+  } else {
+    is.accepted <- time_unit %in% accepted_timeunits
+    return(is.accepted) 
   }
 }

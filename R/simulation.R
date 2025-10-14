@@ -13,6 +13,7 @@
 #' @return the general vals(config, data, vars) list
 #' @noRd
 setup_inputs <- function(config, data, vars) {
+  #browser()
   data[["inputs"]] <- list()
   spaces_rds <- readRDS(file.path(config$directories$input, "spaces.rds"))
   spaces <- spaces_rds$env # TODO correct cascade of names... attention to s i.e. space is contained in spaces
@@ -52,6 +53,8 @@ setup_inputs <- function(config, data, vars) {
   data[["inputs"]][["extent"]] <- spaces_rds$meta$area$extent
   # geodynamc
   data[["inputs"]][["geodynamic"]] <- spaces_rds$meta$geodynamic
+  # duration
+  data[["inputs"]][["duration"]] <- spaces_rds$meta$duration
   
   return(list(config = config, data = data, vars = vars))
 }
@@ -70,7 +73,16 @@ setup_variables <- function(config, data, vars) {
   if (is.na(config$gen3sis$general$start_time)) {
     config$gen3sis$general$start_time <- length(data[["inputs"]][["timesteps"]]) - 1
   } else if (is.character(config$gen3sis$general$start_time)) {
-    config$gen3sis$general$start_time<- which(data[["inputs"]][["timesteps"]] == config$gen3sis$general$start_time) - 1
+    #config$gen3sis$general$start_time<- which(data[["inputs"]][["timesteps"]] == config$gen3sis$general$start_time) - 1
+    start_time <- as.numeric(config$gen3sis$general$start_time)
+    start_time <- measurements::conv_unit(start_time, config$user$sim_time$unit, data$inputs$duration$unit)
+    
+    ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric() 
+    time_distance <- abs(start_time - ts_times)
+    eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
+
+    config$gen3sis$general$start_time <- which(data$inputs$timesteps == data$inputs$timesteps[eq_index])
+    message("Simulation will start at timestep ",config$gen3sis$general$start_time,", ", data$inputs$timesteps[config$gen3sis$general$start_time])
   } else {
     # user supplied numerical time-step
   }
@@ -78,7 +90,17 @@ setup_variables <- function(config, data, vars) {
   if(is.na(config$gen3sis$general$end_time)) {
     config$gen3sis$general$end_time <- 0
   } else if (is.character(config$gen3sis$general$end_time)) {
-    config$gen3sis$general$end_time <- which(data[["inputs"]][["timesteps"]] == config$gen3sis$general$end_time) - 1
+    #config$gen3sis$general$end_time <- which(data[["inputs"]][["timesteps"]] == config$gen3sis$general$end_time) - 1
+    
+    end_time <- as.numeric(config$gen3sis$general$end_time)
+    end_time <- measurements::conv_unit(end_time, config$user$sim_time$unit, data$inputs$duration$unit)
+    
+    ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric() 
+    time_distance <- abs(end_time - ts_times)
+    eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
+    
+    config$gen3sis$general$end_time <- which(data$inputs$timesteps == data$inputs$timesteps[eq_index])
+    message("Simulation will end at timestep ",config$gen3sis$general$end_time,", ", data$inputs$timesteps[config$gen3sis$general$end_time])
   } else {
     # user supplied numerical time-step
   }
@@ -218,6 +240,7 @@ setup_space <- function(config, data, vars) {
                                 coordinates = data[["inputs"]][["coordinates"]][habitable_cells, ],
                                 timestep = data[["inputs"]][["timesteps"]][index],
                                 extent = data[["inputs"]][["extent"]],
+                                duration = data[["inputs"]][["duration"]],
                                 geodynamic = data[["inputs"]][["geodynamic"]],
                                 type = data[["inputs"]][["type"]],
                                 type_spec_res=data[["inputs"]][["type_spec_res"]])

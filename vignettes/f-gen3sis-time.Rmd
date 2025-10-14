@@ -1,0 +1,32 @@
+---
+title: "6. Time in gen3sis2"
+output: rmarkdown::html_vignette
+date: "`r format(Sys.time(),  '%d.%m.%Y')`"
+vignette: >
+  %\VignetteIndexEntry{6. Time in gen3sis2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+# Spaces duration
+```{r}
+# Define o intervalo
+x <- -5:5
+
+# Cria o plot vazio, com eixo X de -6 a 6
+plot(NA, xlim = c(-6, 6), ylim = c(-1, 1),
+     axes = FALSE, xlab = "", ylab = "", main = "Linha de tempo")
+
+# Adiciona a linha horizontal principal
+abline(h = 0, lwd = 2)
+
+# Adiciona as marcações (traços)
+segments(x, -0.1, x, 0.1, lwd = 2)
+
+# Adiciona os rótulos nos pontos
+text(x, 0.2, labels = x)
+
+```
+

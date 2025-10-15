@@ -41,11 +41,12 @@ create_spaces <- function(env=list(NA),
                          type="raster",
                          duration=list(from=NA, to=NA, by=NA, unit="Ma"),
                          area=list(extent=NA, total_area=NA, n_sites=NA, unit="km2"),
-                         crs="+proj=longlat +datum=WGS84 +no_defs",
+                         #crs="+proj=longlat +datum=WGS84 +no_defs",
+                         crs = "EPSG:4326",
                          cost_function=list(NA),
                          geodynamic=NULL,
                          type_spec=list("res"=NA),
-                         author=NULL,
+                         author="missing",
                          source="missing",
                          description=list(environment="missing", methods="missing")
                          ){
@@ -62,11 +63,6 @@ create_spaces <- function(env=list(NA),
     geodynamic <- is_geodynamic(env)
   }
   spaces$meta$"geodynamic" <- geodynamic
-  if (is.null(author)){
-    author <- Sys.info()["user"]
-    # remove attributes
-    attributes(author) <- NULL
-  }
   spaces$meta$"author" <- author
   spaces$meta$"source" <- source
   spaces$meta$"description" <- description

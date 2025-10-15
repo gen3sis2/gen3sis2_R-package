@@ -21,13 +21,12 @@ plot_species_presence <- function(species, space, col=NULL) {
     col <- set_color(all_presence, type=space$`type`)
   }
   
-  conditional_plot(paste0("species_presence_", species$id),
-                   space,
-                   plot_single,
-                   all_presence,
-                   space,
-                   paste("Species", species[["id"]]),
-                   col=col)
+  conditional_plot(title = paste0("species_presence_", species$id), # title
+                   plot_fun = plot_single, # plot_fun
+                   space = space, # space
+                   values = all_presence, # presence vector
+                   title2 = paste("Species", species[["id"]]),
+                   col = col)
 }
 
 
@@ -50,13 +49,12 @@ plot_species_abundance <- function(species, space, col = NULL) {
     col <- set_color(all_presence, type=space$`type`)
   }
   
-  conditional_plot(paste0("species_abundance_", species$id),
-                   space,
-                   plot_single,
-                   all_presence,
-                   space,
-                   paste("Abundance Species", species[["id"]]),
-                   col=col)
+  conditional_plot(title = paste0("species_abundance_", species$id),
+                   plot_fun = plot_single,
+                   space = space,
+                   values = all_presence,
+                   title2 = paste("Abundance Species", species[["id"]]),
+                   col = col)
 }
 
 #' Plot the environment variable of a given space
@@ -74,11 +72,10 @@ plot_space <- function(space, col = NULL) {
   }
 
   conditional_plot(title = "space",
-                   space = space,
                    plot_fun = plot_multiple,
-                   space[["environment"]],
-                   space,
-                   col)
+                   space = space,
+                   values = space[["environment"]],
+                   col = col)
 }
 
 
@@ -129,7 +126,7 @@ plot_space_overview <- function(space, env_names = NULL, breaks = NULL) {
   if (space_type == "raster") {
     plot_space_overview.raster(env_names, env_vars, breaks, x_breaks, y_breaks)
   } else if (space_type == "h3") {
-    plot_space_overview.h3(env_names, env_vars, breaks, x_breaks, y_breaks)
+    plot_space_overview.h3(space, env_names, env_vars, breaks, x_breaks, y_breaks)
   } else if (space_type == "points") {
     plot_space_overview.points(env_names, env_vars, breaks, x_breaks, y_breaks)
   }
@@ -188,7 +185,7 @@ plot_space_overview.raster <- function(env_names, env_vars, breaks, x_breaks, y_
 #'
 #' @returns no return value, called for plot
 #' @noRd
-plot_space_overview.h3 <- function(env_names, env_vars, breaks, x_breaks, y_breaks){
+plot_space_overview.h3 <- function(space, env_names, env_vars, breaks, x_breaks, y_breaks){
   # construct a plot for each timestep and variable
   plot_list <- lapply(env_names, function(vari){
     # Creates a matrix with coordinates and values
@@ -202,6 +199,13 @@ plot_space_overview.h3 <- function(env_names, env_vars, breaks, x_breaks, y_brea
     # and extract the h3 cell indexes
     env_cells <- h3jsr::point_to_cell(env_points, space$meta$type_spec$res)
     polygons <- h3jsr::cell_to_polygon(env_cells)
+    
+    # wrap dateline if necessary
+    polygons <- wrap_dateline_h3(
+      polygons, 
+      space, 
+      conditional = (space$meta$area$extent[["xmin"]] >= -180 & space$meta$area$extent[["xmin"]] <= -170) & (space$meta$area$extent[["xmax"]] <= 180 & space$meta$area$extent[["xmax"]] >= 170)
+    )
     
     # a polygon with geometry and values
     polygons_sf <- sf::st_sf(
@@ -459,13 +463,12 @@ plot_richness <- function(species_list, space, col = NULL) {
     col <- set_color(richness, type=space$`type`)
   }
   
-  conditional_plot("Richness",
-                   space,
-                   plot_single,
-                   richness,
-                   space,
-                   "richness",
-                   col=col)
+  conditional_plot(title = "Richness",
+                   plot_fun = plot_single,
+                   space = space,
+                   values = richness,
+                   title2 = "richness",
+                   col = col)
 }
 
 
@@ -562,8 +565,8 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
   ggplot2::labs( # set labels
     shape = legend_title, ## legend
     color = legend_title, ## legend
-    x = ggplot2::element_blank(), ## nothing in x axis
-    y = ggplot2::element_blank() ## nothing in y axis 
+    x = "", ## nothing in x axis
+    y = "" ## nothing in y axis 
   )
 }
 
@@ -580,7 +583,9 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
 #' @importFrom ggplot2 ggsave
 #' 
 #' @noRd
-conditional_plot <- function(title, space, plot_fun, ...){
+conditional_plot <- function(title, plot_fun, ...){
+  space <- list(...)$space
+  
   fun_calls <- sys.calls()
   if (any(sapply(fun_calls, FUN = function(x){ is(x[[1]], "name") && "call_main_observer" == x[[1]]}))){
     # run during simulation save plot to file
@@ -613,25 +618,29 @@ conditional_plot <- function(title, space, plot_fun, ...){
 }
 
 # Generic plot single function
-plot_single <- function(x, ...) {
+plot_single <- function(no_data = 0, legend = TRUE, ...) {
   # Convert '...' to a list to access additional arguments
   args <- list(...)
   check_args(args)
   # Dispatch based on the class of the second argument  
   # Assuming 'x' is the first argument and we need the second for dispatch,
   # which is the first in 'args'
-  UseMethod("plot_single", args[[1]])
+  UseMethod("plot_single", args$space)
 }
 
 
 #' Plot a single set of values in a given space
 #'
-#' @param values a named list of values, the names must correspond to cells in the space
-#' @param space a space to plot the values onto
-#' @param title a title string for resulting plot, the time information will be taken and appended from the space id
-#' @param no_data what value should be used for missing values in values
-#' @param col a vector containing a color palette. For discrete values, the first element in the vector will be assigned to zero values. If NULL, gen3sis2 internal palette will be used. Default is NULL
-#' @param legend corresponds to the \link{raster} legend plot parameter. This can be omitted and legend is handled by raster::plot
+#' @param no_data what value should be used for missing data present in the values parameter
+#' @param legend logical. TRUE or FALSE 
+#' @param ... other arguments dispatched to the method:
+#' \itemize{
+#'  \item space: a space to plot the values onto
+#'  \item values: a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
+#' this will result in ncol(values) raster plots.
+#'  \item title2: a string with plot title
+#'  \item col: a vector with colors
+#' }
 #' 
 #' @importFrom ggplot2 ggplot scale_fill_manual scale_x_continuous scale_y_continuous theme_bw theme element_text element_line labs scale_fill_gradientn
 #' @importFrom scales alpha
@@ -641,8 +650,14 @@ plot_single <- function(x, ...) {
 #' @example inst/examples/plot_single_help.R
 #' @return no return value, called for plot
 #' 
-#' @export
-plot_single.gen3sis_space_raster <- function(values, space, title, no_data = 0, col, legend=TRUE) {
+#' @noRd
+plot_single.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
+  
+  space <- list(...)$space
+  values <- list(...)$values
+  title <- list(...)$title2
+  col <- list(...)$col
+  
   # creates a temporary raster with original extent
   temp_ras <- terra::rast(xmin=space$extent[["xmin"]], 
                           xmax=space$extent[["xmax"]],
@@ -650,7 +665,7 @@ plot_single.gen3sis_space_raster <- function(values, space, title, no_data = 0, 
                           ymax=space$extent[["ymax"]],
                           resolution = space$type_spec_res)
   values(temp_ras) <- no_data
-
+  
   img <- cbind(space[["coordinates"]], no_data)
   img[names(values), 3] <- values
   
@@ -692,7 +707,7 @@ plot_single.gen3sis_space_raster <- function(values, space, title, no_data = 0, 
     
     col <- unique(col)
     names(col) <- unique(values)
-
+    
     # the plot
     ggplot2::ggplot() +
       tidyterra::geom_spatraster(data = ras) + # to plot the raster
@@ -716,12 +731,16 @@ plot_single.gen3sis_space_raster <- function(values, space, title, no_data = 0, 
 
 #' Plot a single set of values onto a given space
 #'
-#' @param values a named list of values, the names must correspond to cells in the space
-#' @param space a space to plot the values onto
-#' @param title a title string for resulting plot, the time information will be taken and appended from the space id
-#' @param no_data what value should be used for missing values in values
-#' @param col a vector containing a color palette. For discrete values, the first element in the vector will be assigned to zero values. If NULL, gen3sis2 internal palette will be used. Default is NULL
-#' @param legend corresponds to the \link{raster} legend plot parameter. This can be omitted and legend is handled by raster::plot
+#' @param no_data what value should be used for missing data present in the values parameter
+#' @param legend logical. TRUE or FALSE 
+#' @param ... other arguments dispatched to the method:
+#' \itemize{
+#'  \item space: a space to plot the values onto
+#'  \item values: a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
+#' this will result in ncol(values) raster plots.
+#'  \item title2: a string with plot title
+#'  \item col: a vector with colors
+#' }
 #' 
 #' @importFrom ggplot2 ggplot geom_sf aes scale_fill_manual scale_x_continuous scale_y_continuous theme_bw theme element_text element_blank labs scale_fill_gradientn
 #' @importFrom h3jsr point_to_cell cell_to_polygon
@@ -730,8 +749,13 @@ plot_single.gen3sis_space_raster <- function(values, space, title, no_data = 0, 
 #' @example inst/examples/plot_single_help.R
 #' @return no return value, called for plot
 #' 
-#' @export
-plot_single.gen3sis_space_points <- function(values, space, title="", no_data = 0, col, legend=TRUE) {
+#' @noRd
+plot_single.gen3sis_space_points <- function(no_data = 0, legend = TRUE, ...) {
+  space <- list(...)$space
+  values <- list(...)$values
+  title <- list(...)$title2
+  col <- list(...)$col
+  
   # construct the sf to plot
   spatial_points <- sf::st_as_sf(as.data.frame(space$coordinates), coords = c("x", "y"))
   
@@ -778,12 +802,16 @@ plot_single.gen3sis_space_points <- function(values, space, title="", no_data = 
 
 #' Plot a single set of values onto a given space
 #'
-#' @param values a named list of values, the names must correspond to cells in the space
-#' @param space a space to plot the values onto
-#' @param title a title string for resulting plot, the time information will be taken and appended from the space id
-#' @param no_data what value should be used for missing values in values
-#' @param col corresponds to the \link{raster} col plot parameter. This can be omitted and colors are handled by raster::plot  
-#' @param legend corresponds to the \link{raster} legend plot parameter. This can be omitted and legend is handled by raster::plot
+#' @param no_data what value should be used for missing data present in the values parameter
+#' @param legend logical. TRUE or FALSE 
+#' @param ... other arguments dispatched to the method:
+#' \itemize{
+#'  \item space: a space to plot the values onto
+#'  \item values: a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
+#' this will result in ncol(values) raster plots.
+#'  \item title2: a string with plot title
+#'  \item col: a vector with colors
+#' }
 #' 
 #' @importFrom ggplot2 ggplot geom_sf aes scale_color_manual scale_x_continuous scale_y_continuous theme_bw theme element_text element_blank labs scale_color_gradientn
 #' @importFrom sf st_as_sf st_sf st_geometry
@@ -791,8 +819,13 @@ plot_single.gen3sis_space_points <- function(values, space, title="", no_data = 
 #' @example inst/examples/plot_single_help.R
 #' @return no return value, called for plot
 #' 
-#' @export
-plot_single.gen3sis_space_h3 <- function(values, space, title="", no_data = 0, col, legend=TRUE) {
+#' @noRd
+plot_single.gen3sis_space_h3 <- function(no_data = 0, legend = TRUE, ...) {
+  space <- list(...)$space
+  values <- list(...)$values
+  title <- list(...)$title2
+  col <- list(...)$col
+  
   # get the points
   spatial_points <- sf::st_as_sf(as.data.frame(space$coordinates), coords = c("x", "y"), crs = 4326)
   
@@ -803,10 +836,8 @@ plot_single.gen3sis_space_h3 <- function(values, space, title="", no_data = 0, c
   
   #polygons <- h3jsr::cell_to_polygon(h3::geo_to_h3(space$coordinates, space$type_spec_res))
   # if the extent is global, wrap the dateline
-  if (space$extent[["xmin"]] == -180 & space$extent[["xmax"]]==180){
-    # wrap dateline
-    polygons <- sf::st_wrap_dateline(polygons, options= c('WRAPDATELINE=YES', 'DATELINEOFFSET=180'), quiet=TRUE)
-  }
+  polygons <- wrap_dateline_h3(polygons, space)
+  
   # Add the values to the polygons for plotting
   # polygons$values <- values  # Add the values as an attribute to polygons
 
@@ -860,25 +891,28 @@ plot_single.gen3sis_space_h3 <- function(values, space, title="", no_data = 0, c
 }
 
 # Generic plot multiple function 
-plot_multiple <- function(x, ...) {
+plot_multiple <- function(no_data = 0, legend = TRUE, ...) {
   # Convert '...' to a list to access additional arguments
   args <- list(...)
   check_args(args)
   # Dispatch based on the class of the second argument  
   # Assuming 'x' is the first argument and we need the second for dispatch,
   # which is the first in 'args'
-  UseMethod("plot_multiple", args[[1]])
+  UseMethod("plot_multiple", args$space)
 }
-
-
 
 #' Plot a set of values onto a given space
 #'
-#' @param values a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
-#' this will result in ncol(values) raster plots.
-#' @param space a space to plot the values onto
-#' @param col a vector containing a color palette. For discrete values, the first element in the vector will be assigned to zero values. If NULL, gen3sis2 internal palette will be used. Default is NULL
 #' @param no_data what value should be used for missing data present in the values parameter
+#' @param legend logical. TRUE or FALSE 
+#' @param ... other arguments dispatched to the method:
+#' \itemize{
+#'  \item space: a space to plot the values onto
+#'  \item values: a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
+#' this will result in ncol(values) raster plots.
+#'  \item title2: a string with plot title
+#'  \item col: a vector with colors
+#' }
 #' 
 #' @importFrom ggplot2 ggplot scale_fill_gradientn scale_x_continuous scale_y_continuous theme_bw theme element_text element_line labs
 #' @importFrom patchwork wrap_plots
@@ -887,9 +921,13 @@ plot_multiple <- function(x, ...) {
 #' @importFrom tidyterra geom_spatraster
 #' 
 #' @return no return value, called for plot
-#'
-#' @export
-plot_multiple.gen3sis_space_raster <- function(values, space, col, no_data = 0) {
+#' 
+#' @noRd
+plot_multiple.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
+  space <- list(...)$space
+  values <- list(...)$values
+  col <- list(...)$col
+  
   # reconstruct the raster
   img <- matrix(no_data,
                 nrow = nrow(space[["coordinates"]]),
@@ -925,11 +963,16 @@ plot_multiple.gen3sis_space_raster <- function(values, space, col, no_data = 0) 
 
 #' Plot a set of values onto a given space
 #'
-#' @param values a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
-#' this will result in ncol(values) raster plots.
-#' @param space a space to plot the values onto
-#' @param col a vector containing a color palette. For discrete values, the first element in the vector will be assigned to zero values. If NULL, gen3sis2 internal palette will be used. Default is NULL
 #' @param no_data what value should be used for missing data present in the values parameter
+#' @param legend logical. TRUE or FALSE 
+#' @param ... other arguments dispatched to the method:
+#' \itemize{
+#'  \item space: a space to plot the values onto
+#'  \item values: a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
+#' this will result in ncol(values) raster plots.
+#'  \item title2: a string with plot title
+#'  \item col: a vector with colors
+#' }
 #' 
 #' @importFrom ggplot2 ggplot geom_sf aes scale_fill_gradientn scale_x_continuous scale_y_continuous theme_bw theme element_text element_blank labs
 #' @importFrom h3jsr point_to_cell cell_to_polygon
@@ -937,9 +980,13 @@ plot_multiple.gen3sis_space_raster <- function(values, space, col, no_data = 0) 
 #' @importFrom sf st_as_sf st_sf
 #' 
 #' @return no return value, called for plot
-#'
-#' @export
-plot_multiple.gen3sis_space_h3 <- function(values, space, col, no_data = NA) {
+#' 
+#' @noRd
+plot_multiple.gen3sis_space_h3 <- function(no_data = 0, legend = TRUE, ...) {
+  space <- list(...)$space
+  values <- list(...)$values
+  col <- list(...)$col
+  
   # Creates a matrix with coordinates and values  
   env_mtx <- cbind(space$coordinates, values)
   
@@ -953,6 +1000,9 @@ plot_multiple.gen3sis_space_h3 <- function(values, space, col, no_data = NA) {
   # and extract the h3 cell indexes
   env_cells <- h3jsr::point_to_cell(env_points,space$type_spec_res)
   polygons <- h3jsr::cell_to_polygon(env_cells)
+  
+  # wrap dateline if necessary
+  polygons <- wrap_dateline_h3(polygons, space)
   
   # construct the sf
   polygons_sf <- sf::st_sf(
@@ -987,20 +1037,29 @@ plot_multiple.gen3sis_space_h3 <- function(values, space, col, no_data = NA) {
 
 #' Plot a set of values onto a given space
 #'
-#' @param values a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
-#' this will result in ncol(values) raster plots.
-#' @param space a space to plot the values onto
-#' @param col a vector containing a color palette. For discrete values, the first element in the vector will be assigned to zero values. If NULL, gen3sis2 internal palette will be used. Default is NULL
 #' @param no_data what value should be used for missing data present in the values parameter
+#' @param legend logical. TRUE or FALSE 
+#' @param ... other arguments dispatched to the method:
+#' \itemize{
+#'  \item space: a space to plot the values onto
+#'  \item values: a matrix of values with columns corresponding to sets of values, and rows corresponding to grid cells,
+#' this will result in ncol(values) raster plots.
+#'  \item title2: a string with plot title
+#'  \item col: a vector with colors
+#' }
 #' 
 #' @importFrom ggplot2 ggplot geom_sf aes scale_color_gradientn scale_x_continuous scale_y_continuous theme_bw theme element_text element_blank labs
 #' @importFrom patchwork wrap_plots
 #' @importFrom sf st_as_sf st_sf st_geometry
 #' 
 #' @return no return value, called for plot
-#'
-#' @export
-plot_multiple.gen3sis_space_points <- function(values, space, no_data = NA) {
+#' 
+#' @noRd
+plot_multiple.gen3sis_space_points <- function(no_data = 0, legend = TRUE, ...) {
+  space <- list(...)$space
+  values <- list(...)$values
+  col <- list(...)$col
+  
   # Gets the points
   spatial_points <- sf::st_as_sf(as.data.frame(space$coordinates), coords = c("x", "y"))
   
@@ -1051,7 +1110,7 @@ plot_multiple.gen3sis_space_points <- function(values, space, no_data = NA) {
 #' @noRd
 check_args <- function(args){
   # Ensure there is at least one additional argument provided after 'x'
-  if (length(args) < 1) {
+  if (!"space" %in% names(args)) {
     stop("No gen3sis_space provided for dispatch as second parameter, please make sure you add one")
   }
 }
@@ -1060,7 +1119,6 @@ check_args <- function(args){
 #' @param n corresponds to the \link{colorRampPalette} parameter 
 #' @return returns a \link{colorRampPalette} function with the gen3sis richness colors
 #' @export
-#' @noRd
 color_richness_CVDCBP <- colorRampPalette(
   c("#B2F2FD", "#81EEEA", "#61E5C9", "#63DAA0", "#73CE79", "#85BF51", "#94AD2F", "#9B951B",
     "#9C7E1F", "#9A692B", "#985538", "#944444", "#933251", "#901F61", "#8C0172")
@@ -1071,13 +1129,38 @@ color_richness_CVDCBP <- colorRampPalette(
 #' @param n corresponds to the \link{colorRampPalette} parameter 
 #' @return returns a \link{colorRampPalette} function with the gen3sis richness colors
 #' @export
-#' @noRd
 color_richness <- colorRampPalette(
   c("#440154FF", "#482878FF", "#3E4A89FF", "#31688EFF", "#26828EFF", "#1F9E89FF", "#35B779FF",
     "#6DCD59FF", "#B4DE2CFF", "#FDE725FF", "#FFA500",   "#FF2900",   "#C40000",   "#8B0000", "#8B0000")
 )
 
-#' Standard gen3sis2 plot aesthetics for raster spaces
+
+#' set the default aesthetics for raster plot. Internal only.
+#' @noRd
+.default_raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
+  list(
+    ggplot2::scale_x_continuous(
+      expand = c(0, 0),
+      breaks = x_breaks
+    ),
+    ggplot2::scale_y_continuous(
+      expand = c(0, 0),
+      breaks = y_breaks
+    ),
+    ggplot2::theme_bw(),
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5),
+      panel.grid.major = ggplot2::element_line(color = scales::alpha("darkgray", 0.5), linewidth = 0.2),
+      panel.grid.minor = ggplot2::element_line(color = scales::alpha("darkgray", 0.4), linewidth = 0.1),
+      axis.text = element_blank()
+    ),
+    ggplot2::labs(
+      title = title
+    )
+  )
+}
+
+#' Provides the default gen3sis2 plot aesthetics for raster spaces
 #'
 #' @param space a space to plot the values onto
 #' @param col corresponds to the \link{raster} col plot parameter. This can be omitted and colors are handled by raster::plot  
@@ -1088,38 +1171,18 @@ color_richness <- colorRampPalette(
 #' @returns no return value, called for plot
 #' @export
 raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
-  list(
-    ggplot2::scale_x_continuous(
-      expand = c(0, 0),
-      breaks = x_breaks
-    ),
-    ggplot2::scale_y_continuous(
-        expand = c(0, 0),
-        breaks = y_breaks
-      ),
-    ggplot2::theme_bw(),
-    ggplot2::theme(
-        plot.title = ggplot2::element_text(hjust = 0.5),
-        panel.grid.major = ggplot2::element_line(color = scales::alpha("darkgray", 0.5), linewidth = 0.2),
-        panel.grid.minor = ggplot2::element_line(color = scales::alpha("darkgray", 0.4), linewidth = 0.1)
-      ),
-    ggplot2::labs(
-        title = title
-      )
-  )
+  user_fun <- getOption("gen3sis2.raster_plot_aesthetics", default = NULL)
+  
+  if (is.function(user_fun)) {
+    return(user_fun(space, col, x_breaks, y_breaks, title))
+  }
+  
+  .default_raster_plot_aesthetics(space, col, x_breaks, y_breaks, title)
 }
 
-#' Standard gen3sis2 plot aesthetics for H3 and points spaces
-#'
-#' @param space a space to plot the values onto
-#' @param col corresponds to the \link{raster} col plot parameter. This can be omitted and colors are handled by raster::plot  
-#' @param x_breaks numeric. Break points of the x axis. Aesthetic only. 
-#' @param y_breaks numeric. Break points of the y axis. Aesthetic only.
-#' @param title a string with plot title
-#'
-#' @returns no return value, called for plot
-#' @export
-sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
+#' Sets the default aesthetics for h3 and points plot. Internal only.
+#' @noRd
+.default_sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
   list(
     ggplot2::scale_x_continuous(
       expand = c(0, 0),
@@ -1135,7 +1198,8 @@ sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5),
       panel.grid.major = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank()
+      panel.grid.minor = ggplot2::element_blank(),
+      axis.text = element_blank()
     ),
     ggplot2::labs(
       title = title
@@ -1143,4 +1207,43 @@ sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
   )
 }
 
+#' Provides the default gen3sis2 plot aesthetics for H3 and points spaces
+#'
+#' @param space a space to plot the values onto
+#' @param col corresponds to the \link{raster} col plot parameter. This can be omitted and colors are handled by raster::plot  
+#' @param x_breaks numeric. Break points of the x axis. Aesthetic only. 
+#' @param y_breaks numeric. Break points of the y axis. Aesthetic only.
+#' @param title a string with plot title
+#'
+#' @returns no return value, called for plot
+#' @export
+sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
+  user_fun <- getOption("gen3sis2.sf_plot_aesthetics", default = NULL)
+  
+  if (is.function(user_fun)) {
+    return(user_fun(space, col, x_breaks, y_breaks, title))
+  }
+  
+  .default_sf_plot_aesthetics(space, col, x_breaks, y_breaks, title)
+}
 
+#' wraps dateline to plot h3 spaces
+#' @param polygons h3 polygons to be wrapped
+#' @param space h3 spaces
+#' @returns no return value, called for plot routine
+#' @noRd
+wrap_dateline_h3 <- function(
+    polygons, 
+    space, 
+    conditional = (space$extent[["xmin"]] >= -180 & space$extent[["xmin"]] <= -170) & (space$extent[["xmax"]] <= 180 & space$extent[["xmax"]] >= 170)
+    ){
+  
+  if (conditional){
+    # wrap dateline
+    # TODO fix warnings: the plot works, but sf complains about invalid geometry
+    suppressWarnings(
+      polygons <- sf::st_wrap_dateline(polygons, options= c('WRAPDATELINE=YES', 'DATELINEOFFSET=180'), quiet=TRUE)
+    )
+  }
+  return(polygons)
+}

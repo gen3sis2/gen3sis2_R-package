@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_creation.R
 \name{create_spaces_raster}
 \alias{create_spaces_raster}
-\title{create an spaces input from a named list of rasters or raster files and user defined cost function}
+\title{Create an spaces input from a named list of rasters or raster files and user defined cost function}
 \usage{
 create_spaces_raster(
   raster_list,
@@ -31,7 +31,7 @@ where: **src** is a vector of environmental conditions for the origin sites,
 **src_habitable** (TRUE or FALSE) for habitable condition of the origin sites, 
 **dest** is a vector of environmental conditions for the destination site, dest_habitable  (TRUE or FALSE) for habitable condition of the destination cell}
 
-\item{directions}{4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see gistance package). Please, note that this does not control the species dispersal in simulation, only makes diagonal distances more realistic. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances. Default is 16.}
+\item{directions}{4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see gistance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16.}
 
 \item{output_directory}{path for storing the gen3sis ready space (i.e. space.rds, metadata.txt and full- and/or local_distance folders)}
 
@@ -44,29 +44,26 @@ If FALSE (default), only local distances are calculated (slower CPU time when si
 
 \item{verbose}{print distance calculation progress (default: FALSE)}
 
-\item{duration}{list with from, to, by and unit. Default is from -latest time to zero by 1 Ma}
+\item{duration}{list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
+E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
+   \code{duration = list(from = -10, to = 10, by = 5, unit = "Ma")}}
 
 \item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 i.e. deciding final value based on the input data using \code{?is_geodynamic}.}
 
-\item{...}{additional arguments to be passed to the \code{\link{create_spaces}} function}
-
-\item{timesteps}{vector of names for every time-step to represent the time-step at gen3sis ready space. 
-If timesteps=NULL (default), time-steps are sequentially numbered from 0 to the latest time-step.}
-
-\item{crs}{the coordinate reference system in crs format (see raster::crs). Default is defined by \code{\link{create_spaces}}}
-
-\item{author}{author of the space, see \code{?create_spaces}}
-
-\item{source}{source of the space, see \code{?create_spaces}}
-
-\item{description}{list with env and methods, see \code{?create_spaces}}
+\item{...}{additional arguments to be passed to the \code{\link{create_spaces}} function. Possible arguments include:
+\itemize{
+   \item \code{author}: author of the space, see \code{?create_spaces}
+   \item \code{source}: source of the space, see \code{?create_spaces}
+   \item \code{crs}: the coordinate reference system in crs format (see raster::crs). Default is defined by \code{\link{create_spaces}}
+   \item \code{description}: list with env and methods, see \code{?create_spaces}
+}}
 }
 \value{
 no return object. This function saves the space input files for gen3sis at the output_directory
 }
 \description{
-create an spaces input from a named list of rasters or raster files and user defined cost function
+Create an spaces input from a named list of rasters or raster files and user defined cost function
 }
 \details{
 This function creates the input spaces.rds files needed by the run_simulation function. 

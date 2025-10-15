@@ -30,7 +30,7 @@ test_that("create_spaces_raster works properly",{
       full_dists = TRUE,
       overwrite_output = TRUE,
       verbose = FALSE,
-      duration=list(from=100, to=0, by=-50, unit="Ma"),
+      duration=list(from=-100, to=0, by=50, unit="Ma"),
       geodynamic=FALSE
     )
     
@@ -56,7 +56,7 @@ test_that("create_spaces_raster works properly",{
       full_dists = TRUE,
       overwrite_output = TRUE,
       verbose = FALSE,
-      duration=list(from=100, to=0, by=-50, unit="Ma"),
+      duration=list(from=-100, to=0, by=50, unit="Ma"),
       geodynamic=TRUE
     )
     
@@ -94,8 +94,9 @@ test_that("NA duration in create_spaces_raster",{
   
   # test core
   # Geostatic
+  
   withr::with_tempdir({
-    expect_warning(
+    warnigns_cap <- capture_warnings(
       create_spaces_raster(
         raster_list = list(some_var = r),
         cost_function = cf,
@@ -106,8 +107,14 @@ test_that("NA duration in create_spaces_raster",{
         verbose = FALSE,
         duration=NA,
         geodynamic=FALSE
-      ), "Duration is ideally informed as a list with from, to, by and unit. 
-            Assuning default duration from -latest time to zero by 1 Ma")
+      )
+    )
+    
+    expect_contains(
+      warnigns_cap, 
+      c("Duration is ideally informed as a list with from, to, by and unit.",
+        "Assuming default duration from -latest time to zero by 1 Ma.")
+    )
   })
 })
 
@@ -148,12 +155,7 @@ test_that("geodynamic is FALSE but environment says otherwise", {
         full_dists = TRUE,
         overwrite_output = TRUE,
         verbose = FALSE,
-        duration = list(
-          from = 100,
-          to = 0,
-          by = -50,
-          unit = "Ma"
-        ),
+        duration=list(from=-100, to=0, by=50, unit="Ma"),
         geodynamic = FALSE
       ) |> capture_warnings() -> warned
     

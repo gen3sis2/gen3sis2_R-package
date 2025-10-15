@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_functions.R
 \name{sf_plot_aesthetics}
 \alias{sf_plot_aesthetics}
-\title{Standard gen3sis2 plot aesthetics for H3 and points spaces}
+\title{Provides the default gen3sis2 plot aesthetics for H3 and points spaces}
 \usage{
 sf_plot_aesthetics(space, col, x_breaks, y_breaks, title)
 }
@@ -21,5 +21,5 @@ sf_plot_aesthetics(space, col, x_breaks, y_breaks, title)
 no return value, called for plot
 }
 \description{
-Standard gen3sis2 plot aesthetics for H3 and points spaces
+Provides the default gen3sis2 plot aesthetics for H3 and points spaces
 }

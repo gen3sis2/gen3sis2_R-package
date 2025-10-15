@@ -63,13 +63,6 @@ create_spaces <- function(env=list(NA),
     geodynamic <- is_geodynamic(env)
   }
   spaces$meta$"geodynamic" <- geodynamic
-
-  # TODO Collecting user data is not cool, lines commented, remove in near future
-  # if (is.null(author)){
-  #   author <- Sys.info()["user"]
-  #   # remove attributes
-  #   attributes(author) <- NULL
-  # }
   spaces$meta$"author" <- author
   spaces$meta$"source" <- source
   spaces$meta$"description" <- description

@@ -1135,7 +1135,7 @@ color_richness <- colorRampPalette(
 )
 
 
-#' set he default aesthetics for raster plot. Internal only.
+#' set the default aesthetics for raster plot. Internal only.
 #' @noRd
 .default_raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
   list(

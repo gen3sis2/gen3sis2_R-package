@@ -275,9 +275,17 @@ verify_config <- function(config) {
   }
   
   # check if time_unit is accepted 
-  if(!time_unit_check(config$user$sim_time$unit)){
-    c("Time unit is not accepted. \n") |>
-      message()
+  # check if time_unit is accepted 
+  # time_unit_check() returns a logical when a time unit is provided
+  # and a character vector of accepted units when called with NULL.
+  tu <- NULL
+  if (!is.null(config$user$sim_time) && !is.null(config$user$sim_time$unit)) {
+    tu <- config$user$sim_time$unit
+  }
+  accepted <- time_unit_check(tu)
+  # accepted should be a single TRUE value for a valid unit
+  if (!is.logical(accepted) || length(accepted) != 1 || is.na(accepted) || !accepted) {
+    message("Time unit is not accepted. \n")
     return(FALSE)
   }
   

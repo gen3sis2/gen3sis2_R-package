@@ -73,27 +73,30 @@ setup_variables <- function(config, data, vars) {
   if (is.na(config$gen3sis$general$start_time)) {
     config$gen3sis$general$start_time <- length(data[["inputs"]][["timesteps"]]) - 1
   } else if (is.character(config$gen3sis$general$start_time)) {
-    #config$gen3sis$general$start_time<- which(data[["inputs"]][["timesteps"]] == config$gen3sis$general$start_time) - 1
-    start_time <- as.numeric(config$gen3sis$general$start_time)
-    start_time <- measurements::conv_unit(start_time, config$user$sim_time$unit, data$inputs$duration$unit)
-    
-    ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric() 
+    message("start_time must be numerical. Starting simulation from the first time-step.")
+    config$gen3sis$general$start_time <- length(data[["inputs"]][["timesteps"]]) - 1
+  } else if (is.numeric(config$gen3sis$general$start_time)) {
+    start_time <- config$gen3sis$general$start_time
+    start_time <- conv_unit(start_time, config$user$step_time$unit, data$inputs$duration$unit)
+
+    ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric()
     time_distance <- abs(start_time - ts_times)
     eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
 
     config$gen3sis$general$start_time <- which(data$inputs$timesteps == data$inputs$timesteps[eq_index])
     message("Simulation will start at timestep ",config$gen3sis$general$start_time,", ", data$inputs$timesteps[config$gen3sis$general$start_time])
-  } else {
-    # user supplied numerical time-step
   }
 
   if(is.na(config$gen3sis$general$end_time)) {
     config$gen3sis$general$end_time <- 0
-  } else if (is.character(config$gen3sis$general$end_time)) {
-    #config$gen3sis$general$end_time <- which(data[["inputs"]][["timesteps"]] == config$gen3sis$general$end_time) - 1
     
-    end_time <- as.numeric(config$gen3sis$general$end_time)
-    end_time <- measurements::conv_unit(end_time, config$user$sim_time$unit, data$inputs$duration$unit)
+  } else if (is.character(config$gen3sis$general$end_time)) {
+    config$gen3sis$general$end_time <- 0
+    message("start_time must be numerical. Starting simulation from the first time-step.")
+    
+  } else if (is.numeric(config$gen3sis$general$end_time)) {
+    end_time <- config$gen3sis$general$end_time
+    end_time <- conv_unit(end_time, config$user$step_time$unit, data$inputs$duration$unit)
     
     ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric() 
     time_distance <- abs(end_time - ts_times)
@@ -101,8 +104,6 @@ setup_variables <- function(config, data, vars) {
     
     config$gen3sis$general$end_time <- which(data$inputs$timesteps == data$inputs$timesteps[eq_index])
     message("Simulation will end at timestep ",config$gen3sis$general$end_time,", ", data$inputs$timesteps[config$gen3sis$general$end_time])
-  } else {
-    # user supplied numerical time-step
   }
 
   # put in start time for create_space

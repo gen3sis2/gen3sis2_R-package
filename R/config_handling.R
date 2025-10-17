@@ -163,8 +163,7 @@ internal_categories <- c("general",
 populate_config <- function(config, config_file) {
   user_config_env <- new.env()
   
-  machine_config <- config_interpreter(config, config_file)
-  
+  machine_config <- config_interpreter(config_file)
   eval(machine_config$machine_config, envir = user_config_env)
   
   #source(config_file, chdir=TRUE, local=user_config_env)
@@ -191,7 +190,7 @@ populate_config <- function(config, config_file) {
   }
   
   # set config flags
-  config$user$flags$time_flags <- machine_config$time_flags
+  config$user$needs_scaling <- machine_config$needs_scaling
   
   return(invisible(config))
 }
@@ -275,17 +274,16 @@ verify_config <- function(config) {
   }
   
   # check if time_unit is accepted 
-  # check if time_unit is accepted 
   # time_unit_check() returns a logical when a time unit is provided
   # and a character vector of accepted units when called with NULL.
   tu <- NULL
-  if (!is.null(config$user$sim_time) && !is.null(config$user$sim_time$unit)) {
-    tu <- config$user$sim_time$unit
+  if (!is.null(config$user$step_time) && !is.null(config$user$step_time$unit)) {
+    tu <- config$user$step_time$unit
   }
   accepted <- time_unit_check(tu)
   # accepted should be a single TRUE value for a valid unit
   if (!is.logical(accepted) || length(accepted) != 1 || is.na(accepted) || !accepted) {
-    message("Time unit is not accepted. \n")
+    message(paste0("Time unit '",tu,"' is not accepted. \nAccepted time units are: ", paste(time_unit_check(), collapse = " ")))
     return(FALSE)
   }
   
@@ -384,98 +382,117 @@ write_config_skeleton <- function(file_path = "./config_skeleton.R", overwrite =
   }
 }
 
-#
-simulation_timeframe <- function(timestep, time_unit, space = space) {
+#' Balances the step time from config and from space
+#'
+#' This function calculates how many times the events described as time-dependent in the config occur in each space time-step.
+#'
+#' @param step_time numeric. The numerical baseline of the config step_time, i.e., the x from \code{step_time <- list(x=any_number, unit=accepted_unit)}
+#' @param time_unit character. The time unit from the config file.
+#' @param space gen3sis_space. The simulation space.
+#'
+#' @returns For internal use only.
+#' @noRd
+simulation_timeframe <- function(step_time, time_unit, space = space) {
+  if(time_unit == "timestep") {
+    return(1)
+  }
+  
   space_timestep <- space$duration$by
   space_tunit <- space$duration$unit
   
-  .TIME <- (measurements::conv_unit(1, from = space_tunit, to = time_unit) * space_timestep)/timestep
+  scale_time <- (conv_unit(1, from = space_tunit, to = time_unit) * space_timestep)/step_time
   
   if (time_unit != space_tunit){
     message(
       paste0(
         'Space time unit is "',space_tunit,'" but config time unit is "', time_unit,'".\n',
-        '1 ',space_tunit,' = ',measurements::conv_unit(1, from = space_tunit, to = time_unit),' ',time_unit,'\n',
+        '1 ',space_tunit,' = ',conv_unit(1, from = space_tunit, to = time_unit),' ',time_unit,'\n',
         'Each space timestep comprises ', space_timestep,' ', space_tunit, '\n',
-        'Simulation time multiplier (config$user$.TIME) set to ', .TIME
+        'Simulation time multiplier (config$user$scale_time) set to ', scale_time
       )
     )  
   }
   
-  if (.TIME > 10 | .TIME < 0.1) {
+  if (scale_time > 2 | scale_time < 0.1) {
     warning(
       "Significant mismatch between space time and config time. Review recommended."
     )
   }
   
-  return(.TIME)
+  return(scale_time)
 }
 
-#
-config_interpreter <- function(config, config_file){
-  # read the config from the file
+#' Reads the user's config file and adapt it to be used inside the simulation  
+#'
+#' @param config_file character. The path to the config file
+#'
+#' @returns For internal use only.
+#' 
+#' @noRd
+config_interpreter <- function(config_file) {
+  # read and clean
   human_config <- readLines(config_file)
+  human_config <- human_config[!grepl("^\\s*#", human_config)]
   
-  # clean comments -> paste in a single text
-  human_config <- human_config[!grepl("^\\s*#",human_config)]
+  # ensure compatibility
+  if(!any(grepl("^step_time", human_config))){
+    new_line <- grep("^start_time", human_config)-1
+    human_config <- c(human_config[1:new_line-1],"",human_config[new_line:length(human_config)])
+    human_config[new_line] <- 'step_time <- list(x=1,unit="timestep")'
+  }
   
-  # construct sim_time use flags  
-  flags <- c("get_dispersal_values", "get_divergence_factor")
-  flags_pos <- sapply(flags, function(flag){grep(paste0("^",flag),human_config)})
-  flags <- sapply(flags_pos, function(flag){
-    brackets_flag <- grepl("\\{",human_config[flag])
-    inside <- FALSE
-    
-    module_lines <- c(flag)
-    for (i in (flag+1):length(human_config)) {
-      if(!inside){
-        if(grepl("\\{",human_config[i])){
-          inside <- TRUE
-        } else if (grepl("\\}",human_config[i])) {
-          module_lines <- c(module_lines, i)
-          break
-        }
-      } else {
-        if(grepl("\\}",human_config[i])){
-          inside <- FALSE
-        } 
+  # module flags
+  flag_names <- c("get_dispersal_values", "get_divergence_factor")
+  flag_positions <- sapply(flag_names, function(f){ 
+    grep(paste0("^", f), human_config)
+    }
+  )
+  
+  # detect scale_time usage per module
+  uses_scale_time <- sapply(flag_positions, function(start) {
+    depth <- 0
+    lines <- integer(0)
+    for (i in start:length(human_config)) {
+      depth <- depth + stringr::str_count(human_config[i], "\\{") -
+        stringr::str_count(human_config[i], "\\}")
+      lines <- c(lines, i)
+      if (depth == 0 && i > start) {
+        break
       }
     }
-    
-    module_lines <- module_lines[1]:module_lines[2]
-    
-    sim_time_used <- sapply(module_lines, function(ml){
-      grepl("sim_time",human_config[ml])
-    }) |> any()
-    
-    return(sim_time_used)
+    any(grepl("\\bscale_time\\b", human_config[lines]))
   })
   
-  flags <- c(flags, c(divergence_threshold = grepl("sim_time", human_config[grepl("^divergence_threshold", human_config)])))
-  flags <- !flags # TRUE means that gen3si2 will have to scale
-  
-  # Adapt to machine config
-  # which lines call "sim_time"? Except the line defyning it
-  def_line <- grep("sim_time <-",human_config)
-  sim_lines <- grep("sim_time",human_config)
-  sim_lines <- setdiff(sim_lines, def_line)
-  
-  machine_config <- human_config
-  machine_config[sim_lines] <- gsub("sim_time","config$user$.TIME",human_config[sim_lines])
-  
-  machine_config <- parse(text = paste(machine_config,collapse = "\n"))
-  
-  return_list <- list(
-    machine_config = machine_config,
-    time_flags = flags
+  # add divergence_threshold
+  uses_scale_time <- c(
+    uses_scale_time,
+    divergence_threshold = any(grepl("\\bscale_time\\b", human_config[grepl("^divergence_threshold", human_config)]))
   )
+  
+  needs_scaling <- !uses_scale_time
+  
+  # adapt scale_time calls
+  sim_lines <- grep("\\bscale_time\\b", human_config)
+  human_config[sim_lines] <- gsub("\\bscale_time\\b", "config$user$scale_time", human_config[sim_lines])
+  
+  machine_config <- parse(text = paste(human_config, collapse = "\n"))
+  
+  return_list <- list(machine_config = machine_config, needs_scaling = needs_scaling)
+  
   return(return_list)
 }
 
-# 
+
+#' Check if the used time unit is accepted
+#'
+#' @param time_unit character. The used time unit. If NULL, returns a vector of accepted time units.
+#'
+#' @returns if time_unit is character, return TRUE or FALSE. If time_unit = NULL, returns a vector of accepted time units. 
+#' @export
+#'
+#' @examples "TODO"
 time_unit_check <- function(time_unit=NULL){
-  dur_units <- c("day", "days", "wk", "week", "mon", "month", "yr", "year", "dec", "decade", "cen", "century", "mil", "millenium", "Ma")
-  accepted_timeunits <- dur_units[dur_units%in%measurements::conv_unit_options$duration]
+  accepted_timeunits <- c("a","ka", "Ma", "Ga","timestep")
   
   if(is.null(time_unit)){
     return(accepted_timeunits)

@@ -163,3 +163,21 @@ write_nex <- function(phy, label="sp", output_file){
   # t <- read.nexus(file.path(output_location, "phy.nex"))
   # plot(t)
 }
+
+#' Convert time units
+#'
+#' @param x numeric. The numerical value in "from" unit
+#' @param from character. The unit to convert from
+#' @param to character. The unit to convert to
+#'
+#' @returns The numerical values in "to" unit
+#' @noRd
+conv_unit <- function(x, from, to) {
+  if (from == "timestep" || to == "timestep"){
+    return(x)
+  }
+  
+  exponents <- c(a = 0, ka = 3, Ma = 6, Ga = 9)
+  factor <- 10^(exponents[from] - exponents[to])
+  return(x*factor[[1]])
+}

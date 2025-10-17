@@ -160,7 +160,7 @@ save_extract <- function(element) {
 
 ##### TO CLEAN AND ADD AS SUPPORT
 # 
-# make p/a matrices if necessary
+# # make p/a matrices if necessary
 # 
 # if(!file.exists(file.path(config$directories$output, "abs"))){dir.create(file.path(config$directories$output, "abs"))}
 # 

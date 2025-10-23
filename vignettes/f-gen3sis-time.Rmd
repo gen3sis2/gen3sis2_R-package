@@ -8,25 +8,91 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Introduction
+# 1. Introduction
 
-# Spaces duration
-```{r}
-# Define o intervalo
+Eco-evolutionary process take part in space and time. For that reason, time is also an important aspect in eco-evolutionary mechanistic models. There are many approaches to deal with time (including constrains and rates) in ecology and evolution. In `gen3sis2`, time is especially important to consider when creating spaces and config files. In this vignette, we will see how to proper handle and explicit time in `gen3sis2` simulations.
+
+# 2. Time in `gen3sis2`
+
+## 2.1 Time and time units: what is accepted?
+
+`gen3sis2` is an interdisciplinary project that can be used as tool in many fields. In addition, depending on the experiment scope and/or the organism modeled, the simulation can assume different time-scales. This complexity added to the many ways to measure time that exists across science, sometimes makes difficult to compare experiments. In an effort towards standardization and reproduciability, `gen3sis2` accepts only four different time units: *a* (annum), *ka* (kilo annum), *Ma* (mega annum), and *Ga* (giga annum). In addition to those, `gen3sis2` also accepts the joker-unit "timestep", which will be explained later.
+
+The choice of the accepted four time units aim to strategically cover a wide range of possible time-scales. Time in `gen3sis2` is based on *a*, which is equivalent to 1 year, and the other three are powers of ten of *a*. See the table below:
+
+| time unit | *a* equivalent    | power of ten |
+|-----------|-------------------|--------------|
+| *a*       | 1 *a*             | $10^0$ *a*   |
+| *ka*      | 1,000 *a*         | $10^3$ *a*   |
+| *Ma*      | 1,000,000 *a*     | $10^6$ *a*   |
+| *Ga*      | 1,000,000,000 *a* | $10^9$ *a*   |
+
+In `gen3sis2`, time is understood similarly as a number line. Thus, negative values represent past, 0 represent the present, and positive values represent the future. For example, if a simulation starts five million years ago and ends five million years in the future, we would say that it starts at $-5 Ma$ and ends at $5 Ma$. Visually we could represent this situation as the following image:
+
+```{r, echo=FALSE}
 x <- -5:5
-
-# Cria o plot vazio, com eixo X de -6 a 6
 plot(NA, xlim = c(-6, 6), ylim = c(-1, 1),
-     axes = FALSE, xlab = "", ylab = "", main = "Linha de tempo")
-
-# Adiciona a linha horizontal principal
+     axes = FALSE, xlab = "", ylab = "", main = "Timeline")
 abline(h = 0, lwd = 2)
 
-# Adiciona as marcações (traços)
+segments(x0=-6.5,y0=-0.2,x1=-0.4,y1=-0.2,col="red",lty=2)
+segments(x0=6.5,y0=-0.2,x1=0.4,y1=-0.2,col="blue",lty=2)
+
+points(0, -0.2, cex = 2, col = "green")
+
+arrows(x0 = -6.5, y0 = 0, x1 = 6.5, y1 = 0, lwd = 2, length = 0.1, code = 3)
 segments(x, -0.1, x, 0.1, lwd = 2)
 
-# Adiciona os rótulos nos pontos
-text(x, 0.2, labels = x)
-
+text(x, 0.2, labels = paste0(x,"Ma"))
+text(-4, -0.35, labels = "Past", col = "red")
+text(4, -0.35, labels = "Future", col = "blue")
+text(0, -0.35, labels = "Present", col = "green")
 ```
 
+## 2.2 Time and time-steps: how to deal with time in gen3sis_space\_ objects
+
+When creating your spaces, the function `create_spaces_raster` will require de `duration` parameter. This parameter must be a list of the format `list(from, to, by, unit)`. The interpretation of the first two elements is straightforward: `from` is when the environmental data starts, `to` is when its ends. The period between this points in time will be split in equal parts, what is called *time-steps*. The `by` element of `duration` determines the length of those time-steps, i.e., how much time is comprised in each time-step at given unit. Finally, `unit` determines the time unit used (and therefore the time scale) and must be one of the accepted (i.e., a, ka, Ma, or Ga). This list is intentionally similar to the function `base::seq(from, to, by)`, and works in the same way.
+
+The time-step is the *backbone* of `gen3sis2` simulation, because each process (dispersal, ecology, evolution, etc.) is simulated *once per time-step*, i.e., the simulation is initialized in the first time-step and advances trough the last, sequentially. Therefore, all metrics and simulation aspects are informed and computed based on the time-steps. The user should be aware of this because the number of time-steps is an important decision. For example, a simulation that covers from -100Ma to 0Ma in 10 time-steps of 10Ma would have the process simulated 11 times. In other hand, if its used 20 time-steps of 5Ma would have the process simulated 21 times. Therefore, it is possible that those simulations do not produce the same output, specially when stochastic factor are important.  
+
+Consider a space ranging in time from -5Ma to 5Ma (as describe in the last section), each time-step comprising 1Ma. To create this space the function call would look similar to this:
+
+```{r, eval=FALSE}
+create_spaces_raster(
+  raster_list = your_environmental_rasters,
+  cost_function = your_cost_function,
+  output_directory = where_to_save_spaces.rds,
+  duration = list(from = -5, to = 5, by = 1, unit = "Ma") # time is here
+)
+```
+
+This will produce 11 time-steps. We can visualize this:
+
+```{r, echo=FALSE}
+x <- -5:5
+plot(NA, xlim = c(-6, 6), ylim = c(-1, 1),
+     axes = FALSE, xlab = "", ylab = "", main = "Time-steps in spaces")
+segments(x0=-5,y0=0,x1=5,y1=0,col="black",lty=1,lwd=2)
+segments(x0=-0.85,y0=-0.2,x1=-0.15,y1=-0.2,col="black",lty=1,lwd=1.5)
+segments(x0=-0.85,y0=-0.25,x1=-0.85,y1=-0.15,col="black",lty=1,lwd=1.5)
+segments(x0=-0.15,y0=-0.25,x1=-0.15,y1=-0.15,col="black",lty=1,lwd=1.5)
+
+points(x, y = rep(-0.2, length(x)))
+
+segments(x, -0.1, x, 0.1, lwd = 2)
+
+text(x, 0.2, labels = paste0(x,"Ma"))
+text(-5, -0.35, labels = "from")
+text(5, -0.35, labels = "to")
+text(-0.5, -0.35, labels = "by")
+```
+
+## 2.3 Time and `step_time`: how to deal with time in config file
+
+In the config, time is configured using the `step_time`, `start_time`, and `end_time` variables. The `step_time` variable set the *time scale* in which the processes described take part. It must be a list in the format `list(x, unit)`. `unit` is the time unit used and `x` is the numerical basis. E.g., if `step_time = list(x = 2.5, unit = "ka")`, it means that the processes are planned to return the described values each 2.5 ka (2500 years). More on how it is related to the spaces duration's `by` in the next section. `start_time` and `end_time` can be numerical values describing *when* the simulation should start and end, respectively, or NA. The time unit must always be consistent. E.g., if a simulation have `step_time = list(x = 2.5, unit = "ka")`, and the simulation must start -10ka and end -2ka, then the variables should be `start_time = -10` and `end_time = -2`. `gen3sis2` will *always* assume that `start_time` and `end_time` are in `unit`. If `start_time = NA`, simulation will start at the earliest available time-step. If `end_time = NA`, simulation will end at the latest available time-step.  If both are NA, simulation will simply use every time-step available in spaces.
+
+## 2.4 Time and simulation: how the pieces how the pieces fit together
+
+To enhance reproduciability and allow experimentation with different configs and spaces, `gen3sis2` allows to use a config and a spaces that are not in the same time scale. For example, it is possible to use a config with `step_time = list(x=1, unit="Ma")` with a spaces constructed with `duration = list(from=-10, to=0, by=2, unit="Ma")`. In this case, the spaces have time-steps going each 2Ma, so process will be simulated each 2Ma, but the processes described in the config should happen each 1Ma. To overcome this, when `gen3sis2` reads the config file to initialize and run the simulation, it goes trough a process of interpretation. This process aims to achieve two objectives: 1) understand how time is determined in the config file and spaces; and 2) balance config time and spaces time. 
+
+Not every process is time-dependent, but some are. Dispersal, for example, depends on time in most cases. I.e., a species can disperse farther in longer periods. For Dispersal, `gen3sis2` will always implicitly scale the values returned. For example, considering the spaces and config described above, if the returned value for dispersal in the config is 500, simulation assumes that this values is for each 1Ma, so it should be 1000 for each time-step, as each time-step comprises 2Ma. 

@@ -447,24 +447,24 @@ get_weighted_endemism <- function(species_list, space) {
 #' Gets a subset of the species list with species occurring in the specified cells
 #'
 #' @param species_list a list of species to include in the calculations.
-#' @param cell_vector a vector with cell indexes.
+#' @param site_vector a vector with cell indexes.
 #' @param trim_cells if TRUE, species traits will be trimmed to the specified cells. Default is FALSE. 
 #'
 #' @returns a list with selected species.
 #' @export
 #'
 #' @examples # TODO
-get_species_subset <- function(species_list, cell_vector, trim_cells = FALSE){
+get_species_subset <- function(species_list, site_vector, trim_cells = FALSE){
   pa_mtx <- get_presence_matrix(species_list)
-  pa_mtx <- pa_mtx[cell_vector, , drop = FALSE]
+  pa_mtx <- pa_mtx[site_vector, , drop = FALSE]
   
   sp_subset <- colnames(pa_mtx)[colSums(pa_mtx) > 0]
   species_subset <- Filter(\(sp) sp$id %in% sp_subset, species_list)
   
   if (trim_cells) {
     species_subset <- lapply(species_subset, function(sp){
-      sp$abundance <- sp$abundance[names(sp$abundance) %in% cell_vector]
-      sp$traits <- sp$traits[rownames(sp$traits) %in% cell_vector, , drop = FALSE]
+      sp$abundance <- sp$abundance[names(sp$abundance) %in% site_vector]
+      sp$traits <- sp$traits[rownames(sp$traits) %in% site_vector, , drop = FALSE]
       sp
     })
   }
@@ -475,14 +475,14 @@ get_species_subset <- function(species_list, cell_vector, trim_cells = FALSE){
 #' Gets a subset of the space based on specified cells
 #'
 #' @param space the space to calculate over.
-#' @param cell_vector a vector with cell indexes.
+#' @param site_vector a vector with cell indexes.
 #'
 #' @returns a gen3sis_space_type object with the specified cells.
 #' @export
 #' @seealso [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/subsetLandscape.R)
 #' @examples #TODO
-get_space_subset <- function(space, cell_vector){
-  if(length(cell_vector) < 2){
+get_space_subset <- function(space, site_vector){
+  if(length(site_vector) < 2){
     stop("Must subset at least 2 cells.")
   }
   
@@ -490,11 +490,11 @@ get_space_subset <- function(space, cell_vector){
   
   # environment
   space_subset$environment <- subset(space$environment,
-                                         rownames(space$environment) %in% cell_vector)
+                                         rownames(space$environment) %in% site_vector)
   
   # coordinates
   space_subset$coordinates <- subset(space$coordinates,
-                                         rownames(space$coordinates) %in% cell_vector)
+                                         rownames(space$coordinates) %in% site_vector)
   
   # extent
   #subset_landscape$extent <- extent(rasterFromXYZ(subset_landscape$coordinates))
@@ -535,24 +535,24 @@ diversification_summary <- function(gen3sis_output){
 #' Subsets a distance matrix to specified cells
 #'
 #' @param distance_matrix a local or full distance matrix. Can be either the object or a file path.
-#' @param cell_vector a vector with cell indexes.
+#' @param site_vector a vector with cell indexes.
 #'
 #' @returns a distance matrix with only the specified cells.
 #' @export
 #' @seealso [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/distanceSubset.R)
 #'
 #' @examples # TODO
-distance_subset <- function(distance_matrix, cell_vector){
+distance_subset <- function(distance_matrix, site_vector){
   # load the file if distance_matrix is a path
   if(is.character(distance_matrix) && file.exists(distance_matrix)) {
     distance_matrix <- readRDS(distance_matrix)
   }
   
   # convert cell ids to character to match matrix names
-  cell_vector <- as.character(cell_vector)
+  site_vector <- as.character(site_vector)
   
   # subset the matrix
-  distance_subset <- distance_matrix[cell_vector,cell_vector]
+  distance_subset <- distance_matrix[site_vector,site_vector]
   
   return(distance_subset)
 }

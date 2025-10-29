@@ -592,7 +592,7 @@ conditional_plot <- function(title, plot_fun, ...){
     config <- dynGet("config")
     plot_folder <- file.path(config$directories$output, "plots", title)
     dir.create(plot_folder, showWarnings=FALSE, recursive=TRUE)
-    file_name <- file.path(plot_folder, paste0(title, "_t_", space$id, ".svg"))
+    file_name <- file.path(plot_folder, paste0(title, "_t_", space$id, ".png"))
     
     # svg(file_name)
     # p <- plot_fun(...)
@@ -955,7 +955,7 @@ plot_multiple.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) 
         colors = color_richness(20),
         na.value = "transparent",
         name = v) +
-      sf_plot_aesthetics(space, col, x_breaks, y_breaks, title = paste0(v, " ", space$timestep, " t_", space[["id"]])) # gen3sis2 standard aesthetics
+      raster_plot_aesthetics(space, col, x_breaks, y_breaks, title = paste0(v, " ", space$timestep, " t_", space[["id"]])) # gen3sis2 standard aesthetics
   })
   
   patchwork::wrap_plots(plots) # wrap everything up and plot it 
@@ -1150,13 +1150,15 @@ color_richness <- colorRampPalette(
     ggplot2::theme_bw(),
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5),
-      panel.grid.major = ggplot2::element_line(color = scales::alpha("darkgray", 0.5), linewidth = 0.2),
-      panel.grid.minor = ggplot2::element_line(color = scales::alpha("darkgray", 0.4), linewidth = 0.1),
-      axis.text = element_blank()
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
     ),
     ggplot2::labs(
       title = title
-    )
+    ),
+    ggplot2::coord_fixed(ratio = 1)
   )
 }
 
@@ -1199,11 +1201,13 @@ raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
       plot.title = ggplot2::element_text(hjust = 0.5),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
-      axis.text = element_blank()
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
     ),
     ggplot2::labs(
       title = title
-    )
+    ),
+    ggplot2::coord_sf()
   )
 }
 

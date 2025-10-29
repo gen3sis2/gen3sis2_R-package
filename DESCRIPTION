@@ -18,8 +18,7 @@ Suggests:
     formatR,
     withr,
     mockery,
-    vdiffr,
-    svglite
+    vdiffr
 LinkingTo: Rcpp, BH
 URL: https://github.com/project-Gen3sis/R-package
 BugReports: https://github.com/project-Gen3sis/R-package/issues

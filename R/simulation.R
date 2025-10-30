@@ -13,7 +13,6 @@
 #' @return the general vals(config, data, vars) list
 #' @noRd
 setup_inputs <- function(config, data, vars) {
-  #browser()
   data[["inputs"]] <- list()
   spaces_rds <- readRDS(file.path(config$directories$input, "spaces.rds"))
   spaces <- spaces_rds$env # TODO correct cascade of names... attention to s i.e. space is contained in spaces
@@ -70,6 +69,7 @@ setup_inputs <- function(config, data, vars) {
 setup_variables <- function(config, data, vars) {
   # time-steps
   # -1 as time-steps are 0-based
+  zero_base_ts <- (length(data$inputs$timesteps)-1):0
   if (is.na(config$gen3sis$general$start_time)) {
     config$gen3sis$general$start_time <- length(data[["inputs"]][["timesteps"]]) - 1
   } else if (is.character(config$gen3sis$general$start_time)) {
@@ -82,9 +82,9 @@ setup_variables <- function(config, data, vars) {
     ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric()
     time_distance <- abs(start_time - ts_times)
     eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
-
-    config$gen3sis$general$start_time <- which(data$inputs$timesteps == data$inputs$timesteps[eq_index])
-    message("Simulation will start at timestep ",config$gen3sis$general$start_time,", ", data$inputs$timesteps[config$gen3sis$general$start_time])
+    
+    config$gen3sis$general$start_time <- zero_base_ts[which(data$inputs$timesteps == data$inputs$timesteps[eq_index])]
+    message("Simulation will start at timestep ",config$gen3sis$general$start_time,", ", data$inputs$timesteps[eq_index])
   }
 
   if(is.na(config$gen3sis$general$end_time)) {
@@ -102,8 +102,8 @@ setup_variables <- function(config, data, vars) {
     time_distance <- abs(end_time - ts_times)
     eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
     
-    config$gen3sis$general$end_time <- which(data$inputs$timesteps == data$inputs$timesteps[eq_index])
-    message("Simulation will end at timestep ",config$gen3sis$general$end_time,", ", data$inputs$timesteps[config$gen3sis$general$end_time])
+    config$gen3sis$general$end_time <- zero_base_ts[which(data$inputs$timesteps == data$inputs$timesteps[eq_index])]
+    message("Simulation will end at timestep ",config$gen3sis$general$end_time,", ", data$inputs$timesteps[eq_index])
   }
 
   # put in start time for create_space

@@ -1,0 +1,163 @@
+---
+title: "6. Support functions"
+output: rmarkdown::html_vignette
+date: "`r format(Sys.time(),  '%d.%m.%Y')`"
+vignette: >
+  %\VignetteIndexEntry{6. Support functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(gen3sis2)
+```
+
+# Introduction
+
+During or after thet simulation, users may need to retrieve some specific information that are not directly disponible. This usually includes rates, matrices or subsets based on the simulation state. To get this, most times users must define functions that manipulate `gen3sis2` objects. Altought this should be considerably easy, sometimes it can be quite inconvenient.
+
+To facilitate this processes and wide the functionalities range of `gen3sis2`, the package features several generic support functions that cover many common computations, such as presence and abundance matrices, endemism measurements, etc. This functions are designed to be used inside and outside simulations. In this vignette, we will describe and exemplify all the currently built-in support functions.
+
+#### Before we continue...
+
+As this vignette is for illustration purposes only, we will load a minimal version of the `val` object, which contains the simulation state in `gen3sis2`. In this version we will only have the species list and space.
+
+```{r}
+# TODO sub this with gen3sis2 file path
+val <- readRDS("/mnt/DATA/PROJETOS/from_ubuntu/projects/testing_gen3sis/simulation_states/val_sa_redux.rds")
+data <- val$data
+names(data)
+```
+
+# `get_` functions
+
+The `get_` functions family comprises a wide range of species and spaces related functionalities. They are all designed to be used inside the simulation (for example, in the observer function) to retrieve some information. I.e., they are used to *get something from the simulation values*.
+
+-   `get_presence_matrix`
+
+This function constructs a presence-absence matrix based on the space sites. In this matrix, rows are site indexes and columns are species indexes. Optionally, users can get the xy coordinates for each site as the first two columns (`xy=TRUE`) or include all sites that don't havy any species (`empty_sites=TRUE`).
+
+Let's see an example:
+
+```{r}
+get_presence_matrix(data$all_species)[1:5,] # showing just the five first sites
+```
+
+To include the site coordinates, space must be provided:
+
+```{r}
+get_presence_matrix(data$all_species, data$space, xy=T)[1:5,]
+```
+
+
+-   `get_species_prevalence`
+
+This function calculates the species global prevalence of each species, i.e., the proportion of sites occupied by each species in the entire space. It returns a named vector. Names are species' index, values are species' prevalence.
+
+```{r}
+get_species_prevalence(data$all_species, data$space)
+```
+
+-   `get_exant_species`
+
+This function returns a vector of the extant species at the current time-step, i.e., species that are currently present in at least one site.
+
+```{r}
+get_extant_species(data$all_species)
+```
+
+-   `get_abundance_matrix`
+
+Similar to the `get_presence_matrix`, this function returns an abundance matrix. Rows are sites indexes, columns are species indexes. `xy` and `empty_sites` arguments are also present.
+
+```{r}
+get_abundance_matrix(data$all_species)[1:5,]
+```
+
+-   `get_cell_abundance`
+
+Similar to `get_abundance_matrix`, but sums the abundance of all species present in each site. `xy` and `empty_sites` arguments are also present.
+
+```{r}
+get_cell_abundance(data$all_species)[1:5,,drop=F]
+```
+
+-   `get_geo_richness`
+
+This function returns a named vector containing species richness in each site. Names are site indexes, and values are site richness.
+
+```{r}
+get_geo_richness(data$all_species, data$space)[1:50]
+```
+
+-   `get_mean_richness`
+
+This function simply calculates the global mean richness.
+
+```{r}
+get_mean_richness(data$all_species, data$space)
+```
+
+-   `get_species_range`
+
+This function calculate each species' range, i.e., the number of sites in which they are present. Returns a named vector; names are species indexes, values are species range.
+
+```{r}
+get_species_range(data$all_species, data$space)
+```
+
+
+-   `get_weighted_endemism`
+
+This function calculate the weighted endemism $WE$ of each site. The function calculate this following the equation
+$$
+\text{Weighted Endemism} = \frac{\text{Site richness}}{\sum_{j \in \text{site}} \text{Species range}_j}
+$$
+
+Higher values indicate that the site contains more rare species.
+
+```{r}
+get_weighted_endemism(data$all_species, data$space)[255:259] # only five sites
+```
+
+-   `get_species_subset`
+
+This function subsets the species list based on a vector of site indexes. For example, if `site_vector=c("1606")`, it select only the species that are present in the site "1606". If `trim_cells=TRUE`, it will only return information for this site within the `gen3sis_species` object.
+
+```{r}
+get_species_subset(data$all_species, site_vector = c("1606"), trim_cells = T)
+```
+
+-   `get_space_subset`
+
+This function subsets the space based on a vector of site indexes. For example, if `site_vector=c("1606","1805")`, it will return the same space inputed, but with information only for the sites "1606" and "1805".
+
+```{r}
+get_space_subset(data$space, site_vector = c("1606","1805"))
+```
+
+# Miscellaneous functions
+
+These functions are design to be used not necessarly inside the simulation, and serve as multiple purposes.
+
+- `distance_subset`
+
+This function subsets a distance matrix based on a vector of site indexes. For example, if `site_vector=c("7","15")`, it will return a distance matrix with information only for sites "7" and "15".
+
+```{r}
+distance_matrix <- readRDS(system.file("extdata/TestSpaces/geodynamic_spaces/raster/distances_full/distances_full_4.rds", package = "gen3sis2"))
+
+distance_subset(distance_matrix, site_vector = c("7","15"))
+```
+
+# Contribute with your own functions
+
+`gen3sis2` is build over an open and collaborative science philosophy. Anyone can contribute to the project. If you have written a function with a functionality not yet covered by the current support functions, we encourage you share it with us. Support functions are written in the R/observations.R file. To know how to contribute to the project, read the CONTIBUTING.md file.
+

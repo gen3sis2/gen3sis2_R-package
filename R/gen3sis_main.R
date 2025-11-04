@@ -212,7 +212,7 @@ run_simulation <- function(config = NA,
     }
     val <- setup_space(val$config, val$data, val$vars)
 
-    # update space
+    # update space the space_modifiers exist
     if(!is.null(val$data$space_modifiers)){
       val$data$space$environment <- val$config$user$modify_space$apply_modifiers(
         val$data$space,

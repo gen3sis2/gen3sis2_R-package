@@ -2,7 +2,7 @@
 % Please edit documentation in R/observations.R
 \name{get_weighted_endemism}
 \alias{get_weighted_endemism}
-\title{Gets the weighted endemism for each cell in a given space}
+\title{Gets the weighted endemism for each site in a given space}
 \usage{
 get_weighted_endemism(species_list, space)
 }
@@ -12,10 +12,10 @@ get_weighted_endemism(species_list, space)
 \item{space}{the space to calculate over.}
 }
 \value{
-a named vector with the weighted endemism (values) for each cell (names).
+a named vector with the weighted endemism (values) for each site (names).
 }
 \description{
-Gets the weighted endemism for each cell in a given space
+Gets the weighted endemism for each site in a given space
 }
 \examples{
 #TODO

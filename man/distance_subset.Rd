@@ -2,20 +2,20 @@
 % Please edit documentation in R/observations.R
 \name{distance_subset}
 \alias{distance_subset}
-\title{Subsets a distance matrix to specified cells}
+\title{Subsets a distance matrix to specified sites}
 \usage{
-distance_subset(distance_matrix, cell_vector)
+distance_subset(distance_matrix, site_vector)
 }
 \arguments{
 \item{distance_matrix}{a local or full distance matrix. Can be either the object or a file path.}
 
-\item{cell_vector}{a vector with cell indexes.}
+\item{site_vector}{a vector with site indexes.}
 }
 \value{
-a distance matrix with only the specified cells.
+a distance matrix with only the specified sites.
 }
 \description{
-Subsets a distance matrix to specified cells
+Subsets a distance matrix to specified sites
 }
 \examples{
 # TODO

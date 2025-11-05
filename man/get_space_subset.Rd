@@ -2,20 +2,20 @@
 % Please edit documentation in R/observations.R
 \name{get_space_subset}
 \alias{get_space_subset}
-\title{Gets a subset of the space based on specified cells}
+\title{Gets a subset of the space based on specified sites}
 \usage{
-get_space_subset(space, cell_vector)
+get_space_subset(space, site_vector)
 }
 \arguments{
 \item{space}{the space to calculate over.}
 
-\item{cell_vector}{a vector with cell indexes.}
+\item{site_vector}{a vector with site indexes.}
 }
 \value{
-a gen3sis_space_type object with the specified cells.
+a gen3sis_space_type object with the specified sites.
 }
 \description{
-Gets a subset of the space based on specified cells
+Gets a subset of the space based on specified sites
 }
 \examples{
 #TODO

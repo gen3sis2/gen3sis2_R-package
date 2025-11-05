@@ -2,22 +2,22 @@
 % Please edit documentation in R/observations.R
 \name{get_species_subset}
 \alias{get_species_subset}
-\title{Gets a subset of the species list with species occurring in the specified cells}
+\title{Gets a subset of the species list with species occurring in the specified sites}
 \usage{
-get_species_subset(species_list, cell_vector, trim_cells = FALSE)
+get_species_subset(species_list, site_vector, trim_sites = FALSE)
 }
 \arguments{
 \item{species_list}{a list of species to include in the calculations.}
 
-\item{cell_vector}{a vector with cell indexes.}
+\item{site_vector}{a vector with site indexes.}
 
-\item{trim_cells}{if TRUE, species traits will be trimmed to the specified cells. Default is FALSE.}
+\item{trim_sites}{if TRUE, species traits will be trimmed to the specified sites. Default is FALSE.}
 }
 \value{
 a list with selected species.
 }
 \description{
-Gets a subset of the species list with species occurring in the specified cells
+Gets a subset of the species list with species occurring in the specified sites
 }
 \examples{
 # TODO

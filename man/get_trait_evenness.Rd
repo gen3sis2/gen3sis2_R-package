@@ -2,7 +2,7 @@
 % Please edit documentation in R/observations.R
 \name{get_trait_evenness}
 \alias{get_trait_evenness}
-\title{Calculates trait eveness per cell (functional evenness, sensu Mouillot et al. (2005))}
+\title{Calculates trait evenness per cell (functional evenness, sensu Mouillot et al. (2005))}
 \usage{
 get_trait_evenness(species_list, traits)
 }
@@ -15,7 +15,7 @@ get_trait_evenness(species_list, traits)
 a matrix with site as rows and trait eveness as columns.
 }
 \description{
-Calculates trait eveness per cell (functional evenness, sensu Mouillot et al. (2005))
+Calculates trait evenness per cell (functional evenness, sensu Mouillot et al. (2005))
 }
 \examples{
 #TODO

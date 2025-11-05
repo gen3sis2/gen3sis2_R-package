@@ -16,12 +16,12 @@ get_presence_matrix(
 
 \item{space}{the space to calculate over.}
 
-\item{xy}{if TRUE, cell coorinates are returned as matix columns. Default is FALSE.}
+\item{xy}{if TRUE, site coorinates are returned as matix columns. Default is FALSE.}
 
-\item{empty_sites}{if TRUE, cells with no species will be included in the matrix. Default is FALSE.}
+\item{empty_sites}{if TRUE, sites with no species will be included in the matrix. Default is FALSE.}
 }
 \value{
-a presence matrix with cells as rows and species as columns.
+a presence matrix with sites as rows and species as columns.
 }
 \description{
 get_presence_matrix

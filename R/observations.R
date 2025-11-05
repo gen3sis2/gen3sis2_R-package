@@ -275,26 +275,28 @@ get_mean_richness <- function(species_list, space){
 #' Gets a matrix of traits present in occupied sites in the space
 #'
 #' @param species_list a list of species to include in the calculations.
-#' @param space the space to calculate over.
-#' @param summary if TRUE, will return traits mean and standard deviation. If FALSE, will return traits values. Default is FALSE.
+#' @param summarize_fun a function or a named vector of functions to summarize trait values. Accept custom functions.
 #'
 #' @returns a trait matrix with sites as rows and traits as columns.
 #' @export
 #'
 #' @examples # TODO
-get_traits_matrix <- function(species_list, space, summary = F) {
-  if(summary){
+get_traits_matrix <- function(species_list, summarize_fun = NULL) {
+  if(!is.null(summarize_fun)){
     mtx_list <- lapply(species_list, function(sp){
       sp_mtx <- sp$traits
       
       t_names <- colnames(sp_mtx)
       t_list <- lapply(t_names, function(tn){
-        
-        traits_summary <- c(mean(sp_mtx[,tn]), sd(sp_mtx[,tn])) |>
-          matrix() |>
+        traits_summary <- sapply(c(summarize_fun), function(f){f(sp_mtx[,tn])}) |>
+          as.matrix() |>
           t()
         
-        colnames(traits_summary) <- paste0(tn,c("_mean","_sd"))
+        if(is.null(colnames(traits_summary))){
+          colnames(traits_summary) <- "summary"
+        }
+        
+        colnames(traits_summary) <- paste0(tn,"_",colnames(traits_summary))
         
         traits_summary
       })
@@ -320,6 +322,131 @@ get_traits_matrix <- function(species_list, space, summary = F) {
   }
   
   return(trait_mtx)
+}
+
+#' Construct a data.frame with abundance and trait information for each species and site
+#'
+#' @param species_list a list of species to include in the calculations.
+#'
+#' @returns a data.frame with traits values, abundance, and site and species indexes.
+#' @export
+#'
+#' @examples #TODO
+get_trait_abundance <- function(species_list){
+  df_list <- lapply(species_list, function(sp){
+    traits <- sp$traits |> as.data.frame()
+    traits$site <- row.names(traits)
+    
+    abundance <- data.frame(abundance = sp$abundance)
+    abundance$site <- row.names(abundance)
+    
+    sp_df <- merge(traits,abundance, by="site")
+    sp_df$species <- sp$id
+    sp_df
+  })
+  
+  abd_trait_df <- do.call(rbind,df_list)
+  
+  return(abd_trait_df)
+}
+
+#' Calculates trait diversity per cell (sensu Leps et al 2006)
+#'
+#' @param species_list a list of species to include in the calculations.
+#' @param traits a vector with trait names.
+#' @references De Bello, F., Lepš, J. and Sebastià, M.-T. (2006), Variations in species and functional plant diversity along climatic and grazing gradients. Ecography, 29: 801-810. https://doi.org/10.1111/j.2006.0906-7590.04683.x
+#' @returns a matrix with site as rows and trait diversity as columns.
+#' @export
+#'
+#' @examples #TODO
+get_trait_diversity <- function(species_list, traits = NULL){
+  if(is.null(traits)){
+    traits <- species_list[[1]]$traits |> colnames()
+  }
+  
+  trait_df <- get_trait_abundance(species_list) # return trait values
+  
+  sites <- unique(trait_df$site)
+  trait_diversity <- c()
+  
+  div_sites <- lapply(sites, function(st){
+    site_values <- trait_df[trait_df$site==st,] # filter out target cell
+    trait_diversity <- sapply(traits, function(tt){
+      trait_mean  <- mean(site_values[,tt]) # find mean trait value
+      trait_dist  <- (site_values[,tt] - trait_mean)^2 # find distance from mean
+      trait_abd   <- trait_dist*site_values$abundance # multiply by abundance
+      trait_abd   <- trait_abd/sum(site_values$abundance) # divide by total abundance
+      diversity   <- sum(trait_abd) # sum values
+    })
+    
+    trait_diversity
+  })
+  
+  div_sites <- do.call(rbind,div_sites)
+  row.names(div_sites) <- sites
+  
+  return(div_sites)
+}
+
+#' Calculates trait evenness per cell (functional evenness, sensu Mouillot et al. (2005))
+#'
+#' @param species_list a list of species to include in the calculations.
+#' @param traits a vector with trait names.
+#' @references Mouillot D, Mason WH, Dumay O, Wilson JB. Functional regularity: a neglected aspect of functional diversity. Oecologia. 2005 Jan;142(3):353-9. doi: 10.1007/s00442-004-1744-7. Epub 2004 Nov 20. PMID: 15655690.
+#' @returns a matrix with site as rows and trait eveness as columns.
+#' @export
+#'
+#' @examples #TODO
+get_trait_evenness <- function(species_list, traits){
+  if(is.null(traits)){
+    traits <- species_list[[1]]$traits |> colnames()
+  }
+  trait_values <- get_trait_abundance(species_list)
+  
+  sites <- unique(trait_values$site) # vector of cell IDs
+  sites <- sites[1:10]
+  
+  evenness <- lapply(sites, function(site){
+    print(which(sites==site))
+    site_data <- trait_values[site == site,] # test values
+    
+    tt <- traits[[1]]
+    
+    traits_sums <- sapply(traits, function(tt){
+      site_data <- site_data[order(site_data[,tt]),] # arrange by trait values
+      
+      # find sum of all trait and abundance values (sum EW)
+      EW <- c()
+      for(i in 1:dim(site_data)[1]-1){
+        
+        x  <- (site_data[,tt][i+1]-site_data[,tt][i]) / (site_data$abundance[i+1]+site_data[,tt][i])
+        EW <- c(EW,x)
+      }
+      sum_EW <- sum(EW) # the bottom of the equation
+      
+      # find species_value
+      species_values <- c()
+      for(i in 1:dim(site_data)[1]-1){
+        
+        top <- (site_data[,tt][i+1]-site_data[,tt][i]) / (site_data$abundance[i+1]+site_data[,tt][i])
+        PEW <- top/sum_EW
+        
+        default <- 1/(dim(site_data)[1]-1) # find default (1 / Sc - 1)
+        
+        species_values <- c(species_values,min(PEW,default))
+      }
+      
+      # find evenness
+      sum(species_values)
+    })
+    
+    traits_sums
+  })
+  
+  trait_evenness <- do.call(rbind, evenness)
+  row.names(trait_evenness) <- sites
+  
+  return(trait_evenness)
 }
 
 #' Gets the prevalence of each species in a given space

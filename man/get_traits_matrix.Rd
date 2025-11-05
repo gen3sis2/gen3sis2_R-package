@@ -2,22 +2,20 @@
 % Please edit documentation in R/observations.R
 \name{get_traits_matrix}
 \alias{get_traits_matrix}
-\title{Gets a matrix of traits present in occupied cells in the space}
+\title{Gets a matrix of traits present in occupied sites in the space}
 \usage{
-get_traits_matrix(species_list, space, summary = F)
+get_traits_matrix(species_list, summarize_fun = NULL)
 }
 \arguments{
 \item{species_list}{a list of species to include in the calculations.}
 
-\item{space}{the space to calculate over.}
-
-\item{summary}{if TRUE, will return traits mean and standard deviation. If FALSE, will return traits values. Default is FALSE.}
+\item{summarize_fun}{a function or a named vector of functions to summarize trait values. Accept custom functions.}
 }
 \value{
-a trait matrix with cells as rows and traits as columns.
+a trait matrix with sites as rows and traits as columns.
 }
 \description{
-Gets a matrix of traits present in occupied cells in the space
+Gets a matrix of traits present in occupied sites in the space
 }
 \examples{
 # TODO

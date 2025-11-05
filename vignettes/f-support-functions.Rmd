@@ -81,12 +81,12 @@ Similar to the `get_presence_matrix`, this function returns an abundance matrix.
 get_abundance_matrix(data$all_species)[1:5,]
 ```
 
--   `get_cell_abundance`
+-   `get_site_abundance`
 
 Similar to `get_abundance_matrix`, but sums the abundance of all species present in each site. `xy` and `empty_sites` arguments are also present.
 
 ```{r}
-get_cell_abundance(data$all_species)[1:5,,drop=F]
+get_site_abundance(data$all_species)[1:5,,drop=F]
 ```
 
 -   `get_geo_richness`
@@ -127,12 +127,56 @@ Higher values indicate that the site contains more rare species.
 get_weighted_endemism(data$all_species, data$space)[255:259] # only five sites
 ```
 
+-   `get_traits_matrix`
+
+This function returns a matrix with traits values of each species in each site it occupies. In the matrix, rows names indicate the species' index, and col names indicate the trait or site.
+
+```{r}
+get_traits_matrix(data$all_species)[1:5,] # only the first five
+```
+
+Users can also summarize the traits of each species using the `summarize_fun` argument. It accept functions and named vectors of functions. In case no names are provided, the function will use the placeholder "summary" to indicate the function name.
+
+```{r}
+get_traits_matrix(data$all_species, summarize_fun = c(
+  "mean" = mean, 
+  "var_coef" = function(x){
+    sd(x)/mean(x)
+  }
+  )
+)
+```
+
+-   `get_trait_abundance`
+
+This function returns a `data.frame` with site index, traits, abundance, and species indexes as columns. This is mainly used as internal function for other purposes, but can also be useful in some cases.
+
+```{r}
+get_trait_abundance(data$all_species)[1:5,]
+```
+
+-   `get_trait_diversity`
+
+$$
+FD_{s,t} = \sum_{i=1}^{n_s} \left( \frac{A_{i,s}}{\sum_{j=1}^{n_s} A_{j,s}} \right) (T_{i,s,t} - \bar{T}_{s,t})^2
+$$
+where 
+- $A_{i,s}$ is species $i$ abundance in site $s$;  
+- $T_{i,s,t}$ is the value of trait $t$ for the species $i$ in site $s$;  
+- $\bar{T}_{s,t}$ is the mean value of trait $t$ of the species in the site $s$;
+- $n_s$ is the number of species in the site $s$;  
+- $TD_{s,t}$ is the weighted variance (trait diversity) of trait $t$ in site $s$.
+
+```{r}
+get_trait_diversity(data$all_species)[1:5,]
+```
+
 -   `get_species_subset`
 
 This function subsets the species list based on a vector of site indexes. For example, if `site_vector=c("1606")`, it select only the species that are present in the site "1606". If `trim_cells=TRUE`, it will only return information for this site within the `gen3sis_species` object.
 
 ```{r}
-get_species_subset(data$all_species, site_vector = c("1606"), trim_cells = T)
+get_species_subset(data$all_species, site_vector = c("1606"), trim_sites = T)
 ```
 
 -   `get_space_subset`

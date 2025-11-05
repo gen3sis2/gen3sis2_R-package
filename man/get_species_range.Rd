@@ -2,7 +2,7 @@
 % Please edit documentation in R/observations.R
 \name{get_species_range}
 \alias{get_species_range}
-\title{Gets the number of cells each species is present in}
+\title{Gets the number of sites each species is present in}
 \usage{
 get_species_range(species_list, space)
 }
@@ -15,7 +15,7 @@ get_species_range(species_list, space)
 a named vector containing species (names) and its range (values).
 }
 \description{
-Gets the number of cells each species is present in
+Gets the number of sites each species is present in
 }
 \examples{
 #TODO

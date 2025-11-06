@@ -65,6 +65,7 @@ create_spaces_raster <- function(raster_list, # old spaces
     # prepare directories
   create_directories(output_directory, overwrite_output, full_dists)
   # TODO improve this test to actually work
+  # TODO Oskar: "I think this is too expensive! Cant you just get n cols of matrix -2 or something similar?"
   if (any(is.na(duration)) || all(!names(duration) %in% c("from", "to", "by", "unit"))) {
     warning("Duration is ideally informed as a list with from, to, by and unit.")
     timesteps <- -(terra::nlyr(raster_list[[1]]) - 1):0
@@ -74,6 +75,7 @@ create_spaces_raster <- function(raster_list, # old spaces
     #   duration <- list(from=timesteps[1], to=0, by=-1, unit="Ma")
     # }
     if(is.list(duration) && "unit" %in% names(duration)){
+      #TODO Oskar: "this could lead to issues if timesteps[1] is not negative correct?"
       warning("Assuming default duration from -latest time to zero by 1 in given unit.")
       duration <- list(from=timesteps[1], to=0, by=1, unit=duration$unit)
     } else {

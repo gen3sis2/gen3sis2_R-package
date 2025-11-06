@@ -77,7 +77,7 @@ disperse <- function(species, space, distance_matrix, config){
   free_cells <- all_cells[!(all_cells %in% presence_spi_ti)]
   num_draws <- length(free_cells) * length(presence_spi_ti)
   r_disp <- config$gen3sis$dispersal$get_dispersal_values(num_draws, species, space, config)
-  
+
   if (config$user$needs_scaling[["get_dispersal_values"]]) {
     r_disp <- r_disp * config$user$scale_time
   }

@@ -37,6 +37,9 @@ skeleton_config <- function(){
 # set the random seed for the simulation.
 random_seed = NA
 
+# set the time unit
+step_time <- list(x = NA, unit = "timestep")
+
 # set the starting time step or leave NA to use the earliest/highest time-step.
 start_time = NA
 

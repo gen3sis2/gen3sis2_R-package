@@ -37,6 +37,7 @@ get_divergence_factor <- function(species, cluster_indices, space, config){
 #' @return an expanded species list including all newly created species
 #' @noRd
 loop_speciation <- function(config, data, vars) {
+  threw_warning <- FALSE
   if(config$gen3sis$general$verbose>=3){
     cat(paste("entering speciation module \n"))
   }
@@ -68,6 +69,12 @@ loop_speciation <- function(config, data, vars) {
     
     if (config$user$needs_scaling[["get_divergence_factor"]]){
       ifactor <- ifactor * config$user$scale_time
+      
+      if(ifactor > config$gen3sis$speciation$divergence_threshold && !threw_warning){
+        threw_warning <- TRUE
+        message(paste0("Cumulative genetic distance is ",  ifactor / config$gen3sis$speciation$divergence_threshold," times greater than divergence_threshold. Time scaling is likely distorting the process. Review recommended."))
+        warning(paste0("Cumulative genetic distance is ",  ifactor / config$gen3sis$speciation$divergence_threshold," times greater than divergence_threshold. Time scaling is likely distorting the process. Review recommended.")) 
+      }
     }
     
     gen_dist_spi <- update_divergence(gen_dist_spi, clu_geo_spi_ti, ifactor = ifactor )

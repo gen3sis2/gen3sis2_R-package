@@ -24,7 +24,7 @@
 random_seed = 6 
 
 # set the starting time step or leave NA to use the earliest/highest time-step
-start_time = 40
+start_time = NA
 
 # set the end time step or leave as NA to use the latest/lowest time-step (0)
 end_time = NA

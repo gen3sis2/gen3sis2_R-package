@@ -36,7 +36,7 @@ space <- readRDS(system.file("extdata/SouthAmerica/landscape/spaces.rds", packag
 # ... and plot it!
 # "env_names" selects the variables of interest
 # "breaks" selects the timesteps of interest
-plot_space_overview(space, env_names = "temp", breaks = c(60, 50, 40, 30, 20, 10))
+plot_space_overview(space, env_names = "temp", breaks = c(-5, -2, 0))
 ```
 
 ## From inside the simulation (called in the config)

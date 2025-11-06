@@ -31,7 +31,7 @@ As this vignette is for illustration purposes only, we will load a minimal versi
 
 ```{r}
 # TODO sub this with gen3sis2 file path
-val <- readRDS("/mnt/DATA/PROJETOS/from_ubuntu/projects/testing_gen3sis/simulation_states/val_sa_redux.rds")
+val <- readRDS("/mnt/DATA/PROJETOS/from_ubuntu/projects/testing_gen3sis/3_south_america/val_sa_redux.rds")
 data <- val$data
 names(data)
 ```
@@ -157,6 +157,8 @@ get_trait_abundance(data$all_species)[1:5,]
 
 -   `get_trait_diversity`
 
+Trait diversity is calculated as follows:
+
 $$
 FD_{s,t} = \sum_{i=1}^{n_s} \left( \frac{A_{i,s}}{\sum_{j=1}^{n_s} A_{j,s}} \right) (T_{i,s,t} - \bar{T}_{s,t})^2
 $$
@@ -166,6 +168,8 @@ where
 - $\bar{T}_{s,t}$ is the mean value of trait $t$ of the species in the site $s$;
 - $n_s$ is the number of species in the site $s$;  
 - $TD_{s,t}$ is the weighted variance (trait diversity) of trait $t$ in site $s$.
+
+The function return a matrix with sites as rows and trait diversity in each site.
 
 ```{r}
 get_trait_diversity(data$all_species)[1:5,]
@@ -200,6 +204,17 @@ distance_matrix <- readRDS(system.file("extdata/TestSpaces/geodynamic_spaces/ras
 
 distance_subset(distance_matrix, site_vector = c("7","15"))
 ```
+
+- `diversification_summary`
+
+This function takes a simulation output object and returns a `data.frame` with times-steps and calculated Diversification (DR), Speciation (SR) and Extinction (ER) rates.
+
+```{r}
+s <- readRDS(system.file("extdata/SouthAmerica/output/sgen3sis.rds",package = "gen3sis2"))
+
+diversification_summary(s)
+```
+
 
 # Contribute with your own functions
 

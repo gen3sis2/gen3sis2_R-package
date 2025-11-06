@@ -64,33 +64,51 @@ create_spaces_raster <- function(raster_list, # old spaces
 
     # prepare directories
   create_directories(output_directory, overwrite_output, full_dists)
-  # TODO improve this test to actually work
-  # TODO Oskar: "I think this is too expensive! Cant you just get n cols of matrix -2 or something similar?"
-  if (any(is.na(duration)) || all(!names(duration) %in% c("from", "to", "by", "unit"))) {
-    warning("Duration is ideally informed as a list with from, to, by and unit.")
-    timesteps <- -(terra::nlyr(raster_list[[1]]) - 1):0
-    # if(is.list(duration)) {
-    #   duration <- list(from=timesteps[1], to=0, by=-1, unit=duration$unit)
-    # } else {
-    #   duration <- list(from=timesteps[1], to=0, by=-1, unit="Ma")
-    # }
-    if(is.list(duration) && "unit" %in% names(duration)){
-      #TODO Oskar: "this could lead to issues if timesteps[1] is not negative correct?"
-      warning("Assuming default duration from -latest time to zero by 1 in given unit.")
-      duration <- list(from=timesteps[1], to=0, by=1, unit=duration$unit)
-    } else {
-      warning("Assuming default duration from -latest time to zero by 1 Ma.")
-      duration <- list(from=timesteps[1], to=0, by=1, unit="Ma")
-    }
+  
+  if(!is.list(duration) || any(!c("from", "to", "by", "unit") %in% names(duration))){
+    stop("Duration is ideally informed as a list with from, to, by and unit.")
   } 
+  
+  if(any(is.na(duration))) {
+    required_elements <- names(which(is.na(duration)))
+    
+    if(length(required_elements) > 1){
+      stop("Too many NA in duration. Review necessary.")
+    }
+    
+    fill <-  switch (required_elements,
+                     "from" = duration$to-((terra::nlyr(raster_list[[1]])-1)*duration$by),
+                     "to" = duration$from+((terra::nlyr(raster_list[[1]])-1)*duration$by),
+                     "by" = 1,
+                     "unit" = "Ma"
+    )
+    
+    duration[[required_elements]] <- fill
+  }
+  
+  # <<<< OLD CHECKS
+  # if (any(is.na(duration)) || all(!names(duration) %in% c("from", "to", "by", "unit"))) {
+  #   warning("Duration is ideally informed as a list with from, to, by and unit.")
+  #   timesteps <- -(terra::nlyr(raster_list[[1]]) - 1):0
+  #   # if(is.list(duration)) {
+  #   #   duration <- list(from=timesteps[1], to=0, by=-1, unit=duration$unit)
+  #   # } else {
+  #   #   duration <- list(from=timesteps[1], to=0, by=-1, unit="Ma")
+  #   # }
+  #   if(is.list(duration) && "unit" %in% names(duration)){
+  #     #TODO Oskar: "this could lead to issues if timesteps[1] is not negative correct?"
+  #     warning("Assuming default duration from -latest time to zero by 1 in given unit.")
+  #     duration <- list(from=timesteps[1], to=0, by=1, unit=duration$unit)
+  #   } else {
+  #     warning("Assuming default duration from -latest time to zero by 1 Ma.")
+  #     duration <- list(from=timesteps[1], to=0, by=1, unit="Ma")
+  #   }
+  # } 
   #else {
   #  timesteps <- paste0(seq(duration$from, duration$to, by = duration$by), duration$unit)
   #}
-  
+  # >>> OLD CHECKS
   timesteps <- paste0(seq(duration$from, duration$to, by = duration$by), duration$unit)
-  # if(is.null(timesteps)){
-  #   timesteps <- (length(raster_list[[1]]) - 1):0
-  # }
 
   # prepare and save spaces
   compiled_env <- compile_spaces(raster_list,
@@ -504,3 +522,6 @@ get_transition_correction <- function(x, tr_fun, dir) {
   )
   return(return_list)
 }
+
+#
+

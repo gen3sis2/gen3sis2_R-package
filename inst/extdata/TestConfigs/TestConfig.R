@@ -4,6 +4,7 @@
 comb_vector <- list(seed=28015, dispersal=240, t_evo=0.03) # 
 
 random_seed = comb_vector$seed #28015
+step_time = list(x=1,unit="timestep")
 start_time = NA
 end_time = NA
 max_number_of_species =20000
@@ -112,6 +113,7 @@ create_ancestor_species <- function(space, config) {
 
 # returns n dispersal values (proba distrib function)
 get_dispersal_values <- function(n, species, space, config) {
+  scale_time
   # mean_abd <- mean(species$abundance)
   # weight_abd <- species$abundance/mean_abd
   # # if shape =1 then it is an exponential distribution
@@ -130,6 +132,7 @@ divergence_threshold = 1 # between 10 and 50 ? as 0.1 to 0.5 Myrs or 100 - 500 k
 
 # adds a value of 1 to each geographic population cluster
 get_divergence_factor <- function(species, cluster_indices, space, config) {
+  scale_time
   return(1)
 }
 

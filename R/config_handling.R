@@ -302,7 +302,7 @@ verify_config <- function(config) {
 #' @details All config fields are created and set to NA if they can be omitted by the user
 #' or set to NULL if they must be provided before starting a simulation.
 #' @return returns an empty config structure
-#' @noRd
+#' @export
 create_empty_config <- function(){
   config <- list()
   config[["gen3sis"]] <- list("general" = list( "random_seed" = NA,
@@ -447,7 +447,7 @@ simulation_timeframe <- function(step_time, time_unit, space = space, needs_scal
 #' @noRd
 config_interpreter <- function(config_file) {
   # read and clean
-  human_config <- readLines(config_file)
+  human_config <- suppressWarnings(readLines(config_file))
   human_config <- human_config[!grepl("^\\s*#", human_config)]
   
   # ensure compatibility

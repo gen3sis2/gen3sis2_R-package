@@ -218,5 +218,5 @@ diversification_summary(s)
 
 # Contribute with your own functions
 
-`gen3sis2` is build over an open and collaborative science philosophy. Anyone can contribute to the project. If you have written a function with a functionality not yet covered by the current support functions, we encourage you share it with us. Support functions are written in the R/observations.R file. To know how to contribute to the project, read the CONTIBUTING.md file.
+`gen3sis2` is built over an open and collaborative science philosophy. Anyone can contribute to the project. If you have written a function with a functionality not yet covered by the current support functions, we encourage you share it with us. Support functions are written in the R/observations.R file. To know how to contribute to the project, read the CONTIBUTING.md file.
 

@@ -88,9 +88,6 @@ prepare_directories <- function(config_file = NA,
   return(dir)
 }
 
-
-
-
 #' Creates either an empty configuration or a pre-filled configuration object from a config file
 #'
 #' @param config_file the path to a valid configuration file. if NA it creates an empty config

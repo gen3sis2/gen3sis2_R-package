@@ -225,7 +225,7 @@ construct_community_matrices <- function(species_list, space, xy, empty_sites, m
 #' @returns an abundance matrix with sites as rows and species as columns.
 #' @export
 #'
-#' @examples #TODO
+#' @examples inst/examples/support_
 get_abundance_matrix <- function(species_list, space = NULL, xy=FALSE, empty_sites = FALSE){
   abundance_matrix <- construct_community_matrices(
     species_list = species_list,

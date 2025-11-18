@@ -164,9 +164,15 @@ populate_config <- function(config, config_file) {
   user_config_env <- new.env()
   
   machine_config <- config_interpreter(config_file)
+  
+  current_wd <- getwd()
+  config_wd <- dirname(normalizePath(config_file))
+  setwd(config_wd)
+  on.exit(setwd(current_wd), add = TRUE)
+   
   eval(machine_config$machine_config, envir = user_config_env)
   
-  #source(config_file, chdir=TRUE, local=user_config_env)
+  # source(config_file, chdir=TRUE, local=user_config_env)
   for ( category in internal_categories) {
     config[["gen3sis"]][[category]] <- populate_settings_list(config[["gen3sis"]][[category]], user_config_env)
   }
@@ -387,7 +393,15 @@ write_config_skeleton <- function(file_path = "./config_skeleton.R", overwrite =
 #' This function calculates how many times the events described as time-dependent in the config occur in each space time-step.
 #'
 #' @param step_time numeric. The numerical baseline of the config step_time, i.e., the x from \code{step_time <- list(x=any_number, unit=accepted_unit)}
-#' @param time_unit character. The time unit from the config file.
+#' @param time_unit character. The time unit from the config file. Currently available time units are:
+#' \itemize{
+#'  \item "a": annum (1 year)
+#'  \item "ka": kilo annum (1,000 years)
+#'  \item "Ma": mega annum (1,000,000 years)
+#'  \item "Ga": giga annum (1,000,000,000 years)
+#'  \item "timestep": bypass the entire time-conversion and assumes the config in the same unit as the space 
+#' } 
+#' 
 #' @param space gen3sis_space. The simulation space.
 #'
 #' @returns For internal use only.
@@ -408,7 +422,7 @@ simulation_timeframe <- function(step_time, time_unit, space = space, needs_scal
         'Space time unit is "',space_tunit,'" but config time unit is "', time_unit,'".\n',
         '1 ',space_tunit,' = ',conv_unit(1, from = space_tunit, to = time_unit),' ',time_unit,'\n',
         'Each space timestep comprises ', space_timestep,' ', space_tunit, '\n',
-        'Simulation time multiplier (config$user$scale_time) set to ', scale_time
+        'Specified config values will be mutiplied by ', scale_time, 'to cope with space.'
       )
     )  
   }

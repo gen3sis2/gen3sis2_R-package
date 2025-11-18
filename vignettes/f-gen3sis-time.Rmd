@@ -173,3 +173,13 @@ If the user wishes to deactivate time scaling entirely, it is possible to set th
 - The `scale_time` multiplier is automatically set to 1.
 
 This approach is useful when temporal consistency between config and spaces is already ensured, or when users prefer to work with abstract, step-based time rather than explicit chronological units.
+
+## 2.5 Human and machine config
+
+As said above, when the config file the used provided is read by `gen3sis2` (in `run_simuation()` or `create_input_config()`), it goes trough a process of interpretation. In this processes, many aspects of the config are adapted to ensure that the simulation will run without problems. One central points is to replace the place-holder `scale_time` by the callable `config$user$scale_time`. In addition to that, code commentaries are removed, `gen3sis2` detects whether the user used `scale_time` inside any of the main functions or not. Finally, the adapted code is parsed and evaluated. 
+
+The file provided by the user is called in `gen3sis2` as "human config". After this code is parsed and evaluated, it produces a list `config` that is stored internally during the simulation (and saved within the simulation state). This is called the "machine config". They essentially carry the same information, but the machine config is interpreted, adapted and easily accessed by the simulation (and the user, when desired).
+
+# 3. Conclusion
+
+Time is an important aspect of eco-evolutionary simulations, and dealing with it in `gen3sis2` is straight-forward. Every config file must be written considering time, as well as every space created. Config and space can have different timeframes, but in tis case `gen3sis2` will calculate a multiplier and apply it to config's processes, what can generate distortions.

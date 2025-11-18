@@ -68,37 +68,59 @@ setup_inputs <- function(config, data, vars) {
 #' @noRd
 setup_variables <- function(config, data, vars) {
   # time-steps
-  # -1 as time-steps are 0-based
+  # As time-steps are 0-based, for any spaces with n time-steps, internally they will be indexed
+  # in a sequence {n-1, n-2, n-3, ..., 0}, with n elements. For example, if the spaces has 5 time-steps,
+  # they will be indexed in a sequence {4, 3, 2, 1, 0}. That way the latest time-step will be always 0,
+  # and the earlist time-step will always n-1, what ensures compatibility across all possible situations.
+  # TL;DR: -1 as time-steps are 0-based, i.e., latest must be 0 and earliest must be the length-1 
   zero_base_ts <- (length(data$inputs$timesteps)-1):0
   if (is.na(config$gen3sis$general$start_time)) {
+    # start at the earliest available time-step
     config$gen3sis$general$start_time <- length(data[["inputs"]][["timesteps"]]) - 1
   } else if (is.character(config$gen3sis$general$start_time)) {
+    # warns the user and ignores the string, starting at the earliest time-step
     message("start_time must be numerical. Starting simulation from the first time-step.")
     config$gen3sis$general$start_time <- length(data[["inputs"]][["timesteps"]]) - 1
   } else if (is.numeric(config$gen3sis$general$start_time)) {
+    # assumes that the numeric value expresses a "date", not a time-step
+    # e.g.: -2000 means 2000 time units in the past
+    
+    # fetch the start_time
     start_time <- config$gen3sis$general$start_time
+    # convert it from the config time unit to the space time unit
     start_time <- conv_unit(start_time, config$user$step_time$unit, data$inputs$duration$unit)
 
+    # gets the absolute time for each timesteps in the space
+    # e.g.: {"-10Ma", "-5Ma", "0Ma"} -> {-10, -5, 0}
     ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric()
+    # gets which time-step is closer in time to the start_time
     time_distance <- abs(start_time - ts_times)
     eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
     
+    # sets the start_time as the closest time-step in the time
     config$gen3sis$general$start_time <- zero_base_ts[which(data$inputs$timesteps == data$inputs$timesteps[eq_index])]
     message("Simulation will start at timestep ",config$gen3sis$general$start_time,", ", data$inputs$timesteps[eq_index])
   }
 
   if(is.na(config$gen3sis$general$end_time)) {
+    # ends at the latest available time-step 
     config$gen3sis$general$end_time <- 0
     
   } else if (is.character(config$gen3sis$general$end_time)) {
+    # ignores the string, warns the user and ends at the latest available time-step
     config$gen3sis$general$end_time <- 0
     message("start_time must be numerical. Starting simulation from the first time-step.")
     
   } else if (is.numeric(config$gen3sis$general$end_time)) {
+    # fetches the end_time and converts from the config time unit to the space time unit
     end_time <- config$gen3sis$general$end_time
     end_time <- conv_unit(end_time, config$user$step_time$unit, data$inputs$duration$unit)
     
+    # gets the absolute time for each timesteps in the space
+    # e.g.: {"-10Ma", "-5Ma", "0Ma"} -> {-10, -5, 0}
     ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric() 
+    
+    # gets the closes time-step in time
     time_distance <- abs(end_time - ts_times)
     eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
     

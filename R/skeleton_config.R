@@ -38,12 +38,18 @@ skeleton_config <- function(){
 random_seed = NA
 
 # set the time unit
+# Currently available units are:
+# "a": annum (1 year)
+# "ka": kilo annum (1,000 years)
+# "Ma": mega annum (1,000,000 years)
+# "Ga": giga annum (1,000,000,000 years)
+# "timestep": bypass the entire time-conversion and assumes the config in the same unit as the space 
 step_time <- list(x = NA, unit = "timestep")
 
-# set the starting time step or leave NA to use the earliest/highest time-step.
+# set the starting time (in the same unit as step_time) or leave NA to use the earliest/highest time-step.
 start_time = NA
 
-# set the end time step or leave as NA to use the latest/lowest time-step (0).
+# set the end time (in the same unit as step_time) or leave as NA to use the latest/lowest time-step (0).
 end_time = NA
 
 # maximum total number of species in the simulation before it is aborted.

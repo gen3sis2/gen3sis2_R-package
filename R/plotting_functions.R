@@ -18,7 +18,7 @@ plot_species_presence <- function(species, space, col=NULL) {
   all_presence[names(species[["abundance"]])] <- 1
   
   if(is.null(col)){
-    col <- set_color(all_presence, type=space$`type`)
+    col <- set_color(all_presence)
   }
   
   conditional_plot(title = paste0("species_presence_", species$id), # title
@@ -46,7 +46,7 @@ plot_species_abundance <- function(species, space, col = NULL) {
   all_presence[names(species[["abundance"]])] <- species[["abundance"]]
   
   if(is.null(col)){
-    col <- set_color(all_presence, type=space$`type`)
+    col <- set_color(all_presence)
   }
   
   conditional_plot(title = paste0("species_abundance_", species$id),
@@ -460,7 +460,7 @@ plot_richness <- function(species_list, space, col = NULL) {
   #attribute color
 
   if(is.null(col)){
-    col <- set_color(richness, type=space$`type`)
+    col <- set_color(richness)
   }
   
   conditional_plot(title = "Richness",
@@ -494,13 +494,6 @@ set_color <- function(values, colfun=color_richness, zero_col="navajowhite"){
   }
   
   return(rc)
-  # if (type%in%c("raster")){
-  #   return(rc)
-  # } else {
-  #   cols_cut <- cut(values,length(rc))
-  #   colors <- rc[cols_cut]
-  #   return(colors)
-  # }
 }
 
 

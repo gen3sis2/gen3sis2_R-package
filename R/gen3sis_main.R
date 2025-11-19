@@ -101,14 +101,12 @@ run_simulation <- function(config = NA,
   } else if (is.numeric(save_state) && any(save_state < 0)){
     warning("save_state negative timesteps are meaningless, simulation will not save.")
   }
-  #
   
   directories <- prepare_directories(config_file = config,
                                      input_directory = space,
                                      output_directory = output_directory)
 
-  # TODO rewrite this conditional to enable copying the config file if object is on RAM
-  if(is.na(config)[1]){ # TODO shouldn't this test be before using the config?
+  if(is.na(config)[1]){ 
     stop("please provide either a config file or a config object")
   } else if (is(config, "gen3sis_config")){
     file.copy(config$directories$config_path, directories$output)
@@ -120,7 +118,6 @@ run_simulation <- function(config = NA,
   } else {
     stop("this is not a known config, please provide either a config file or a config object")
   }
-  
   
   if(!verify_config(config)){
     stop("config verification failed")

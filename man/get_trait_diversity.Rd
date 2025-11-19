@@ -2,7 +2,7 @@
 % Please edit documentation in R/observations.R
 \name{get_trait_diversity}
 \alias{get_trait_diversity}
-\title{Calculates trait diversity per cell (sensu Leps et al 2006)}
+\title{Get trait diversity}
 \usage{
 get_trait_diversity(species_list, traits = NULL)
 }
@@ -15,10 +15,79 @@ get_trait_diversity(species_list, traits = NULL)
 a matrix with site as rows and trait diversity as columns.
 }
 \description{
-Calculates trait diversity per cell (sensu Leps et al 2006)
+This function calculates trait diversity per cell (sensu Leps et al 2006)
 }
 \examples{
-#TODO
+# Loading and running a simulation
+## loading the config file
+config_file <- system.file("extdata/TestConfigs/TestConfig.R",package = "gen3sis2")
+config <- create_input_config(config_file, config_name="support_example")
+
+## loading the space
+space <- system.file("extdata/TestSpaces/geostatic_spaces/raster",package = "gen3sis2")
+
+## running the simulation
+output_dir <- tempdir()
+s <- run_simulation(
+  config = config,
+  space = space,
+  output_directory = output_dir,
+  save_state = "all",
+  verbose = 0
+)
+
+# Miscellaneous functions examples
+## those are used outsite the simulation
+distance_matrix <- readRDS(system.file("extdata/TestSpaces/geodynamic_spaces/raster/distances_full/distances_full_4.rds", package = "gen3sis2"))
+distance_subset(distance_matrix, site_vector = c("7","15"))
+
+diversification_summary(s)
+
+# get_ function examples
+
+## inside the observer function, the user will have access to the 'data' variable, which contains all_species and space, used in most support functions
+## below is loaded a saved internal state to simulate this variable
+val <- readRDS(file.path(output_dir, "support_example", "val", "val_t_0.rds"))
+data <- val$data
+
+## functions usage
+get_presence_matrix(data$all_species)[1:5,] # showing just the five first sites
+
+get_presence_matrix(data$all_species, data$space, xy=T)[1:5,] # with coordinates
+
+get_species_prevalence(data$all_species, data$space)
+
+get_extant_species(data$all_species)
+
+get_abundance_matrix(data$all_species)[1:5,]
+
+get_geo_richness(data$all_species, data$space)
+
+get_mean_richness(data$all_species, data$space)
+
+get_species_range(data$all_species, data$space)
+
+get_weighted_endemism(data$all_species, data$space) # only five sites
+
+get_traits_matrix(data$all_species)[1:5,] # only the first five
+
+get_traits_matrix(data$all_species, summarize_fun = c(
+  "mean" = mean, 
+  "var_coef" = function(x){
+    sd(x)/mean(x)
+  }
+)
+)
+
+get_trait_abundance(data$all_species)[1:5,]
+
+get_trait_diversity(data$all_species)[1:5,]
+
+get_species_subset(data$all_species, site_vector = c("4"), trim_sites = T)
+
+get_space_subset(data$space, site_vector = c("4","7"))
+
+
 }
 \references{
 De Bello, F., Lepš, J. and Sebastià, M.-T. (2006), Variations in species and functional plant diversity along climatic and grazing gradients. Ecography, 29: 801-810. https://doi.org/10.1111/j.2006.0906-7590.04683.x

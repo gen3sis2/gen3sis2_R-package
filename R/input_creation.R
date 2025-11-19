@@ -86,28 +86,6 @@ create_spaces_raster <- function(raster_list, # old spaces
     duration[[required_elements]] <- fill
   }
   
-  # <<<< OLD CHECKS
-  # if (any(is.na(duration)) || all(!names(duration) %in% c("from", "to", "by", "unit"))) {
-  #   warning("Duration is ideally informed as a list with from, to, by and unit.")
-  #   timesteps <- -(terra::nlyr(raster_list[[1]]) - 1):0
-  #   # if(is.list(duration)) {
-  #   #   duration <- list(from=timesteps[1], to=0, by=-1, unit=duration$unit)
-  #   # } else {
-  #   #   duration <- list(from=timesteps[1], to=0, by=-1, unit="Ma")
-  #   # }
-  #   if(is.list(duration) && "unit" %in% names(duration)){
-  #     #TODO Oskar: "this could lead to issues if timesteps[1] is not negative correct?"
-  #     warning("Assuming default duration from -latest time to zero by 1 in given unit.")
-  #     duration <- list(from=timesteps[1], to=0, by=1, unit=duration$unit)
-  #   } else {
-  #     warning("Assuming default duration from -latest time to zero by 1 Ma.")
-  #     duration <- list(from=timesteps[1], to=0, by=1, unit="Ma")
-  #   }
-  # } 
-  #else {
-  #  timesteps <- paste0(seq(duration$from, duration$to, by = duration$by), duration$unit)
-  #}
-  # >>> OLD CHECKS
   timesteps <- paste0(seq(duration$from, duration$to, by = duration$by), duration$unit)
 
   # prepare and save spaces
@@ -381,12 +359,9 @@ get_local_distances <- function(space_stack, habitable_mask, cost_function, dire
 #' @noRd
 get_habitable_mask <- function(habitability_masks, space_stack, i) {
   if(is.null(habitability_masks)) {
-    #habitable_mask <- calc(space_stack, fun = function(x, na.rm) { !any(is.na(x)) } )
     habitable_mask <- !any(is.na(space_stack)) # TODO is this the best solution?
   } else if( is.character(habitability_masks[[i]])){
-    #habitable_mask <- raster(habitability_masks[[i]])
     habitable_mask <- terra::rast(habitability_masks[[i]])
-  #} else if( "RasterLayer" %in% class(habitability_masks[[i]])) {
   } else if( "SpatRaster" %in% class(habitability_masks[[i]])) {
     habitable_mask <- habitability_masks[[i]]
   } else {
@@ -406,29 +381,19 @@ get_habitable_mask <- function(habitability_masks, space_stack, i) {
 #' @noRd
 stack_spaces <- function(spaces, i) {
   all_names <- names(spaces)
-  # new_stack <- stack()
   new_stack <- terra::rast()
   for(space in spaces){
-    # space <- spaces[[1]]
     if(is.character(space[i])) {
-      #ras <- raster(space[i])
       ras <- terra::rast(space[i])
-    # } else if(is(space[[i]],"RasterLayer")) { # TODO remove when raster transition is done
-    #   ras <- space[i]
     } else if(is(space[[i]],"SpatRaster")) {
-      #ras <- raster(terra::subset(space[[i]], 1))
       ras <- space[[i]]
     } else {
       stop("Unknown space; it must be a named list of list of either rasters or raster files")
     }
-    #new_stack <- addLayer(new_stack, ras)
     suppressWarnings(
       new_stack <- c(new_stack, ras)
     )
   }
-  #new_brick <- as(new_stack, "RasterBrick")
-  #names(new_brick) <- all_names
-  #return(new_brick)
   
   names(new_stack) <- all_names
   return(new_stack)

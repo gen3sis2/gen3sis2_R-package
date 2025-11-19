@@ -476,11 +476,14 @@ config_interpreter <- function(config_file) {
     any(grepl("\\bscale_time\\b", human_config[lines]))
   })
   
-  # add divergence_threshold # TODO deactivated for now
+  ### deactivated for now
+  # add divergence_threshold 
   # uses_scale_time <- c(
   #   uses_scale_time,
   #   divergence_threshold = any(grepl("\\bscale_time\\b", human_config[grepl("^divergence_threshold", human_config)]))
   # )
+  ###
+  
   
   needs_scaling <- !uses_scale_time
   

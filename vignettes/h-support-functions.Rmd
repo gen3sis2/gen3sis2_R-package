@@ -27,24 +27,28 @@ To facilitate this processes and wide the functionalities range of `gen3sis2`, t
 
 #### Before we continue...
 
-As this vignette is for illustration purposes only, we will load a minimal version of the `val` object, which contains the simulation state in `gen3sis2`. In this version we will only have the species list and space.
+As this vignette is for illustration purposes only, we will load spaces and species objects saved with `save_spaces()` and `save_species()`, respectively, and construct a minimal version of the `data` object, which contains the simulation state in `gen3sis2` and is available inside the observer function. In this version we will only have the species list and space.
 
 ```{r}
-# TODO sub this with gen3sis2 file path
-val <- readRDS("/mnt/DATA/PROJETOS/from_ubuntu/projects/testing_gen3sis/3_south_america/val_sa_redux.rds")
-data <- val$data
-names(data)
+space <- system.file("extdata/SouthAmerica/species_and_spaces/space_t_2.rds", package = "gen3sis2") |> readRDS()
+
+all_species <- system.file("extdata/SouthAmerica/species_and_spaces/species_t_2.rds", package = "gen3sis2") |> readRDS()
+
+data <- list(
+  space = space,
+  all_species = all_species
+)
 ```
 
 # `get_` functions
 
-The `get_` functions family comprises a wide range of species and spaces related functionalities. They are all designed to be used inside the simulation (for example, in the observer function) to retrieve some information. I.e., they are used to *get something from the simulation values*.
+The `get_` functions family comprises a wide range of species and spaces related functionalities. They are all designed to be used inside the simulation (for example, in the observer function) or outside it, with the files created with `save_spaces()` and `save_species()`, to retrieve some information. I.e., they are used to *get something from the simulation values*.
 
 -   `get_presence_matrix`
 
 This function constructs a presence-absence matrix based on the space sites. In this matrix, rows are site indexes and columns are species indexes. Optionally, users can get the xy coordinates for each site as the first two columns (`xy=TRUE`) or include all sites that don't havy any species (`empty_sites=TRUE`).
 
-Let's see an example:
+Inside the observer function:
 
 ```{r}
 get_presence_matrix(data$all_species)[1:5,] # showing just the five first sites
@@ -56,63 +60,123 @@ To include the site coordinates, space must be provided:
 get_presence_matrix(data$all_species, data$space, xy=T)[1:5,]
 ```
 
+With saved files:
+
+```{r}
+get_presence_matrix(all_species, space)[1:5,]
+```
 
 -   `get_species_prevalence`
 
 This function calculates the species global prevalence of each species, i.e., the proportion of sites occupied by each species in the entire space. It returns a named vector. Names are species' index, values are species' prevalence.
 
+In the observer function:
+
 ```{r}
 get_species_prevalence(data$all_species, data$space)
+```
+
+With loaded files:
+
+```{r}
+get_species_prevalence(all_species, space)
 ```
 
 -   `get_exant_species`
 
 This function returns a vector of the extant species at the current time-step, i.e., species that are currently present in at least one site.
 
+In the observer function:
+
 ```{r}
 get_extant_species(data$all_species)
+```
+
+From loaded files:
+
+```{r}
+get_extant_species(all_species)
 ```
 
 -   `get_abundance_matrix`
 
 Similar to the `get_presence_matrix`, this function returns an abundance matrix. Rows are sites indexes, columns are species indexes. `xy` and `empty_sites` arguments are also present.
 
+In the observer function:
+
 ```{r}
 get_abundance_matrix(data$all_species)[1:5,]
+```
+
+From loaded files:
+
+```{r}
+get_abundance_matrix(all_species)[1:5,]
 ```
 
 -   `get_site_abundance`
 
 Similar to `get_abundance_matrix`, but sums the abundance of all species present in each site. `xy` and `empty_sites` arguments are also present.
 
+In the observer function:
+
 ```{r}
 get_site_abundance(data$all_species)[1:5,,drop=F]
+```
+
+From loaded files:
+
+```{r}
+get_site_abundance(all_species)[1:5,,drop=F]
 ```
 
 -   `get_geo_richness`
 
 This function returns a named vector containing species richness in each site. Names are site indexes, and values are site richness.
 
+In the observer function:
+
 ```{r}
 get_geo_richness(data$all_species, data$space)[1:50]
+```
+
+From loaded files:
+
+```{r}
+get_geo_richness(all_species, space)[1:50]
 ```
 
 -   `get_mean_richness`
 
 This function simply calculates the global mean richness.
 
+In the observer function:
+
 ```{r}
 get_mean_richness(data$all_species, data$space)
+```
+
+From loaded files:
+
+```{r}
+get_mean_richness(all_species, space)
 ```
 
 -   `get_species_range`
 
 This function calculate each species' range, i.e., the number of sites in which they are present. Returns a named vector; names are species indexes, values are species range.
 
+In the observer function:
+
 ```{r}
 get_species_range(data$all_species, data$space)
 ```
 
+From loaded files:
+
+```{r}
+get_species_range(all_species, space)
+```
 
 -   `get_weighted_endemism`
 
@@ -123,8 +187,16 @@ $$
 
 Higher values indicate that the site contains more rare species.
 
+In the observer function:
+
 ```{r}
 get_weighted_endemism(data$all_species, data$space)[255:259] # only five sites
+```
+
+From loaded files:
+
+```{r}
+get_weighted_endemism(all_species, space)[255:259] # only five sites
 ```
 
 -   `get_traits_matrix`
@@ -137,8 +209,22 @@ get_traits_matrix(data$all_species)[1:5,] # only the first five
 
 Users can also summarize the traits of each species using the `summarize_fun` argument. It accept functions and named vectors of functions. In case no names are provided, the function will use the placeholder "summary" to indicate the function name.
 
+In the observer function:
+
 ```{r}
 get_traits_matrix(data$all_species, summarize_fun = c(
+  "mean" = mean, 
+  "var_coef" = function(x){
+    sd(x)/mean(x)
+  }
+  )
+)
+```
+
+From loaded files
+
+```{r}
+get_traits_matrix(all_species, summarize_fun = c(
   "mean" = mean, 
   "var_coef" = function(x){
     sd(x)/mean(x)
@@ -151,8 +237,16 @@ get_traits_matrix(data$all_species, summarize_fun = c(
 
 This function returns a `data.frame` with site index, traits, abundance, and species indexes as columns. This is mainly used as internal function for other purposes, but can also be useful in some cases.
 
+In the observer function:
+
 ```{r}
 get_trait_abundance(data$all_species)[1:5,]
+```
+
+From loaded files:
+
+```{r}
+get_trait_abundance(all_species)[1:5,]
 ```
 
 -   `get_trait_diversity`
@@ -171,24 +265,48 @@ where
 
 The function return a matrix with sites as rows and trait diversity in each site.
 
+In the observer function:
+
 ```{r}
 get_trait_diversity(data$all_species)[1:5,]
+```
+
+From loaded files:
+
+```{r}
+get_trait_diversity(all_species)[1:5,]
 ```
 
 -   `get_species_subset`
 
 This function subsets the species list based on a vector of site indexes. For example, if `site_vector=c("1606")`, it select only the species that are present in the site "1606". If `trim_cells=TRUE`, it will only return information for this site within the `gen3sis_species` object.
 
+In the observer function:
+
 ```{r}
-get_species_subset(data$all_species, site_vector = c("1606"), trim_sites = T)
+get_species_subset(data$all_species, site_vector = c("841"), trim_sites = T)
+```
+
+From loaded files:
+
+```{r}
+get_species_subset(all_species, site_vector = c("841"), trim_sites = T)
 ```
 
 -   `get_space_subset`
 
 This function subsets the space based on a vector of site indexes. For example, if `site_vector=c("1606","1805")`, it will return the same space inputed, but with information only for the sites "1606" and "1805".
 
+In the observer function:
+
 ```{r}
-get_space_subset(data$space, site_vector = c("1606","1805"))
+get_space_subset(data$space, site_vector = c("841","948"))
+```
+
+From loaded files:
+
+```{r}
+get_space_subset(space, site_vector = c("841","948"))
 ```
 
 # Miscellaneous functions

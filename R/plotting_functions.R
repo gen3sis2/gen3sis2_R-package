@@ -477,11 +477,11 @@ plot_richness <- function(species_list, space, col = NULL) {
 #' @param colfun a color function to use, default is color_richness, 
 #' consider using color_richness_CVDCBP for color-blind safe colors
 #' @param zero_col a color to use for zero values, default is "navajowhite3"
-#' @param type a string, see \code{\link{check_spaces}} for options or use \code{check_spaces()$type} # TODO deprecated
+#' 
 #' @return if type is "raster" the function returns a color scale, if type is "points" the function returns a vector of colors
 #' @export
 #' @example inst/examples/set_color_help.R
-set_color <- function(values, colfun=color_richness, zero_col="navajowhite", type="raster"){
+set_color <- function(values, colfun=color_richness, zero_col="navajowhite"){
   max_val <- max(values, na.rm=TRUE)
   min_val <- min(values, na.rm=TRUE)
   if (max_val==0){

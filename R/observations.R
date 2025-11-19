@@ -1,7 +1,5 @@
 # Copyright (c) 2020, ETH Zurich
 
-
-
 #' Prepare the internal data structures to be called with the observe_xx functions and call the user provide observer
 #' Unless a problem shows up the save_xx functions call getDyn() to get access to the internal state, no prep here.
 #'
@@ -215,7 +213,9 @@ construct_community_matrices <- function(species_list, space, xy, empty_sites, m
   return(community_matrix)
 }
 
-#' get_abundance_matrix
+#' Get abundance matrix
+#'
+#' This function constructs an abundance matrix based on the space sites.
 #'
 #' @param species_list a list of species to include in the calculations.
 #' @param space the space to calculate over.
@@ -225,7 +225,7 @@ construct_community_matrices <- function(species_list, space, xy, empty_sites, m
 #' @returns an abundance matrix with sites as rows and species as columns.
 #' @export
 #'
-#' @examples inst/examples/support_
+#' @example inst/examples/support_functions_help.R
 get_abundance_matrix <- function(species_list, space = NULL, xy=FALSE, empty_sites = FALSE){
   abundance_matrix <- construct_community_matrices(
     species_list = species_list,
@@ -236,8 +236,10 @@ get_abundance_matrix <- function(species_list, space = NULL, xy=FALSE, empty_sit
   return(abundance_matrix)
 }
 
-#' get_presence_matrix
+#' Get presence-absence matrix 
 #'
+#' This function constructs a presence-absence matrix based on the space sites.
+#' 
 #' @param species_list a list of species to include in the calculations.
 #' @param space the space to calculate over.
 #' @param xy if TRUE, site coorinates are returned as matix columns. Default is FALSE.
@@ -246,7 +248,7 @@ get_abundance_matrix <- function(species_list, space = NULL, xy=FALSE, empty_sit
 #' @returns a presence matrix with sites as rows and species as columns.
 #' @export
 #'
-#' @examples # TODO
+#' @example inst/examples/support_functions_help.R
 get_presence_matrix <- function(species_list, space = NULL, xy=FALSE, empty_sites = FALSE){
   presence_matrix <- construct_community_matrices(
     species_list = species_list,
@@ -267,12 +269,14 @@ get_presence_matrix <- function(species_list, space = NULL, xy=FALSE, empty_site
 #' @returns a numeric value of the mean richness.
 #' @export
 #'
-#' @examples #TODO
+#' @example inst/examples/support_functions_help.R
 get_mean_richness <- function(species_list, space){
   return(get_geo_richness(species_list, space) |> mean())
 }
 
-#' Gets a matrix of traits present in occupied sites in the space
+#' Get traits matrix
+#'
+#' This function constructs a matrix of traits present in occupied sites in the space
 #'
 #' @param species_list a list of species to include in the calculations.
 #' @param summarize_fun a function or a named vector of functions to summarize trait values. Accept custom functions.
@@ -280,7 +284,7 @@ get_mean_richness <- function(species_list, space){
 #' @returns a trait matrix with sites as rows and traits as columns.
 #' @export
 #'
-#' @examples # TODO
+#' @example inst/examples/support_functions_help.R
 get_traits_matrix <- function(species_list, summarize_fun = NULL) {
   if(!is.null(summarize_fun)){
     mtx_list <- lapply(species_list, function(sp){
@@ -324,14 +328,16 @@ get_traits_matrix <- function(species_list, summarize_fun = NULL) {
   return(trait_mtx)
 }
 
-#' Construct a data.frame with abundance and trait information for each species and site
+#' Get abundance and traits matrix
+#' 
+#' This function constructs a data.frame with abundance and trait information for each species and site
 #'
 #' @param species_list a list of species to include in the calculations.
 #'
 #' @returns a data.frame with traits values, abundance, and site and species indexes.
 #' @export
 #'
-#' @examples #TODO
+#' @example inst/examples/support_functions_help.R
 get_trait_abundance <- function(species_list){
   df_list <- lapply(species_list, function(sp){
     traits <- sp$traits |> as.data.frame()
@@ -350,15 +356,17 @@ get_trait_abundance <- function(species_list){
   return(abd_trait_df)
 }
 
-#' Calculates trait diversity per cell (sensu Leps et al 2006)
-#'
+#' Get trait diversity
+#' 
+#' This function calculates trait diversity per cell (sensu Leps et al 2006)
+#' 
 #' @param species_list a list of species to include in the calculations.
 #' @param traits a vector with trait names.
 #' @references De Bello, F., Lepš, J. and Sebastià, M.-T. (2006), Variations in species and functional plant diversity along climatic and grazing gradients. Ecography, 29: 801-810. https://doi.org/10.1111/j.2006.0906-7590.04683.x
 #' @returns a matrix with site as rows and trait diversity as columns.
 #' @export
 #'
-#' @examples #TODO
+#' @example inst/examples/support_functions_help.R
 get_trait_diversity <- function(species_list, traits = NULL){
   if(is.null(traits)){
     traits <- species_list[[1]]$traits |> colnames()
@@ -388,7 +396,9 @@ get_trait_diversity <- function(species_list, traits = NULL){
   return(div_sites)
 }
 
-#' Calculates trait evenness per cell (functional evenness, sensu Mouillot et al. (2005))
+#' Get trait evenness
+#'
+#' This function calculates trait evenness per cell (functional evenness, sensu Mouillot et al. (2005))
 #'
 #' @param species_list a list of species to include in the calculations.
 #' @param traits a vector with trait names.
@@ -396,7 +406,7 @@ get_trait_diversity <- function(species_list, traits = NULL){
 #' @returns a matrix with site as rows and trait eveness as columns.
 #' @export
 #'
-#' @examples #TODO
+#' @example inst/examples/support_functions_help.R
 get_trait_evenness <- function(species_list, traits){
   if(is.null(traits)){
     traits <- species_list[[1]]$traits |> colnames()
@@ -449,7 +459,9 @@ get_trait_evenness <- function(species_list, traits){
   return(trait_evenness)
 }
 
-#' Gets the prevalence of each species in a given space
+#' Get species prevalence
+#'
+#' This function calculates the prevalence of each species in a given space
 #'
 #' @param species_list a list of species to include in the calculations.
 #' @param space the space to calculate over.
@@ -457,7 +469,7 @@ get_trait_evenness <- function(species_list, traits){
 #' @returns a vector containing species prevalence in decimal percentages.
 #' @export
 #'
-#' @examples # TODO
+#' @example inst/examples/support_functions_help.R
 get_species_prevalence <- function(species_list, space){
   prevalence <- sapply(species_list, function(sp){
     sum(sp$abundance > 0) / nrow(na.omit(space$environment))
@@ -470,14 +482,16 @@ get_species_prevalence <- function(species_list, space){
   return(prevalence)
 }
 
-#' Gets the extant species in the simulation
+#' Gets extant species
+#' 
+#' This function simply identify which species has abundance > 0 in at least one site
 #'
 #' @param species_list a list of species to include in the calculations.
 #'
 #' @returns a vector with extant species IDs.
 #' @export
 #'
-#' @examples # TODO
+#' @example inst/examples/support_functions_help.R
 get_extant_species <- function(species_list) {
   extant <- sapply(species_list, \(sp){any(sp$abundance > 0)})
   species_id <- sapply(species_list, \(sp){sp$id})
@@ -486,7 +500,9 @@ get_extant_species <- function(species_list) {
 }
 
 
-#' Gets the total abundance per site in a given space
+#' Gets site abundance
+#' 
+#' This function calculates the total abundance per site in a given space
 #'
 #' @param species_list a list of species to include in the calculations.
 #' @param space the space to calculate over.
@@ -498,7 +514,7 @@ get_extant_species <- function(species_list) {
 #' 
 #' @seealso [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/traitDiversity.R)
 #'
-#' @examples #TODO
+#' @example inst/examples/support_functions_help.R
 get_site_abundance <- function(species_list, space, xy = F, empty_sites = F) {
   abundance_vector <- sapply(species_list, function(sp){
     sp$abundance
@@ -525,7 +541,9 @@ get_site_abundance <- function(species_list, space, xy = F, empty_sites = F) {
   return(abundance_matrix)
 }
 
-#' Gets the number of sites each species is present in
+#' Gets species range
+#'
+#' This function counts the number of sites each species is present in
 #'
 #' @param species_list a list of species to include in the calculations.
 #' @param space the space to calculate over.
@@ -533,13 +551,15 @@ get_site_abundance <- function(species_list, space, xy = F, empty_sites = F) {
 #' @returns a named vector containing species (names) and its range (values). 
 #' @export
 #'
-#' @examples #TODO
+#' @example inst/examples/support_functions_help.R
 get_species_range <- function(species_list, space) {
   pa_mtx <- get_presence_matrix(species_list, space)
   return(colSums(pa_mtx))
 }
 
-#' Gets the weighted endemism for each site in a given space
+#' Gets weighted endemism
+#'
+#' This function calculates the weighted endemism for each site in a given space
 #'
 #' @param species_list a list of species to include in the calculations.
 #' @param space the space to calculate over.
@@ -547,7 +567,7 @@ get_species_range <- function(species_list, space) {
 #' @returns a named vector with the weighted endemism (values) for each site (names).
 #' @export
 #' 
-#' @examples #TODO
+#' @example inst/examples/support_functions_help.R
 get_weighted_endemism <- function(species_list, space) {
   richness <- get_geo_richness(species_list, space)
   species_range <- get_species_range(species_list, space)
@@ -570,7 +590,9 @@ get_weighted_endemism <- function(species_list, space) {
   return(weighted_endemism)
 }
 
-#' Gets a subset of the species list with species occurring in the specified sites
+#' Gets species subset
+#' 
+#' This function subsets the species list with species occurring in the specified sites
 #'
 #' @param species_list a list of species to include in the calculations.
 #' @param site_vector a vector with site indexes.
@@ -579,7 +601,7 @@ get_weighted_endemism <- function(species_list, space) {
 #' @returns a list with selected species.
 #' @export
 #'
-#' @examples # TODO
+#' @example inst/examples/support_functions_help.R
 get_species_subset <- function(species_list, site_vector, trim_sites = FALSE){
   pa_mtx <- get_presence_matrix(species_list)
   pa_mtx <- pa_mtx[site_vector, , drop = FALSE]
@@ -598,7 +620,9 @@ get_species_subset <- function(species_list, site_vector, trim_sites = FALSE){
   return(species_subset)
 }
 
-#' Gets a subset of the space based on specified sites
+#' Gets space subset
+#' 
+#' This function subsets the space based on specified sites
 #'
 #' @param space the space to calculate over.
 #' @param site_vector a vector with site indexes.
@@ -606,7 +630,7 @@ get_species_subset <- function(species_list, site_vector, trim_sites = FALSE){
 #' @returns a gen3sis_space_type object with the specified sites.
 #' @export
 #' @seealso [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/subsetLandscape.R)
-#' @examples #TODO
+#' @example inst/examples/support_functions_help.R
 get_space_subset <- function(space, site_vector){
   if(length(site_vector) < 2){
     stop("Must subset at least 2 sites.")
@@ -636,14 +660,16 @@ get_space_subset <- function(space, site_vector){
 
 # missiteaneous tools ----
 
-#' Construct a matrix with speciation, extinction and diversification rate over timesteps
+#' Diverisification summary
+#' 
+#' This function constructs a matrix with speciation, extinction and diversification rate over timesteps
 #'
 #' @param gen3sis_output a simulation output object.
 #'
 #' @returns a matrix with timesteps as rows and speciation, extinction and diversification rates as columns.
 #' @export
 #'
-#' @examples # TODO
+#' @example inst/examples/support_functions_help.R
 diversification_summary <- function(gen3sis_output){
   extant_lineages <- gen3sis_output$summary$phylo_summary[1:nrow(gen3sis_output$summary$phylo_summary)-1,2] 
   speciation <- gen3sis_output$summary$phylo_summary[2:nrow(gen3sis_output$summary$phylo_summary),3]
@@ -658,7 +684,9 @@ diversification_summary <- function(gen3sis_output){
   return(diverse_df)  
 }
 
-#' Subsets a distance matrix to specified sites
+#' Subset distance matrix
+#' 
+#' This function subsets a distance matrix based on specified sites
 #'
 #' @param distance_matrix a local or full distance matrix. Can be either the object or a file path.
 #' @param site_vector a vector with site indexes.
@@ -667,7 +695,7 @@ diversification_summary <- function(gen3sis_output){
 #' @export
 #' @seealso [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/distanceSubset.R)
 #'
-#' @examples # TODO
+#' @example inst/examples/support_functions_help.R
 distance_subset <- function(distance_matrix, site_vector){
   # load the file if distance_matrix is a path
   if(is.character(distance_matrix) && file.exists(distance_matrix)) {

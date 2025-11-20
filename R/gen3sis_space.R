@@ -85,9 +85,12 @@ create_spaces <- function(env=list(NA),
 #' @examples print("TODO")
 check_spaces <- function(spaces=NULL){
   accepted <- list()
+  
   accepted[["type"]] <- c("raster", "points", "h3")
-  dur_units <- c("day", "wk", "mon", "yr", "dec", "cen", "mil", "Ma")
-  accepted[["duration_unit"]] <- dur_units[dur_units%in%measurements::conv_unit_options$duration]
+  
+  #dur_units <- c("day", "wk", "mon", "yr", "dec", "cen", "mil", "Ma")
+  accepted[["duration_unit"]] <- time_unit_check()
+  
   # area_units <- c("m2", "km2", "ha")
   # accepted[["area_unit"]]<- area_units[area_units%in%measurements::conv_unit_options$area]
 

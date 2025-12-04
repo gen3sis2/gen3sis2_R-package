@@ -285,7 +285,7 @@ test_that("create_directories overwrite protection works", {
 test_that("create_directories works", {
   # mocking base functions is no longer feasible, overwrite is not tested as it calls "unlink"
   new_dirs <- list()
-  local_mock(dir.create = function(new_dir, ...){ new_dirs <<- append(new_dirs, new_dir)} )
+  local_mocked_bindings(dir.create = function(new_dir, ...){ new_dirs <<- append(new_dirs, new_dir)} )
 
   create_directories("test", overwrite = FALSE, full_matrices = FALSE)
   expect_true("test" %in% new_dirs)

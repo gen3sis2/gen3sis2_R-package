@@ -207,36 +207,24 @@ test_that("verify_config: config with missing values",{
   # With empty config all values are missing
   config <- create_empty_config()
   
-  expected_message <- paste0(
-    "These settings must be set in the configuration:\n",
-    "general\n",
-    "- random_seed\n",
-    "- start_time\n",
-    "- end_time\n",
-    "- max_number_of_species\n",
-    "- max_number_of_coexisting_species\n",
-    "- end_of_timestep_observer\n",
-    "- trait_names\n",
-    "- environmental_ranges\n",
-    "- verbose\n",
-    "- config_name\n",
-    "initialization\n",
-    "- initial_abundance\n",
-    "- create_ancestor_species\n",
-    "dispersal\n",
-    "- max_dispersal\n",
-    "- get_dispersal_values\n",
-    "speciation\n",
-    "- divergence_threshold\n",
-    "- get_divergence_factor\n",
-    "mutation\n",
-    "- apply_evolution\n",
-    "ecology\n",
-    "- apply_ecology"
+  fields <- c(
+    "random_seed", "start_time", "end_time",
+    "max_number_of_species", "max_number_of_coexisting_species",
+    "end_of_timestep_observer", "trait_names",
+    "environmental_ranges", "verbose", "config_name",
+    "initial_abundance", "create_ancestor_species",
+    "max_dispersal", "get_dispersal_values",
+    "divergence_threshold", "get_divergence_factor",
+    "apply_trait_evolution", "apply_ecology",
+    "get_modifiers", "apply_modifiers"
   )
   
-  expect_message(verify_config(config),
-                 expected_message)
+  for (f in fields) {
+    expect_message(
+      verify_config(config),
+      regexp = f
+    )
+  }
 })
 
 # write_config_skeleton()

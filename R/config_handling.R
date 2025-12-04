@@ -145,8 +145,9 @@ internal_categories <- c("general",
                          "initialization",
                          "dispersal",
                          "speciation",
-                         "mutation",
-                         "ecology"
+                         "trait_evolution",
+                         "ecology",
+                         "space_modifier"
                          )
 
 
@@ -167,7 +168,9 @@ populate_config <- function(config, config_file) {
   setwd(config_wd)
   on.exit(setwd(current_wd), add = TRUE)
    
-  eval(machine_config$machine_config, envir = user_config_env)
+  for (i in seq_along(machine_config$machine_config)){
+    eval(machine_config$machine_config, envir = user_config_env) 
+  }
   
   # source(config_file, chdir=TRUE, local=user_config_env)
   for ( category in internal_categories) {
@@ -186,6 +189,7 @@ populate_config <- function(config, config_file) {
   for (category in internal_categories){
     presence <- presence | (user_settings %in% names(config[["gen3sis"]][[category]]))
   }
+  
   if(any(!presence)){
     for( i in user_settings[which(!presence)] ) {
       config[["user"]][[i]] <- user_config_env[[i]]
@@ -322,10 +326,13 @@ create_empty_config <- function(){
                             "speciation" = list( "divergence_threshold" = NULL,
                                                  "get_divergence_factor" = NULL
                                                  ),
-                            "mutation" = list( "apply_evolution" = NULL
+                            "trait_evolution" = list( "apply_trait_evolution" = NULL
                                                ),
                             "ecology" = list("apply_ecology" = NULL
-                                             )
+                                             ),
+                            "space_modifier" = list("get_modifiers" = NULL, 
+                                                    "apply_modifiers" = NULL
+                                                    )
                             )
   config[["user"]] <- list()
   config[["directories"]] <- list()

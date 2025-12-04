@@ -24,8 +24,9 @@ knitr::opts_chunk$set(
 
 This vignette shows how to create input space objects necessary to run *gen3sis2*. These objects are:
 
--   a spaces.rds file containing a space list of raster stacks for environmental variables;
-
+-   a spaces.rds file containing a list with:
+    -   `env`: a matrix for environmental variables
+    -   `meta`: important metadata about the spaces
 -   a series of rds files, one for each time-step, including distance matrices between sites.
 
 To create these files, we use the function *create_spaces_raster* which requires as arguments:
@@ -56,9 +57,9 @@ library(gen3sis2)
 library(terra)
 ```
 
-## Creating the environmental rasters bricks
+## Creating the environmental rasters
 
-Second, create the SpatRaster containing the spatio-temporal distribution of the environmental variables of interest. Here, we will use the temperature, aridity and area rasters of the 1d example of South America that has been used in the [**introduction vignette**](introduction.html). We first load the three corresponding raster bricks from the hard drive.
+Second, create the SpatRaster containing the spatio-temporal distribution of the environmental variables of interest. Here, we will use the temperature, aridity and area rasters of the 1d example of South America that has been used in the [**introduction vignette**](introduction.html). We first load the three corresponding rasters from the hard drive.
 
 ```{r, eval=FALSE, message=F}
 setwd(datapath)
@@ -73,7 +74,7 @@ If you want to see an example on how you can create a virtual dynamic space from
 
 To create the input space for *gen3sis2*, all environmental variables have to be stored as raster files in a named list. It is important to add the name of the environmental variable you want to use in the list, which will be used when specifying the config file. Alternatively, you can also create a list which contains all of the raster file paths on your hard drive.
 
-We will now create a list that contains all of the layers of our raster bricks for temperature, aridity and area.
+We will now create a list that contains all of the layers of our rasters for temperature, aridity and area.
 
 ```{r, eval=FALSE}
 spaces_list <- list(
@@ -223,7 +224,7 @@ Besides the (i) space list, (ii) cost function and (iii) experiment folder, we c
 
 The argument 'directions' requires an integer providing the amount of directions used to calculate distances. It can take 4, 8 or 16 as values to consider the four, eighth or 16 neighboring sites.
 
-The argument 'duration' requires a named list with information about the start ("from"), end ("to"), step size ("by") and time unit ("unit") of the enviromental series.  Negative values represent the past, and positive values the future. From example, a duration starting 10 million years ago and ending 10 millions years in the future should look like: `duration = list(from=-10, to=10, by=1, unit="Ma")`. Is also used to name the files and to name the timesteps in the *spaces.rds* space object created by the *create_spaces_raster* function. 
+The argument 'duration' requires a named list with information about the start ("from"), end ("to"), step size ("by") and time unit ("unit") of the enviromental series. Negative values represent the past, and positive values the future. From example, a duration starting 10 million years ago and ending 10 millions years in the future should look like: `duration = list(from=-10, to=10, by=1, unit="Ma")`. Is also used to name the files and to name the timesteps in the *spaces.rds* space object created by the *create_spaces_raster* function.
 
 The argument 'full_dists' defines whether the *create_spaces_raster* function will create one large distance matrix for all suitable sites (calculate_full_distance_matrices=TRUE) or a list of small distance matrices for the neighboring sites specified in 'directions' around each suitable site (full_dists=FALSE). The full distance matrix confers faster computing speed for the model, but requires a larger storage. The local distance matrices cause a slower computing speed, but require smaller storage. The slower speed emerges form the fact that a full distance matrix is then reconstructed by concatenating local distances matrices each time-step during a simulation run.
 

@@ -142,7 +142,7 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
 #-----------------------#
 
 # mutate the traits of populations of each species and return the new traits matrix
-apply_evolution <- function(species, cluster_indices, space, config) {
+apply_trait_evolution <- function(species, cluster_indices, space, config) {
   stop("mutate species traits here")
 }
 
@@ -161,7 +161,7 @@ apply_ecology <- function(abundance, traits, environment, config) {
 
 
 #--------------------------------------------#
-#### Biotic Modulation of the Environment ####
+##  Biotic Modification of the Environment  ##
 #--------------------------------------------#
 
 # Accounts for Biospheric Feedbacks to the space
@@ -179,15 +179,14 @@ apply_ecology <- function(abundance, traits, environment, config) {
 ## Must return the "space$environment" object.
 ## Only runs if modifiers are not NULL.
 
-modify_space <- list(
-  get_modifiers = function(space, all_species){
-    modifiers <- NULL
-    return(modifiers)
-  },
-  apply_modifiers = function(space, modifiers){
-    return(space$environment)
-  }
-)
+get_modifiers <- function(space, all_species){
+  modifiers <- NULL
+  return(modifiers)
+}
+
+apply_modifiers <- function(space, modifiers){
+  return(space$environment)
+}
 
 ')) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
 }

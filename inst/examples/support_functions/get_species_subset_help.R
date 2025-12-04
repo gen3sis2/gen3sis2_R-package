@@ -9,5 +9,5 @@
     all_species = all_species
   )
   
-  get_presence_matrix(data$all_species)[1:5,] # showing just the five first sites
+  get_species_subset(data$all_species, site_vector = c("841"), trim_sites = T)
 }

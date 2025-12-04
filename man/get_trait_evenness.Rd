@@ -4,7 +4,7 @@
 \alias{get_trait_evenness}
 \title{Get trait evenness}
 \usage{
-get_trait_evenness(species_list, traits)
+get_trait_evenness(species_list, traits = NULL)
 }
 \arguments{
 \item{species_list}{a list of species to include in the calculations.}
@@ -19,77 +19,23 @@ This function calculates trait evenness per cell (functional evenness, sensu Mou
 }
 \examples{
 \dontrun{
-  # Loading and running a simulation
-  ## loading the config file
-  config_file <- system.file("extdata/TestConfigs/TestConfig.R",package = "gen3sis2")
-  config <- create_input_config(config_file, config_name="support_example")
+  # mock simulation state
+  space <- system.file("extdata/SouthAmerica/species_and_spaces/space_t_2.rds", package = "gen3sis2") |> readRDS()
   
-  ## loading the space
-  space <- system.file("extdata/TestSpaces/geostatic_spaces/raster",package = "gen3sis2")
+  all_species <- system.file("extdata/SouthAmerica/species_and_spaces/species_t_2.rds", package = "gen3sis2") |> readRDS()
   
-  ## running the simulation
-  output_dir <- tempdir()
-  s <- run_simulation(
-    config = config,
+  data <- list(
     space = space,
-    output_directory = output_dir,
-    save_state = "all",
-    verbose = 0
+    all_species = all_species
   )
   
-  # Miscellaneous functions examples
-  ## those are used outsite the simulation
-  distance_matrix <- readRDS(system.file("extdata/TestSpaces/geodynamic_spaces/raster/distances_full/distances_full_4.rds", package = "gen3sis2"))
-  distance_subset(distance_matrix, site_vector = c("7","15"))
-  
-  diversification_summary(s)
-  
-  # get_ function examples
-  
-  ## inside the observer function, the user will have access to the 'data' variable, which contains all_species and space, used in most support functions
-  ## below is loaded a saved internal state to simulate this variable
-  val <- readRDS(file.path(output_dir, "support_example", "val", "val_t_0.rds"))
-  data <- val$data
-  
-  ## functions usage
-  get_presence_matrix(data$all_species)[1:5,] # showing just the five first sites
-  
-  get_presence_matrix(data$all_species, data$space, xy=T)[1:5,] # with coordinates
-  
-  get_species_prevalence(data$all_species, data$space)
-  
-  get_extant_species(data$all_species)
-  
-  get_abundance_matrix(data$all_species)[1:5,]
-  
-  get_geo_richness(data$all_species, data$space)
-  
-  get_mean_richness(data$all_species, data$space)
-  
-  get_species_range(data$all_species, data$space)
-  
-  get_weighted_endemism(data$all_species, data$space) # only five sites
-  
-  get_traits_matrix(data$all_species)[1:5,] # only the first five
-  
-  get_traits_matrix(data$all_species, summarize_fun = c(
-    "mean" = mean, 
-    "var_coef" = function(x){
-      sd(x)/mean(x)
-    }
-  )
-  )
-  
-  get_trait_abundance(data$all_species)[1:5,]
-  
-  get_trait_diversity(data$all_species)[1:5,]
-  
-  get_species_subset(data$all_species, site_vector = c("4"), trim_sites = T)
-  
-  get_space_subset(data$space, site_vector = c("4","7"))
-  
+  get_trait_evenness(data$all_species, c("temp"))
 }
+"inst/examples/support_functions/get_trait_evenness.R"
 }
 \references{
 Mouillot D, Mason WH, Dumay O, Wilson JB. Functional regularity: a neglected aspect of functional diversity. Oecologia. 2005 Jan;142(3):353-9. doi: 10.1007/s00442-004-1744-7. Epub 2004 Nov 20. PMID: 15655690.
+}
+\seealso{
+\code{vignette("h-support-functions", package = "gen3sis2")}
 }

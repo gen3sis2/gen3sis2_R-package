@@ -1,9 +1,9 @@
 ---
-title: "6. Support functions"
+title: "7. Support functions"
 output: rmarkdown::html_vignette
 date: "`r format(Sys.time(),  '%d.%m.%Y')`"
 vignette: >
-  %\VignetteIndexEntry{6. Support functions}
+  %\VignetteIndexEntry{7. Support functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -82,7 +82,7 @@ With loaded files:
 get_species_prevalence(all_species, space)
 ```
 
--   `get_exant_species`
+-   `get_extant_species`
 
 This function returns a vector of the extant species at the current time-step, i.e., species that are currently present in at least one site.
 

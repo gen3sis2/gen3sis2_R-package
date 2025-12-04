@@ -9,5 +9,6 @@
     all_species = all_species
   )
   
-  get_presence_matrix(data$all_species)[1:5,] # showing just the five first sites
+  get_trait_evenness(data$all_species, c("temp"))
 }
+"inst/examples/support_functions/get_trait_evenness.R"

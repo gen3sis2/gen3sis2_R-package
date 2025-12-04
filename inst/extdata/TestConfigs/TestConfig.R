@@ -140,7 +140,7 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
 #### Trait Evolution ####
 #-----------------------#
 
-apply_evolution <- function(species, cluster_indices, space, config) {
+apply_trait_evolution <- function(species, cluster_indices, space, config) {
   trait_evolutionary_power <-comb_vector$t_evo
   pw_tr_hom <- 0.5 # percentage of movement of local trait towards weighted trait mean within each population cluster 
   # pw_tr_hom = ZERO means no change while a value of ONE means that traits are equal within each populations cluster)
@@ -198,13 +198,13 @@ apply_ecology <- function(abundance, traits, space, config, abundance_scale = 10
 }
 
 #------------------------------#
-#### Environmental dynamics ####
+####      Modify space      ####
 #------------------------------#
-modify_space <- list(
-  get_modifiers = function(space, all_species){
-    return(NULL)
-  },
-  apply_modifiers = function(space, modifiers){
-    return(space$environment)
-  }
-)
+get_modifiers <- function(space, all_species){
+  modifiers <- NULL
+  return(modifiers)
+}
+
+apply_modifiers <- function(space, modifiers){
+  return(space$environment)
+}

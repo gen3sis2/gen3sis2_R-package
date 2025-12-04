@@ -91,7 +91,7 @@ run_simulation <- function(config = NA,
   ####### User defined variables (config.R) ############
   #----------------------------------------------------#
   system_time_start <- Sys.time() #Starting timer
-  
+  # TODO fix modifiers and trait_evolution to work with the new name
   # Checking save_states
   recognized_save_states <- c("all", "last")
   if(!all(is.na(save_state)) && 
@@ -125,7 +125,6 @@ run_simulation <- function(config = NA,
     cat("\nUsing config:",config$gen3sis$general$config_name,"\n")
   }
 
-  
   val <- list("data" = list(),
               "vars" = list(),
               "config" = config)
@@ -217,7 +216,7 @@ run_simulation <- function(config = NA,
 
     # update space
     if(!is.null(val$data$space_modifiers)){
-      val$data$space$environment <- val$config$user$modify_space$apply_modifiers(
+      val$data$space$environment <- val$config$gen3sis$space_modifier$apply_modifiers(
         val$data$space,
         val$data$space_modifiers
       )
@@ -294,7 +293,7 @@ run_simulation <- function(config = NA,
     }
     
     # Environmental dynamics
-    val$data$space_modifiers <- val$config$user$modify_space$get_modifiers(val$data$space, val$data$all_species)
+    val$data$space_modifiers <- val$config$gen3sis$space_modifier$get_modifiers(val$data$space, val$data$all_species)
     
     if(val$vars$ti %in% val$vars$save_steps){
       call_main_observer(val$data, val$vars, val$config)

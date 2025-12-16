@@ -21,3 +21,4 @@ returns an invisible empty species traits when no evolution is considered
 \description{
 No evolution considered
 }
+\keyword{simulation}

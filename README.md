@@ -1,4 +1,4 @@
-![gen3sis](./inst/logo/gen3sis_logo.png)
+![](./man/figures/gen3sis_logo.png)
 
 
 # General Engine for Eco-Evolutionary Simulations
@@ -32,6 +32,7 @@ Below the status of the automatic CI R-CMD-check tests
 DEVELOPMENT [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/project-gen3sis/R-package/actions/workflows/R-CMD-check.yaml)
 
 MASTER [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/project-gen3sis/R-package/actions/workflows/R-CMD-check.yaml)
+
 ### How to use
 
 #### Run one simulation
@@ -47,7 +48,7 @@ sim <- run_simulation(config = file.path(datapath, "config/config_worldcenter.R"
                output_directory = tempdir(),
                verbose=0)
 ```
-A summary statistics is stored at 'sim' more data can be save using the oberver function
+A summary statistics is stored at 'sim' more data can be save using the observer function
 
 ####  Visualize a simulation
 
@@ -68,8 +69,9 @@ paste("gen3sis2 version:", packageVersion("gen3sis2"))
 
 Great that you are considering contributing! We welcome contributions from the community, whether they are bug fixes, new features, documentation improvements, or anything else that can help improve the package. Feel free to also reach out over e-mail to discuss ideas.
 For guidelines on contributing to this project, please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file. In short, the main branches of this repo are:
-* **master** – reflects the current CRAN release (if at all). Only hotfixes or release-ready changes are merged here, typically just before CRAN submission.
-* **development** – serves as the main working branch. All new features, improvements, and fixes should be merged here from separate feature or bugfix branches.
+
+- **master** – reflects the current CRAN release (if at all). Only hotfixes or release-ready changes are merged here, typically just before CRAN submission.
+- **development** – serves as the main working branch. All new features, improvements, and fixes should be merged here from separate feature or bugfix branches.
 
 
 ### Credits

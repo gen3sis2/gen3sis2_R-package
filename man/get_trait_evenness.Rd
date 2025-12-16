@@ -39,3 +39,4 @@ Mouillot D, Mason WH, Dumay O, Wilson JB. Functional regularity: a neglected asp
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

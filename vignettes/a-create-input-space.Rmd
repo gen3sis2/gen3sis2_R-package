@@ -125,7 +125,7 @@ create_spaces_raster(
 ```
 
 ```{r, eval=T, echo=FALSE, fig.width=4, fig.height=7, fig.cap='This figure shows the connection costs from one site in the middle of South America to all other sites. To travel to the site of Antarctica that is indicated with the arrow, the travelling cost is 3790. The distance matrix was computed using the very simple cost function that has been introduced before and is not adding any penalty.', fig.align='center'}
-knitr::include_graphics("../inst/extdata/SouthAmerica/images/const_cost.png")
+knitr::include_graphics("../man/figures/const_cost.png")
 
 #dist_matrix_null_t0 <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/distances_full/distances_full_0.rds'))
 #spaces_null <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/spaces.rds'))
@@ -186,7 +186,7 @@ create_spaces_raster(
 ```
 
 ```{r, eval=TRUE, echo=FALSE, fig.width=4, fig.height=7, fig.align='center', fig.cap='By using a cost function which penalises the crossing of water, the cost of travelling from our cell in the middle of South America to Antarctica increases to 5204.'}
-knitr::include_graphics("../inst/extdata/SouthAmerica/images/var_cost.png")
+knitr::include_graphics("../man/figures//var_cost.png")
 # dist_matrix_water_t0 <- readRDS('inst/extdata/SouthAmerica/space/distances_full/cost_function_water/distances_full/distances_full_0.rds')
 # # C:\VITAL LOCAL\Meus Documentos\ETH PhD\Code\R\package\Gen3sis\inst\extdata\SouthAmerica\space\distances_full\cost_function_null\distances_full
 # spaces_water <- readRDS('inst/extdata/SouthAmerica/space/andscapes.rds')

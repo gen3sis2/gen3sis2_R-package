@@ -44,3 +44,4 @@ Plot the richness of the given list of species on a space
   plot_richness(data$all_species, data$space)
 }
 }
+\keyword{plot}

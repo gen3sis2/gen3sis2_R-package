@@ -38,3 +38,4 @@ De Bello, F., Lepš, J. and Sebastià, M.-T. (2006), Variations in species and f
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

@@ -47,3 +47,4 @@ Plot simulation default summary object
 \seealso{
 \code{\link{run_simulation}}
 }
+\keyword{plot}

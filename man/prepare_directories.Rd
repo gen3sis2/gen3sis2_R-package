@@ -39,3 +39,4 @@ manually beforehand, for example to redirect the stdout to a file in the output 
   )
 }
 }
+\keyword{config}

@@ -23,3 +23,4 @@ no return value, called for plot
 \description{
 Provides the default gen3sis2 plot aesthetics for H3 and points spaces
 }
+\keyword{plot}

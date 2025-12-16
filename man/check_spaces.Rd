@@ -21,3 +21,4 @@ Check gen3sis_spaces
 \examples{
 print("TODO")
 }
+\keyword{spaces}

@@ -54,3 +54,4 @@ Plot species ranges of the given list of species on a space
   plot_ranges(data$all_species, data$space)
 }
 }
+\keyword{plot}

@@ -38,3 +38,4 @@ config_object$gen3sis$general$random_seed <- 2025
                         output_directory = tempdir())
 }
 }
+\keyword{config}

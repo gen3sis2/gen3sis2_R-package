@@ -27,3 +27,4 @@ This function subsets a distance matrix based on specified sites
 \seealso{
 [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/distanceSubset.R)
 }
+\keyword{support}

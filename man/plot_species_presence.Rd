@@ -47,3 +47,4 @@ Plot a species' presence on a given space
   par(oldpar)
 }
 }
+\keyword{plot}

@@ -37,3 +37,4 @@ This function subsets the species list with species occurring in the specified s
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

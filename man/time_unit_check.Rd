@@ -18,3 +18,4 @@ Check if the used time unit is accepted
 \examples{
 "TODO"
 }
+\keyword{support}

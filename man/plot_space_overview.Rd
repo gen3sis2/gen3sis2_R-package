@@ -19,3 +19,4 @@ no return value, called for plot
 \description{
 Plot the outline of a given space over time
 }
+\keyword{plot}

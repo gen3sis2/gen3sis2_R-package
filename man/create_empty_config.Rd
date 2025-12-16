@@ -16,3 +16,4 @@ Creates an empty config object
 All config fields are created and set to NA if they can be omitted by the user
 or set to NULL if they must be provided before starting a simulation.
 }
+\keyword{config}

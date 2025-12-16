@@ -35,3 +35,4 @@ This function calculates the prevalence of each species in a given space
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

@@ -44,3 +44,4 @@ This function constructs a presence-absence matrix based on the space sites.
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

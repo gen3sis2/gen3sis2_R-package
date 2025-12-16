@@ -35,3 +35,4 @@ This function subsets the space based on specified sites
 \seealso{
 [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/subsetLandscape.R)
 }
+\keyword{support}

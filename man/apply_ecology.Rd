@@ -30,3 +30,4 @@ site. Based on those rules, the function updates the abundance of each species i
 is null, the species is absent or extinct. Ecology can account for local environmental conditions, the abundance of
 species, and/or their traits.
 }
+\keyword{user}

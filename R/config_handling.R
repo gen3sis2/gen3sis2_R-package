@@ -8,7 +8,7 @@
 #' @param input_directory path to input directory, if NA it will be derived from the config file path
 #' @param output_directory path to output directory, if NA it will be derived from the config file path
 #' @return returns a named list with the paths for the input and output directories
-#'
+#' @keywords config
 #' @importFrom tools file_path_sans_ext
 #' @example inst/examples/prepare_directories_help.R
 #' @export
@@ -94,6 +94,7 @@ prepare_directories <- function(config_file = NA,
 #' @param config_name the name of the configuration. if NULL it will be set to a random name, if a empty config is creasted, or use the file name
 #' @return list of configuration elements, similar generated from reading a config_file.R. The internal elements 
 #' of this list are: "general", "initialization", "dispersal", "speciation", "mutation" and "ecology"
+#' @keywords config
 #' @example inst/examples/create_input_config_help.R
 #' @export
 create_input_config <- function(config_file = NA, config_name = NULL) {
@@ -227,6 +228,7 @@ populate_settings_list <- function(config_list, user_env) {
 #' @param config a config object
 #' @return Returns TRUE for a valid config, FALSE otherwise, in which case a list of
 #' missing parameters will be printed out as well
+#' @keywords config
 #' @seealso \code{\link{create_input_config}}    \code{\link{write_config_skeleton}}   
 #' @example inst/examples/verify_config_help.R
 #' @export
@@ -303,6 +305,7 @@ verify_config <- function(config) {
 #' @details All config fields are created and set to NA if they can be omitted by the user
 #' or set to NULL if they must be provided before starting a simulation.
 #' @return returns an empty config structure
+#' @keywords config
 #' @export
 create_empty_config <- function(){
   config <- list()
@@ -368,6 +371,7 @@ complete_config <- function(config) {
 #' @param overwrite overwrite existing file defaults to FALSE
 #'
 #' @return returns a boolean indicating success or failure
+#' @keywords config
 #' @example inst/examples/write_config_skeleton_help.R
 #' @export
 write_config_skeleton <- function(file_path = "./config_skeleton.R", overwrite = FALSE) {
@@ -511,9 +515,21 @@ config_interpreter <- function(config_file) {
 #' @param time_unit character. The used time unit. If NULL, returns a vector of accepted time units.
 #'
 #' @returns if time_unit is character, return TRUE or FALSE. If time_unit = NULL, returns a vector of accepted time units. 
+#' @keywords support
 #' @export
 #'
-#' @examples "TODO"
+#' @examples 
+#' \dontrun{
+#'   # return TRUE
+#'   time_unit_check("a")
+#'   time_unit_check("ka")
+#'   time_unit_check("Ma")
+#'   time_unit_check("Ga")
+#'   time_unit_check("timestep")
+#'   
+#'   # return FALSE
+#'   time_unit_check("eons")
+#' }
 time_unit_check <- function(time_unit=NULL){
   accepted_timeunits <- c("a","ka", "Ma", "Ga","timestep")
   

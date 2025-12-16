@@ -21,3 +21,4 @@ an error report with the mismatches found
 \description{
 Check names of spaces
 }
+\keyword{spaces}

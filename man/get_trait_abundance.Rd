@@ -33,3 +33,4 @@ This function constructs a data.frame with abundance and trait information for e
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

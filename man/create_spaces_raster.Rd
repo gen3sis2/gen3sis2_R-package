@@ -218,3 +218,4 @@ create_spaces_raster(
 \seealso{
 \code{\link{run_simulation}}
 }
+\keyword{spaces}

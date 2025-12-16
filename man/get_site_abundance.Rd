@@ -40,3 +40,4 @@ This function calculates the total abundance per site in a given space
 \code{vignette("h-support-functions", package = "gen3sis2")}
 [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/traitDiversity.R)
 }
+\keyword{support}

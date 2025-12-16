@@ -16,6 +16,8 @@
 #'
 #' @return an abundance vector with the new abundance values for every species.
 #' An abundance value of 0 indicates species death, any other values indicates survival.
+#' 
+#' @keywords user
 #' @export
 apply_ecology <- function(abundance, traits, local_environment, config) {
   stop("this function documents the user function interface only, do not use it.")

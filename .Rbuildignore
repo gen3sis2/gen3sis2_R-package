@@ -43,3 +43,6 @@ LICENSE
 # NOTES on contributions
 #----------------------------
 ^CONTRIBUTING.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

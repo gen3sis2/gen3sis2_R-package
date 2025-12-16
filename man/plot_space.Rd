@@ -17,3 +17,4 @@ no return value, called for plot
 \description{
 Plot the environment variable of a given space
 }
+\keyword{plot}

@@ -60,6 +60,7 @@ Authors:
   \item Mikael Pontarp \email{mikael.pontarp@biol.lu.se} (Department of Biology, Lund University, Lund, Sweden)
   \item Thiago F. Rangel \email{rangel.tf@gmail.com} (Department of Ecology, Universidade Federal de Goiás, Goiás, Brazil)
   \item Loïc Pellissier \email{loic.pellissier@usys.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland) [thesis advisor]
+  \item Admir C. de O. Junior \email{admircjunior@gmail.com}
 }
 
 Other contributors:
@@ -73,6 +74,7 @@ Other contributors:
 \concept{gen3sis2 modeling eco-evolutionary macroevolution macroecology mechanisms}
 \keyword{IO}
 \keyword{iteration}
+\keyword{main}
 \keyword{methods}
 \keyword{programming}
 \keyword{utilities}

@@ -40,3 +40,4 @@ This function constructs a matrix with speciation, extinction and diversificatio
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

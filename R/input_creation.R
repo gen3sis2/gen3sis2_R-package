@@ -36,6 +36,7 @@
 #'    \item \code{description}: list with env and methods, see \code{?create_spaces}
 #' }
 #' @return no return object. This function saves the space input files for gen3sis at the output_directory
+#' @keywords spaces
 #' @importFrom gdistance transition costDistance
 #' @example inst/examples/create_spaces_raster_help.R
 #' @seealso \code{\link{run_simulation}} 

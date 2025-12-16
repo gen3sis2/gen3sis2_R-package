@@ -22,3 +22,4 @@ Using this function, any number of new species can be created. For every species
 habitable sites from the space are selected and call 'create_species'. In another step, the user must initialize 
 the species[["traits"]] matrix with the desired initial traits values
 }
+\keyword{user}

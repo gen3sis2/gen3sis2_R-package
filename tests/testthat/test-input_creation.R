@@ -153,7 +153,7 @@ test_that("geodynamic is FALSE but environment says otherwise", {
       ) |> capture_warnings() -> warned
     
     expect_equal("geodynamic is set to FALSE but environment says otherwise. \n          changing geodynamic to TRUE",
-                 warned) # TODO for some reason, expect_warning was not working here, need to try again
+                 warned) 
   })
 })
 
@@ -229,7 +229,6 @@ test_that("compile_spaces works", {  # create rasters
                         as.character(1:25)))
 })
 
-# TODO needs to be improved
 test_that("get_local_distances works", {
   crs <- NULL
   directions <- 8

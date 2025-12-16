@@ -34,6 +34,7 @@
 #' The "env" should describe the environmental data used, including it's units
 #'
 #' @return an informal and empty gen3sis_spaces object
+#' @keywords spaces
 #' @export
 #'
 #' @examples print("TODO")
@@ -80,9 +81,17 @@ create_spaces <- function(env=list(NA),
 #' report or a pass statement.
 #' If spaces=NULL, this function returns lists of accepted values categories
 #' according to \code{check_spaces()}
+#' @keywords spaces
 #' @export
 #'
-#' @examples print("TODO")
+#' @examples 
+#' \dontrun{
+#' # checks the structure of the gen3sis_space
+#' check_spaces(your_spaces)
+#' 
+#' # return a list with accepted types and time units
+#' check_spaces(NULL)
+#' }
 check_spaces <- function(spaces=NULL){
   accepted <- list()
   
@@ -130,6 +139,7 @@ check_spaces <- function(spaces=NULL){
 #' default is NULL
 #'
 #' @return an error report with the mismatches found
+#' @keywords spaces
 #' @export
 check_names <- function(reference, datags, error_report=NULL){
   target=names(datags)
@@ -179,7 +189,6 @@ check_names <- function(reference, datags, error_report=NULL){
 #' @param dir_output "path to dir_output"
 #' @return no value is returned
 #' @noRd
-#' @examples print("TODO")
 prepare_dirs <- function(dir_input, dir_output){
   if(!dir.exists(dir_input)){
     stop(paste("Input directory does not exist:", dir_input))
@@ -202,6 +211,7 @@ prepare_dirs <- function(dir_input, dir_output){
 #' @return A logical value indicating whether the dataset is geodynamic (`TRUE`) or not (`FALSE`).
 #' The dataset is considered geodynamic if at least one row contains a mix of `NA` and non-`NA` values.
 #'
+#' @keywords spaces
 #' @details
 #' The function iterates over each environmental variable in the `env` list. For each variable, it removes the first two columns
 #' (i.e. `x` and `y` coordinates) and checks if any row in the remaining data has a mix of `NA` and non-`NA` values.
@@ -222,4 +232,28 @@ is_geodynamic <- function(env){
     return(r)
   })))
   return(geodynamic)
+}
+
+#' Computed the object used to modify the environmental variables trough the simulation
+#'
+#' @param space the space of the current time-step
+#' @param all_species the list of species at the current time-step
+#'
+#' @returns a modifier object. It can by of any class.
+#' @keywords user
+#' @export
+get_modifiers <- function(space, all_species){
+  stop("this function documents the user function interface only, do not use it.")
+}
+
+#' Allows the user to populate the world at the beginning of a simulation
+#'
+#' @param space the space of the current time-step
+#' @param modifiers the modifier object created by the user
+#'
+#' @returns must return the modified "space$environment".
+#' @keywords user
+#' @export
+apply_modifiers <- function(space, modifiers){
+  stop("this function documents the user function interface only, do not use it.")
 }

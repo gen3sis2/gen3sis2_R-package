@@ -48,3 +48,4 @@ Plot a species' abundance on a given space
   
 }
 }
+\keyword{plot}

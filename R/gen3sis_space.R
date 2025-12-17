@@ -37,7 +37,7 @@
 #' @keywords spaces
 #' @export
 #'
-#' @examples print("TODO")
+#' @example inst/examples/create_spaces_help.R
 create_spaces <- function(env=list(NA),
                          type="raster",
                          duration=list(from=NA, to=NA, by=NA, unit="Ma"),

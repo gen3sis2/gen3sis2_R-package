@@ -9,6 +9,8 @@
 #' @return no return value, called for plot
 #' @keywords plot
 #' 
+#' @example inst/examples/plot_species_presence_help.R
+#' 
 #' @export
 plot_species_presence <- function(species, space, col=NULL) {
   #presence <- species[["abundance"]]
@@ -40,6 +42,9 @@ plot_species_presence <- function(species, space, col=NULL) {
 #' @example inst/examples/plot_species_abundance_help.R
 #' @return no return value, called for plot
 #' @keywords plot
+#' 
+#' @example inst/examples/plot_species_abundance_help.R
+#' 
 #' @export
 plot_species_abundance <- function(species, space, col = NULL) {
   all_presence <- space[["coordinates"]][,1, drop=T]
@@ -96,6 +101,8 @@ plot_space <- function(space, col = NULL) {
 #' 
 #' @return no return value, called for plot
 #' @keywords plot
+#'
+#' @example inst/examples/plot_space_overview_help.R
 #'
 #' @export
 plot_space_overview <- function(space, env_names = NULL, breaks = NULL) {
@@ -334,6 +341,8 @@ plot_space_overview.points <- function(env_names, env_vars, breaks, x_breaks, y_
 #' @return no return value, called for plot
 #' @keywords plot
 #' 
+#' @example inst/examples/plot_summary_help.R
+#' 
 #' @export
 plot_summary <- function(output, summary_title=NULL, summary_legend=NULL) {
   oldpar <- par(no.readonly = TRUE)
@@ -518,7 +527,7 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
   max_sps <- abs(max_sps)
 
   # Gets the plot base/background
-  base_plot <- plot_single(1, space, title, no_data=0, col="navajowhite", title="species ranges")
+  base_plot <- plot_single(values = 1, space = space, title, no_data=0, col="navajowhite", title="species ranges")
   
   # compute the species to plot
   n_species <- length(species_list)
@@ -537,7 +546,7 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
   
   # get species coordinates
   spp_list <- lapply(1:n_sps_max, function(i){
-    sp_coords <- space[["coordinates"]][names(species_list[[i]][["abundance"]]),]
+    sp_coords <- space[["coordinates"]][names(species_list[[i]][["abundance"]]),,drop=FALSE]
     sp_coords <- cbind(sp_coords, rep(i, nrow(sp_coords)))
     colnames(sp_coords) <- c("x","y","shape")
     sp_coords <- as.data.frame(sp_coords)

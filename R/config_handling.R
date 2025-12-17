@@ -306,6 +306,9 @@ verify_config <- function(config) {
 #' or set to NULL if they must be provided before starting a simulation.
 #' @return returns an empty config structure
 #' @keywords config
+#' 
+#' @example inst/examples/create_empty_config_help.R
+#' 
 #' @export
 create_empty_config <- function(){
   config <- list()

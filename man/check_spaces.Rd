@@ -19,6 +19,12 @@ according to \code{check_spaces()}
 Check gen3sis_spaces
 }
 \examples{
-print("TODO")
+\dontrun{
+# checks the structure of the gen3sis_space
+check_spaces(your_spaces)
+
+# return a list with accepted types and time units
+check_spaces(NULL)
+}
 }
 \keyword{spaces}

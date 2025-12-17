@@ -19,4 +19,11 @@ no return value, called for plot
 \description{
 Plot the outline of a given space over time
 }
+\examples{
+library(gen3sis2)
+
+spaces <- readRDS(system.file("extdata/SouthAmerica/landscape/spaces.rds", package="gen3sis2"))
+
+plot_space_overview(spaces)
+}
 \keyword{plot}

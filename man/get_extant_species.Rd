@@ -33,3 +33,4 @@ This function simply identify which species has abundance > 0 in at least one si
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

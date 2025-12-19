@@ -23,6 +23,7 @@
 #' @param config the config of the simulation
 #'
 #' @return a single value or a matrix of divergences between all clusters occurring in clusters_indices
+#' @keywords user
 #' @export
 get_divergence_factor <- function(species, cluster_indices, space, config){
   stop("this function documents the user function interface only, do not use it!")

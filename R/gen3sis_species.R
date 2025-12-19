@@ -11,6 +11,7 @@
 #' @param config the configuration information
 #'
 #' @return a list of species
+#' @keywords user
 #' @export
 create_ancestor_species  <- function(space, config){
   stop("this function documents the user function interface only, do not use it.")
@@ -27,6 +28,7 @@ create_ancestor_species  <- function(space, config){
 #' @param config the configuration information
 #'
 #' @return returns a newly created species occupying the provided initial cells
+#' @keywords simulation
 #' @example inst/examples/create_species_help.R
 #' @export
 create_species <- function(initial_cells, config) {
@@ -92,6 +94,7 @@ update_species_from_abundance <- function(species) {
 #' @param species the species for which the divergence matrix should be produced
 #'
 #' @return the full decompressed divergence matrix
+#' @keywords support
 #' @example inst/examples/get_divergence_matrix_help.R
 #' @export
 get_divergence_matrix <- function(species) {

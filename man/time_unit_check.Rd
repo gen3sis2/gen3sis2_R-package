@@ -16,5 +16,16 @@ if time_unit is character, return TRUE or FALSE. If time_unit = NULL, returns a 
 Check if the used time unit is accepted
 }
 \examples{
-"TODO"
+\dontrun{
+  # return TRUE
+  time_unit_check("a")
+  time_unit_check("ka")
+  time_unit_check("Ma")
+  time_unit_check("Ga")
+  time_unit_check("timestep")
+  
+  # return FALSE
+  time_unit_check("eons")
 }
+}
+\keyword{support}

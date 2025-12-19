@@ -52,3 +52,4 @@ new_species$traits[ , "tratiX"] <- 1
   
 }
 }
+\keyword{simulation}

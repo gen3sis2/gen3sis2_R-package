@@ -35,3 +35,4 @@ This function constructs a matrix of traits present in occupied sites in the spa
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

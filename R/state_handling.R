@@ -92,7 +92,12 @@ restore_state <- function(val, timestep_restart){
     timestep <- as.integer(timestep_restart)
   }
 
-  val <- readRDS(file.path(state_dir, paste0("val_t_", timestep, ".rds")))
+  state_file <- file.path(state_dir, paste0("val_t_", timestep, ".rds"))
+  if(!file.exists(state_file)){
+    stop("State file not found. Can't restart the simulation.")
+  }
+  
+  val <- readRDS(state_file)
   .GlobalEnv$.Random.seed <- val$config$seed
 
   if(timestep > 0){

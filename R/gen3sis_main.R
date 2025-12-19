@@ -6,7 +6,7 @@
 #' @references O. Hagen, B. Flück, F. Fopp, J.S. Cabral, F. Hartig, M. Pontarp, T.F. Rangel, L. Pellissier. (2021). gen3sis: A general engine for eco-evolutionary simulations of the processes that shape Earth’s biodiversity. PLoS biology
 #' @details Gen3sis2 is implemented in a mix of R and C++ code, and wrapped into an R-package. All high-level functions that the user may interact with are written in R, and are documented via the standard R / Roxygen help files for R-packages. Runtime-critical functions are implemented in C++ and coupled to R via the Rcpp framework. Additionally, the package provides several convenience functions to generate input data, configuration files and plots, as well as tutorials in the form of vignettes that illustrate how to declare models and run simulations.
 #' @seealso \code{\link{create_input_config}}   \code{\link{create_spaces_raster}}  \code{\link{run_simulation}}  \code{\link{plot_summary}}
-#' @keywords programming IO iteration methods utilities
+#' @keywords programming IO iteration methods utilities main
 #' @concept gen3sis2 modeling eco-evolutionary macroevolution macroecology mechanisms
 #' @examples
 #' \dontrun{
@@ -74,6 +74,8 @@
 #'
 #' @return a summary object containing a minimal summary on simulation and dynamics progress (alive, speciations, extinctions) as well as useful simulation data
 #'
+#' @keywords main
+#'  
 #' @importFrom utils packageVersion write.table
 #' 
 #' @example inst/examples/run_simulation_help.R
@@ -91,7 +93,7 @@ run_simulation <- function(config = NA,
   ####### User defined variables (config.R) ############
   #----------------------------------------------------#
   system_time_start <- Sys.time() #Starting timer
-  # TODO fix modifiers and trait_evolution to work with the new name
+
   # Checking save_states
   recognized_save_states <- c("all", "last")
   if(!all(is.na(save_state)) && 

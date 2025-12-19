@@ -334,7 +334,26 @@ test_that("wrong timestep_restart usage",{
     )
   })
   
-  # TODO test for starting from a non-existing timestep
+  withr::with_tempdir({
+    suppressWarnings({
+      s <- run_simulation(config = config,
+                          space = input_variables, 
+                          output_directory = getwd(),
+                          save_state = c(1))
+    }) |> capture.output()
+    
+    expect_error(
+      suppressWarnings({
+        run_simulation(config = config,
+                       space = input_variables, 
+                       output_directory = getwd(),
+                       save_state = NA,
+                       timestep_restart = 0)
+      }) |> capture.output(),
+      regexp = "State file not found. Can't restart the simulation."
+    )
+  })
+  
 })
 
 ## Test for call_observer

@@ -7,6 +7,9 @@
 #' @param col a vector containing a color palette. For discrete values, the first element in the vector will be assigned to zero values. If NULL, gen3sis2 internal palette will be used. Default is NULL   
 #' @example inst/examples/plot_species_presence_help.R
 #' @return no return value, called for plot
+#' @keywords plot
+#' 
+#' @example inst/examples/plot_species_presence_help.R
 #' 
 #' @export
 plot_species_presence <- function(species, space, col=NULL) {
@@ -38,6 +41,9 @@ plot_species_presence <- function(species, space, col=NULL) {
 #' 
 #' @example inst/examples/plot_species_abundance_help.R
 #' @return no return value, called for plot
+#' @keywords plot
+#' 
+#' @example inst/examples/plot_species_abundance_help.R
 #' 
 #' @export
 plot_species_abundance <- function(species, space, col = NULL) {
@@ -63,7 +69,7 @@ plot_species_abundance <- function(species, space, col = NULL) {
 #' @param col a vector containing a color palette. For discrete values, the first element in the vector will be assigned to zero values. If NULL, gen3sis2 internal palette will be used. Default is NULL
 #' 
 #' @return no return value, called for plot
-#'
+#' @keywords plot
 #' @export
 plot_space <- function(space, col = NULL) {
   
@@ -94,6 +100,9 @@ plot_space <- function(space, col = NULL) {
 #' @importFrom tidyterra geom_spatraster
 #' 
 #' @return no return value, called for plot
+#' @keywords plot
+#'
+#' @example inst/examples/plot_space_overview_help.R
 #'
 #' @export
 plot_space_overview <- function(space, env_names = NULL, breaks = NULL) {
@@ -330,6 +339,9 @@ plot_space_overview.points <- function(env_names, env_vars, breaks, x_breaks, y_
 #' @importFrom grDevices rgb colorRampPalette
 #' @importFrom stringr str_split str_remove
 #' @return no return value, called for plot
+#' @keywords plot
+#' 
+#' @example inst/examples/plot_summary_help.R
 #' 
 #' @export
 plot_summary <- function(output, summary_title=NULL, summary_legend=NULL) {
@@ -453,6 +465,7 @@ plot_summary <- function(output, summary_title=NULL, summary_legend=NULL) {
 #' @param col a vector containing a color palette. For discrete values, the first element in the vector will be assigned to zero values. If NULL, gen3sis2 internal palette will be used. Default is NULL
 #' @example inst/examples/plot_richness_help.R
 #' @return no return value, called for plot
+#' @keywords plot
 #' 
 #' @export
 plot_richness <- function(species_list, space, col = NULL) {
@@ -479,6 +492,7 @@ plot_richness <- function(species_list, space, col = NULL) {
 #' @param zero_col a color to use for zero values, default is "navajowhite3"
 #' 
 #' @return if type is "raster" the function returns a color scale, if type is "points" the function returns a vector of colors
+#' @keywords plot
 #' @export
 #' @example inst/examples/set_color_help.R
 set_color <- function(values, colfun=color_richness, zero_col="navajowhite"){
@@ -505,6 +519,7 @@ set_color <- function(values, colfun=color_richness, zero_col="navajowhite"){
 #' @param max_sps maximum number of plotted species, not recommended above 20
 #' @example inst/examples/plot_ranges_help.R
 #' @return no return value, called for plot
+#' @keywords plot
 #' 
 #' @export
 plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
@@ -512,7 +527,7 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
   max_sps <- abs(max_sps)
 
   # Gets the plot base/background
-  base_plot <- plot_single(1, space, title, no_data=0, col="navajowhite", title="species ranges")
+  base_plot <- plot_single(values = 1, space = space, title, no_data=0, col="navajowhite", title="species ranges")
   
   # compute the species to plot
   n_species <- length(species_list)
@@ -531,7 +546,7 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
   
   # get species coordinates
   spp_list <- lapply(1:n_sps_max, function(i){
-    sp_coords <- space[["coordinates"]][names(species_list[[i]][["abundance"]]),]
+    sp_coords <- space[["coordinates"]][names(species_list[[i]][["abundance"]]),,drop=FALSE]
     sp_coords <- cbind(sp_coords, rep(i, nrow(sp_coords)))
     colnames(sp_coords) <- c("x","y","shape")
     sp_coords <- as.data.frame(sp_coords)
@@ -1111,6 +1126,7 @@ check_args <- function(args){
 #' Define gen3sis richness color scale for non colour-vision deficient
 #' @param n corresponds to the \link{colorRampPalette} parameter 
 #' @return returns a \link{colorRampPalette} function with the gen3sis richness colors
+#' @keywords plot
 #' @export
 color_richness_CVDCBP <- colorRampPalette(
   c("#B2F2FD", "#81EEEA", "#61E5C9", "#63DAA0", "#73CE79", "#85BF51", "#94AD2F", "#9B951B",
@@ -1121,6 +1137,7 @@ color_richness_CVDCBP <- colorRampPalette(
 #' Define richness color scale which is colour-vision deficient and colour-blind people safe based on scientific colour maps by Fabio Crameri
 #' @param n corresponds to the \link{colorRampPalette} parameter 
 #' @return returns a \link{colorRampPalette} function with the gen3sis richness colors
+#' @keywords plot
 #' @export
 color_richness <- colorRampPalette(
   c("#440154FF", "#482878FF", "#3E4A89FF", "#31688EFF", "#26828EFF", "#1F9E89FF", "#35B779FF",
@@ -1164,6 +1181,7 @@ color_richness <- colorRampPalette(
 #' @param title a string with plot title
 #'
 #' @returns no return value, called for plot
+#' @keywords plot
 #' @export
 raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
   user_fun <- getOption("gen3sis2.raster_plot_aesthetics", default = NULL)
@@ -1213,6 +1231,7 @@ raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
 #' @param title a string with plot title
 #'
 #' @returns no return value, called for plot
+#' @keywords plot
 #' @export
 sf_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
   user_fun <- getOption("gen3sis2.sf_plot_aesthetics", default = NULL)

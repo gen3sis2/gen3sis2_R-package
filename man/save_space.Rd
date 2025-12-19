@@ -26,3 +26,4 @@ other observer functions relying on the space to be present (e.g. save_species)
 \seealso{
 \code{\link{save_species}}
 }
+\keyword{support}

@@ -19,7 +19,7 @@ call_main_observer <- function(data, vars, config) {
 
 #' This function can be called within the observer function to save the current occupancy pattern
 #' @return no return value, called for side effects
-#' 
+#' @keywords support
 #' @example inst/examples/save_occupancy_help.R
 #' @export
 save_occupancy <- function() {
@@ -37,7 +37,7 @@ save_occupancy <- function() {
 
 #' This function can be called within the observer function to save the current richness pattern
 #' @return no return value, called for side effects
-#' 
+#' @keywords support
 #' @seealso \code{\link{save_species}}   
 #' @example inst/examples/save_richness_help.R
 #' @export
@@ -55,7 +55,7 @@ save_richness <- function() {
 
 #' This function can be called within the observer function to save the current phylogeny.
 #' @return no return value, called for side effects
-#' 
+#' @keywords support
 #' @example inst/examples/save_phylogeny_help.R
 #' @export
 save_phylogeny <- function(){
@@ -73,7 +73,7 @@ save_phylogeny <- function(){
 
 #' This function can be called within the observer function to save the full species list.
 #' @return no return value, called for side effects
-#' 
+#' @keywords support
 #' @seealso \code{\link{save_space}}   
 #' @example inst/examples/save_species_help.R
 #' @export
@@ -93,7 +93,7 @@ save_species <- function() {
 #' the current space, can be called independently by the user and is called by 
 #' other observer functions relying on the space to be present (e.g. save_species)
 #' @return no return value, called for side effects
-#' 
+#' @keywords support
 #' @seealso \code{\link{save_species}}   
 #' @example inst/examples/save_space_help.R
 #' @export
@@ -112,7 +112,7 @@ save_space <- function() {
 
 #' This function can be called within the observer function to save the species abundances.
 #' @return no return value, called for side effects
-#' 
+#' @keywords support
 #' @seealso \code{\link{save_species}}   
 #' @example inst/examples/save_abundance_help.R
 #' @export
@@ -123,7 +123,7 @@ save_abundance <- function() {
 
 #' This function can be called within the observer function to save the species traits.
 #' @return no return value, called for side effects
-#' 
+#' @keywords support
 #' @seealso \code{\link{save_species}}   
 #' @example inst/examples/save_traits_help.R
 #' @export
@@ -134,7 +134,7 @@ save_traits <- function() {
 
 #' This function can be called within the observer function to save the compressed species divergence.
 #' @return no return value, called for side effects
-#' 
+#' @keywords support
 #' @seealso \code{\link{save_species}}   
 #' @example inst/examples/save_divergence_help.R
 #' @export
@@ -223,6 +223,7 @@ construct_community_matrices <- function(species_list, space, xy, empty_sites, m
 #' @param empty_sites if TRUE, sites with no species will be included in the matrix. Default is FALSE.
 #'
 #' @returns an abundance matrix with sites as rows and species as columns.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_abundance_matrix_help.R
@@ -246,6 +247,7 @@ get_abundance_matrix <- function(species_list, space = NULL, xy=FALSE, empty_sit
 #' @param empty_sites if TRUE, sites with no species will be included in the matrix. Default is FALSE.
 #'
 #' @returns a presence matrix with sites as rows and species as columns.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_presence_matrix_help.R
@@ -267,6 +269,7 @@ get_presence_matrix <- function(species_list, space = NULL, xy=FALSE, empty_site
 #' @param space the space to calculate over.
 #'
 #' @returns a numeric value of the mean richness.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_mean_richness_help.R
@@ -282,6 +285,7 @@ get_mean_richness <- function(species_list, space){
 #' @param summarize_fun a function or a named vector of functions to summarize trait values. Accept custom functions.
 #'
 #' @returns a trait matrix with sites as rows and traits as columns.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_traits_matrix_help.R
@@ -335,6 +339,7 @@ get_traits_matrix <- function(species_list, summarize_fun = NULL) {
 #' @param species_list a list of species to include in the calculations.
 #'
 #' @returns a data.frame with traits values, abundance, and site and species indexes.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_trait_abundance_help.R
@@ -364,6 +369,7 @@ get_trait_abundance <- function(species_list){
 #' @param traits a vector with trait names.
 #' @references De Bello, F., Lepš, J. and Sebastià, M.-T. (2006), Variations in species and functional plant diversity along climatic and grazing gradients. Ecography, 29: 801-810. https://doi.org/10.1111/j.2006.0906-7590.04683.x
 #' @returns a matrix with site as rows and trait diversity as columns.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_trait_diversity_help.R
@@ -404,6 +410,7 @@ get_trait_diversity <- function(species_list, traits = NULL){
 #' @param traits a vector with trait names.
 #' @references Mouillot D, Mason WH, Dumay O, Wilson JB. Functional regularity: a neglected aspect of functional diversity. Oecologia. 2005 Jan;142(3):353-9. doi: 10.1007/s00442-004-1744-7. Epub 2004 Nov 20. PMID: 15655690.
 #' @returns a matrix with site as rows and trait eveness as columns.
+#' @keywords support
 #' @export
 #'
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
@@ -468,6 +475,7 @@ get_trait_evenness <- function(species_list, traits = NULL){
 #' @param space the space to calculate over.
 #'
 #' @returns a vector containing species prevalence in decimal percentages.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_species_prevalence_help.R
@@ -490,6 +498,7 @@ get_species_prevalence <- function(species_list, space){
 #' @param species_list a list of species to include in the calculations.
 #'
 #' @returns a vector with extant species IDs.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_extant_species.R
@@ -511,6 +520,7 @@ get_extant_species <- function(species_list) {
 #' @param empty_sites if TRUE, sites with no species will be included in the matrix. Default is FALSE.
 #'
 #' @returns a matrix with sites as rows and abundance as column.
+#' @keywords support
 #' @export
 #' 
 #' @seealso 
@@ -553,6 +563,7 @@ get_site_abundance <- function(species_list, space, xy = F, empty_sites = F) {
 #' @param space the space to calculate over.
 #'
 #' @returns a named vector containing species (names) and its range (values). 
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_species_range_help.R
@@ -569,6 +580,7 @@ get_species_range <- function(species_list, space) {
 #' @param space the space to calculate over.
 #'
 #' @returns a named vector with the weighted endemism (values) for each site (names).
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_weighted_endemism_help.R
@@ -603,6 +615,7 @@ get_weighted_endemism <- function(species_list, space) {
 #' @param trim_sites if TRUE, species traits will be trimmed to the specified sites. Default is FALSE. 
 #'
 #' @returns a list with selected species.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/get_species_subset_help.R
@@ -632,6 +645,7 @@ get_species_subset <- function(species_list, site_vector, trim_sites = FALSE){
 #' @param site_vector a vector with site indexes.
 #'
 #' @returns a gen3sis_space_type object with the specified sites.
+#' @keywords support
 #' @export
 #' @seealso [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/subsetLandscape.R)
 #' @example inst/examples/support_functions/get_space_subset_help.R
@@ -671,6 +685,7 @@ get_space_subset <- function(space, site_vector){
 #' @param gen3sis_output a simulation output object.
 #'
 #' @returns a matrix with timesteps as rows and speciation, extinction and diversification rates as columns.
+#' @keywords support
 #' @export
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/diversification_summary_help.R
@@ -696,6 +711,7 @@ diversification_summary <- function(gen3sis_output){
 #' @param site_vector a vector with site indexes.
 #'
 #' @returns a distance matrix with only the specified sites.
+#' @keywords support
 #' @export
 #' @seealso [Based on Thomas Keggin's implementation for gen3sis](https://gitlab.ethz.ch/ele-public/gen3sis_wiki/-/blob/master/tools/keggin/distanceSubset.R)
 #' 

@@ -26,6 +26,7 @@ select_habitable_hab <- function(what) {
 #' @param space the space to calculate the richnness over
 #'
 #' @return a vector with the richness for every cell in the input space
+#' @keywords support
 #' @example inst/examples/get_geo_richness_help.R
 #' @seealso \code{\link{plot_richness}} 
 #' @export

@@ -13,6 +13,7 @@
 #' @param config the current config
 #'
 #' @return the mutated species traits matrix
+#' @keywords user
 #' @export
 apply_trait_evolution <- function(species, cluster_indices, space, config){
   stop("this function documents the user function interface only, do not use it")
@@ -63,6 +64,7 @@ evolve <- function(species, space, distance_matrix, config){
 #' @param space the current space
 #' @param config the general config
 #' @return returns an invisible empty species traits when no evolution is considered
+#' @keywords simulation
 #'
 #' @export
 evolution_mode_none <- function(species, cluster_indices, space, config){

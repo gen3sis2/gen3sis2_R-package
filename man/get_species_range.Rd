@@ -35,3 +35,4 @@ This function counts the number of sites each species is present in
 \seealso{
 \code{vignette("h-support-functions", package = "gen3sis2")}
 }
+\keyword{support}

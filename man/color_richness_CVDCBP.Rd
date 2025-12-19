@@ -15,3 +15,4 @@ returns a \link{colorRampPalette} function with the gen3sis richness colors
 \description{
 Define gen3sis richness color scale for non colour-vision deficient
 }
+\keyword{plot}

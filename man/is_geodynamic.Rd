@@ -42,3 +42,4 @@ env_stc <- list(
 # Check if the environment data is geodynamic
 gen3sis2:::is_geodynamic(env_stc)
 }
+\keyword{spaces}

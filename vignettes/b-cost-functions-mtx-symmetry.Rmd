@@ -1,5 +1,5 @@
 ---
-title: "3 - Creating spaces: cost functions and matrices symmetry"
+title: "2.1 Creating spaces: cost functions and matrices symmetry"
 subtitle: "all you need to know about how to write nice cost functions and how to make dispersal harder in specific directions"
 date: "`r format(Sys.time(),  '%d.%m.%Y')`"
 output: rmarkdown::html_vignette
@@ -163,7 +163,7 @@ This data goes from 65Ma to current time, in a time-resolution of 5Ma. Let's vis
 #   plot(elevation[[1]], main = "Elevation")
 # }
 # par(old_par)
-knitr::include_graphics(system.file("extdata/SouthAmerica/images/v2varplot.png", package = "gen3sis2"))
+knitr::include_graphics("../man/figures/v2varplot.png")
 ```
 
 Nice. Now, we can create a input space using the *create_spaces_raster* function, just like in the previous vignette. We will use the *withr* package to save it in temporary directory, because we are only interested in the distance matrix.

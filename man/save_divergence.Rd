@@ -22,3 +22,4 @@ This function can be called within the observer function to save the compressed 
 \seealso{
 \code{\link{save_species}}
 }
+\keyword{support}

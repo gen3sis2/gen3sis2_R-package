@@ -24,6 +24,7 @@
 #' @param config the config of the simulation
 #'
 #' @return a numerical vector of length num_draws with dispersal values
+#' @keywords user
 #' @export
 get_dispersal_values <- function(num_draws, species, space, config) {
   stop("this function documents the user function interface only, do not use it")

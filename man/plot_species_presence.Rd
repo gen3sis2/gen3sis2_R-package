@@ -20,30 +20,19 @@ no return value, called for plot
 Plot a species' presence on a given space
 }
 \examples{
-\dontshow{
-  #TODO change this to a working example
-}
+library(gen3sis2)
 
-\dontrun{
-  # get path to output objects
-  datapath <- system.file(file.path("extdata", "WorldCenter"), package = "gen3sis")
-  
-  # load space and species at time step zero
-  space_t_0 <- readRDS(
-    file.path(datapath, "output/config_worldcenter", "spaces", "space_t_0.rds"))
-  species_t_0 <- readRDS(
-    file.path(datapath, "output/config_worldcenter", "species", "species_t_0.rds"))
-  
-  # plot species 13 range
-  plot_species_presence(species_t_0[[13]], space_t_0)
-  # oh, a South American one!
-  
-  # plot ranges of 3 species (i.e. 1, 21 and 32)
-  oldpar <- par(no.readonly = TRUE)
-  par(mfrow=c(1,3))
-  plot_species_presence(species_t_0[[1]], space_t_0)
-  plot_species_presence(species_t_0[[7]], space_t_0)
-  plot_species_presence(species_t_0[[11]], space_t_0)
-  par(oldpar)
+all_species <- readRDS(system.file("extdata/SouthAmerica/species_and_spaces/species_t_2.rds", package = "gen3sis2"))
+one_species <- all_species[[1]]
+space <- readRDS(system.file("extdata/SouthAmerica/species_and_spaces/space_t_2.rds", package = "gen3sis2"))
+
+plot_species_presence(one_species, space)
+library(gen3sis2)
+
+all_species <- readRDS(system.file("extdata/SouthAmerica/species_and_spaces/species_t_2.rds", package = "gen3sis2"))
+one_species <- all_species[[1]]
+space <- readRDS(system.file("extdata/SouthAmerica/species_and_spaces/space_t_2.rds", package = "gen3sis2"))
+
+plot_species_presence(one_species, space)
 }
-}
+\keyword{plot}

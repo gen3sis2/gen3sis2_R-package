@@ -15,3 +15,4 @@ returns a \link{colorRampPalette} function with the gen3sis richness colors
 \description{
 Define richness color scale which is colour-vision deficient and colour-blind people safe based on scientific colour maps by Fabio Crameri
 }
+\keyword{plot}

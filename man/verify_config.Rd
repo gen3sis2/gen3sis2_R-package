@@ -35,3 +35,4 @@ verify_config(config_object) # FALSE! this is an invalid config
 \seealso{
 \code{\link{create_input_config}}    \code{\link{write_config_skeleton}}
 }
+\keyword{config}

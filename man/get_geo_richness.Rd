@@ -45,3 +45,4 @@ calculate the richness of a list of species over a given space
 \seealso{
 \code{\link{plot_richness}}
 }
+\keyword{support}

@@ -33,3 +33,4 @@ vals <- c(0,2,2,3,4,5,5,5)*10
 rc <- set_color(vals, color_richness, "navajowhite3")
 plot(1:length(vals), vals, col=rc, pch=15, cex=2)
 }
+\keyword{plot}

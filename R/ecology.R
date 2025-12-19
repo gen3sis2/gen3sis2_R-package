@@ -83,7 +83,6 @@ loop_ecology <- function(config, data, vars) {
     NEW_abd <- config$gen3sis$ecology$apply_ecology(abundance, traits, local_environment, config)
 
     # colnames(NEW_abd) <- coo_sp_ti_idi
-    # TODO check if colnames(geo_sp_ti[,coo_sp_ti_idi]) should be used see line 622+-
     names(NEW_abd) <- coo_sp
     #abd_threshold <- config$exp$abundance_threshold
     shalldie <- NEW_abd == 0
@@ -109,7 +108,6 @@ loop_ecology <- function(config, data, vars) {
     ##}
   species_list <- lapply(data$all_species, function(i){limit_species_to_cells(i, names(i[["abundance"]])[i[["abundance"]] != 0])})
   data$all_species <- species_list
-  
 
   if(config$gen3sis$general$verbose>=3){
     cat(paste("exiting ecology module @ time", vars$ti, "\n"))

@@ -88,9 +88,6 @@ prepare_directories <- function(config_file = NA,
   return(dir)
 }
 
-
-
-
 #' Creates either an empty configuration or a pre-filled configuration object from a config file
 #'
 #' @param config_file the path to a valid configuration file. if NA it creates an empty config
@@ -148,8 +145,9 @@ internal_categories <- c("general",
                          "initialization",
                          "dispersal",
                          "speciation",
-                         "mutation",
-                         "ecology"
+                         "trait_evolution",
+                         "ecology",
+                         "space_modifier"
                          )
 
 
@@ -170,7 +168,9 @@ populate_config <- function(config, config_file) {
   setwd(config_wd)
   on.exit(setwd(current_wd), add = TRUE)
    
-  eval(machine_config$machine_config, envir = user_config_env)
+  for (i in seq_along(machine_config$machine_config)){
+    eval(machine_config$machine_config, envir = user_config_env) 
+  }
   
   # source(config_file, chdir=TRUE, local=user_config_env)
   for ( category in internal_categories) {
@@ -189,6 +189,7 @@ populate_config <- function(config, config_file) {
   for (category in internal_categories){
     presence <- presence | (user_settings %in% names(config[["gen3sis"]][[category]]))
   }
+  
   if(any(!presence)){
     for( i in user_settings[which(!presence)] ) {
       config[["user"]][[i]] <- user_config_env[[i]]
@@ -302,7 +303,7 @@ verify_config <- function(config) {
 #' @details All config fields are created and set to NA if they can be omitted by the user
 #' or set to NULL if they must be provided before starting a simulation.
 #' @return returns an empty config structure
-#' @noRd
+#' @export
 create_empty_config <- function(){
   config <- list()
   config[["gen3sis"]] <- list("general" = list( "random_seed" = NA,
@@ -325,10 +326,13 @@ create_empty_config <- function(){
                             "speciation" = list( "divergence_threshold" = NULL,
                                                  "get_divergence_factor" = NULL
                                                  ),
-                            "mutation" = list( "apply_evolution" = NULL
+                            "trait_evolution" = list( "apply_trait_evolution" = NULL
                                                ),
                             "ecology" = list("apply_ecology" = NULL
-                                             )
+                                             ),
+                            "space_modifier" = list("get_modifiers" = NULL, 
+                                                    "apply_modifiers" = NULL
+                                                    )
                             )
   config[["user"]] <- list()
   config[["directories"]] <- list()
@@ -447,7 +451,7 @@ simulation_timeframe <- function(step_time, time_unit, space = space, needs_scal
 #' @noRd
 config_interpreter <- function(config_file) {
   # read and clean
-  human_config <- readLines(config_file)
+  human_config <- suppressWarnings(readLines(config_file))
   human_config <- human_config[!grepl("^\\s*#", human_config)]
   
   # ensure compatibility
@@ -479,11 +483,14 @@ config_interpreter <- function(config_file) {
     any(grepl("\\bscale_time\\b", human_config[lines]))
   })
   
-  # add divergence_threshold # TODO deactivated for now
+  ### deactivated for now
+  # add divergence_threshold 
   # uses_scale_time <- c(
   #   uses_scale_time,
   #   divergence_threshold = any(grepl("\\bscale_time\\b", human_config[grepl("^divergence_threshold", human_config)]))
   # )
+  ###
+  
   
   needs_scaling <- !uses_scale_time
   

@@ -18,13 +18,13 @@ Plotting in `gen3sis2` is quite easy, as the package features several plotting f
 -   `plot_abundance`
 -   `plot_richness`
 
-The core of plotting functions of `gen3sis2` is built with `ggplot2`. Among other things, this allows for plots to be easily customizable. In this vignette we will go trough an overwiew of `gen3sis2` plotting functions and how to customize your plot.
+The core of plotting functions of `gen3sis2` is built with `ggplot2`. Among other things, this allows for plots to be easily customizable. In this vignette, we will go through an overview of `gen3sis2` plotting functions and how to customize your plot.
 
 # Visualizing the space
 
-## From you spaces.rds
+## From your spaces.rds
 
-If you inspect your spaces.rds file, you will see that it consists of an organized list of matrices and vectors, which aren't so good for visualization. To better visualize the spaces created, users can use the `plot_space_overview` function, that will plot one or more variable for defined timesteps.
+If you inspect your spaces.rds file, you will see that it consists of an organized list of matrices and vectors, which aren't too good for visualization. To better visualize the spaces created, users can use the `plot_space_overview` function, that will plot one or more variable for defined time-steps.
 
 Let's see an example:
 
@@ -36,14 +36,14 @@ space <- readRDS(system.file("extdata/SouthAmerica/landscape/spaces.rds", packag
 # ... and plot it!
 # "env_names" selects the variables of interest
 # "breaks" selects the timesteps of interest
-plot_space_overview(space, env_names = "temp", breaks = c(60, 50, 40, 30, 20, 10))
+plot_space_overview(space, env_names = "temp", breaks = c(-5, -2, 0))
 ```
 
 ## From inside the simulation (called in the config)
 
-The observer function is a great place to make plot calls, and `gen3sis2` features several functions to be called in this context. For example, it is possible to plot the space in the current timestep using the function `plot_space`.
+The observer function is a great place to make plot calls, and `gen3sis2` features several functions to be called in this context. For example, it is possible to plot the space in the current time-step using the function `plot_space`.
 
-As this vignette is for illustration purposes only, let's define a function that will alow us to simulation how your space looks like inside the simulation:
+As this vignette is for illustration purposes only, let's define a function that will allow us to simulate how your space looks like inside the simulation:
 
 ```{r}
 simulate_space_format <- function(config,space,output_directory) {
@@ -76,7 +76,7 @@ data <- simulate_space_format(
 names(data)
 ```
 
-[!] IMPORTANT: This is done just for this vignette, to facilitate the example.
+[!] IMPORTANT: This is done only for this vignette, to facilitate the example.
 
 Now, we can call the plot function in a very easy way:
 
@@ -90,7 +90,7 @@ Again, this function is meant to be called *inside* the simulation and configure
 
 ## Presence
 
-The `plot_species_presence` is an useful function that users can use to plot the species' presence across the space. To
+The `plot_species_presence` is a useful function that users can use to plot the species' presence across the space.
 
 ```{r}
 # Simulate species in random places
@@ -115,7 +115,7 @@ sp$abundance[] <- sample(1:5, 12, replace = TRUE)
 plot_species_abundance(sp, data$space)
 ```
 
-The scale of the plot is adaptative. If the abundance vector of the species have few unique values, it creates a discrete scale. However, if the vector have a lot of unique values, it creates a continuous scale:
+The scale of the plot is adaptive If the abundance vector of the species has few unique values, it creates a discrete scale. However, if the vector has a lot of unique values, it creates a continuous scale:
 
 ```{r}
 # Simulate species in random places...
@@ -130,7 +130,7 @@ plot_species_abundance(sp, data$space)
 
 ## Richness
 
-Species richness across the space is a very useful information for users. For that reason, `gen3sis2` features the `plot_richness` function, which can be used within the config to plot species richness. Different of the other functions, this one will recieve a species list, not a single species. But, besides of that, it works in the very same way:
+Species richness across the space is very useful information for users. For that reason, `gen3sis2` features the `plot_richness` function, which can be used within the config to plot species richness. Different from the other functions, this one will receive a species list, not a single species. But, besides that, it works in the very same way:
 
 ```{r}
 # Simulating a species list
@@ -146,11 +146,11 @@ plot_richness(species_list, data$space)
 
 # Plot aesthetics customization
 
-Many aspects of the plot can be customized, ranging from simple to complex custom settings. This is possible due to the plotting core being built with `ggplot2`. Let's see now some possibilities.
+Many aspects of the plot can be customized, ranging from simple to complex custom settings. This is possible due to the plotting core being built with `ggplot2`. Let's see some possibilities.
 
 ## Customizing color
 
-The simplest way to customize plots its defining colors, using the `col` parameter. Each context have its specifications, so the user needs to read functions' documentation to be aware of the proper usage. However, let's go over one simple example:
+The simplest way to customize plots is by defining colors, using the `col` parameter. Each context has its specifications, so the user needs to read functions' documentation to be aware of the proper usage. However, let's go over one simple example:
 
 ```{r}
 # Simulate species in random places
@@ -164,7 +164,7 @@ plot_species_presence(sp, data$space, col = c("lightgray","#8B0000"))
 
 ## Applying `ggplot2` syntax
 
-As the plotting core of `gen3sis2` is the `ggplot2` package, plotting functions return ggplot2 objects. As a result, its natively possible to apply `ggplot2` syntax `gen3sis2` plots:
+As the plotting core of `gen3sis2` is the `ggplot2` package, plotting functions return ggplot2 objects. As a result, it's natively possible to apply `ggplot2` syntax `gen3sis2` plots:
 
 ```{r}
 # storing plot in an object 
@@ -180,9 +180,9 @@ p +
 
 ## Customizing `gen3sis2` default aesthetics
 
-Default plot aesthetics in `gen3sis2` are stored as internal functions `.default_raster_plot_aesthetics`, for raster type spaces, and `.default_sf_plot_aesthetics`, for h3 and points type spaces. This allow users to customize the aesthetics from all plots in session, by overriding package's options:
+Default plot aesthetics in `gen3sis2` are stored as internal functions `.default_raster_plot_aesthetics`, for raster type spaces, and `.default_sf_plot_aesthetics`, for h3 and points type spaces. This allows users to customize the aesthetics from all plots in the session, by overriding package's options:
 
-First, let's see how the default raster aesthetics looks like:
+First, let's see how the default raster aesthetics look:
 
 ```{r}
 gen3sis2:::.default_raster_plot_aesthetics
@@ -211,7 +211,8 @@ options(gen3sis2.raster_plot_aesthetics = function(space, col, x_breaks, y_break
       panel.grid.minor = ggplot2::element_line(color = alpha("white", 0.4), linewidth = 0.1),
       axis.text = ggplot2::element_text()
     ),
-    ggplot2::labs(title = "Look, mom. It's custom!") # and title.
+    ggplot2::labs(title = "Look, mom. It's custom!"), # and title.
+    ggplot2::coord_fixed(ratio = 1) # To freeze the map ratio.
   )
 })
 ```
@@ -221,4 +222,3 @@ Now the plots should have this new aesthetics:
 ```{r}
 plot_species_presence(sp, data$space)
 ```
-

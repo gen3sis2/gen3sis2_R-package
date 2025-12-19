@@ -18,7 +18,7 @@ plot_species_presence <- function(species, space, col=NULL) {
   all_presence[names(species[["abundance"]])] <- 1
   
   if(is.null(col)){
-    col <- set_color(all_presence, type=space$`type`)
+    col <- set_color(all_presence)
   }
   
   conditional_plot(title = paste0("species_presence_", species$id), # title
@@ -46,7 +46,7 @@ plot_species_abundance <- function(species, space, col = NULL) {
   all_presence[names(species[["abundance"]])] <- species[["abundance"]]
   
   if(is.null(col)){
-    col <- set_color(all_presence, type=space$`type`)
+    col <- set_color(all_presence)
   }
   
   conditional_plot(title = paste0("species_abundance_", species$id),
@@ -460,7 +460,7 @@ plot_richness <- function(species_list, space, col = NULL) {
   #attribute color
 
   if(is.null(col)){
-    col <- set_color(richness, type=space$`type`)
+    col <- set_color(richness)
   }
   
   conditional_plot(title = "Richness",
@@ -477,11 +477,11 @@ plot_richness <- function(species_list, space, col = NULL) {
 #' @param colfun a color function to use, default is color_richness, 
 #' consider using color_richness_CVDCBP for color-blind safe colors
 #' @param zero_col a color to use for zero values, default is "navajowhite3"
-#' @param type a string, see \code{\link{check_spaces}} for options or use \code{check_spaces()$type} # TODO deprecated
+#' 
 #' @return if type is "raster" the function returns a color scale, if type is "points" the function returns a vector of colors
 #' @export
 #' @example inst/examples/set_color_help.R
-set_color <- function(values, colfun=color_richness, zero_col="navajowhite", type="raster"){
+set_color <- function(values, colfun=color_richness, zero_col="navajowhite"){
   max_val <- max(values, na.rm=TRUE)
   min_val <- min(values, na.rm=TRUE)
   if (max_val==0){
@@ -494,13 +494,6 @@ set_color <- function(values, colfun=color_richness, zero_col="navajowhite", typ
   }
   
   return(rc)
-  # if (type%in%c("raster")){
-  #   return(rc)
-  # } else {
-  #   cols_cut <- cut(values,length(rc))
-  #   colors <- rc[cols_cut]
-  #   return(colors)
-  # }
 }
 
 
@@ -592,7 +585,7 @@ conditional_plot <- function(title, plot_fun, ...){
     config <- dynGet("config")
     plot_folder <- file.path(config$directories$output, "plots", title)
     dir.create(plot_folder, showWarnings=FALSE, recursive=TRUE)
-    file_name <- file.path(plot_folder, paste0(title, "_t_", space$id, ".svg"))
+    file_name <- file.path(plot_folder, paste0(title, "_t_", space$id, ".png"))
     
     # svg(file_name)
     # p <- plot_fun(...)
@@ -955,7 +948,7 @@ plot_multiple.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) 
         colors = color_richness(20),
         na.value = "transparent",
         name = v) +
-      sf_plot_aesthetics(space, col, x_breaks, y_breaks, title = paste0(v, " ", space$timestep, " t_", space[["id"]])) # gen3sis2 standard aesthetics
+      raster_plot_aesthetics(space, col, x_breaks, y_breaks, title = paste0(v, " ", space$timestep, " t_", space[["id"]])) # gen3sis2 standard aesthetics
   })
   
   patchwork::wrap_plots(plots) # wrap everything up and plot it 
@@ -1150,13 +1143,15 @@ color_richness <- colorRampPalette(
     ggplot2::theme_bw(),
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5),
-      panel.grid.major = ggplot2::element_line(color = scales::alpha("darkgray", 0.5), linewidth = 0.2),
-      panel.grid.minor = ggplot2::element_line(color = scales::alpha("darkgray", 0.4), linewidth = 0.1),
-      axis.text = element_blank()
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
     ),
     ggplot2::labs(
       title = title
-    )
+    ),
+    ggplot2::coord_fixed(ratio = 1)
   )
 }
 
@@ -1199,11 +1194,13 @@ raster_plot_aesthetics <- function(space, col, x_breaks, y_breaks, title) {
       plot.title = ggplot2::element_text(hjust = 0.5),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
-      axis.text = element_blank()
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
     ),
     ggplot2::labs(
       title = title
-    )
+    ),
+    ggplot2::coord_sf()
   )
 }
 

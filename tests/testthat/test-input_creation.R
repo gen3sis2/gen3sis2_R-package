@@ -94,27 +94,20 @@ test_that("NA duration in create_spaces_raster",{
   
   # test core
   # Geostatic
-  
   withr::with_tempdir({
-    warnigns_cap <- capture_warnings(
-      create_spaces_raster(
-        raster_list = list(some_var = r),
-        cost_function = cf,
-        directions=4,
-        output_directory = file.path(getwd(), "output"),
-        full_dists = TRUE,
-        overwrite_output = TRUE,
-        verbose = FALSE,
-        duration=NA,
-        geodynamic=FALSE
-      )
-    )
     
-    expect_contains(
-      warnigns_cap, 
-      c("Duration is ideally informed as a list with from, to, by and unit.",
-        "Assuming default duration from -latest time to zero by 1 Ma.")
-    )
+    expect_error(create_spaces_raster(
+      raster_list = list(some_var = r),
+      cost_function = cf,
+      directions=4,
+      output_directory = file.path(getwd(), "output"),
+      full_dists = TRUE,
+      overwrite_output = TRUE,
+      verbose = FALSE,
+      duration=NA,
+      geodynamic=FALSE
+    ),
+    "Duration is ideally informed as a list with from, to, by and unit.")
   })
 })
 
@@ -292,7 +285,7 @@ test_that("create_directories overwrite protection works", {
 test_that("create_directories works", {
   # mocking base functions is no longer feasible, overwrite is not tested as it calls "unlink"
   new_dirs <- list()
-  local_mock(dir.create = function(new_dir, ...){ new_dirs <<- append(new_dirs, new_dir)} )
+  local_mocked_bindings(dir.create = function(new_dir, ...){ new_dirs <<- append(new_dirs, new_dir)} )
 
   create_directories("test", overwrite = FALSE, full_matrices = FALSE)
   expect_true("test" %in% new_dirs)

@@ -284,7 +284,7 @@ setup_space <- function(config, data, vars) {
 #' @return the general vals(config, data, vars) list
 #' @noRd
 restrict_species <- function(config, data, vars) {
-  points_coordinates <- data[["space"]][["coordinates"]] # TODO replace loop to reduce code
+  points_coordinates <- data[["space"]][["coordinates"]] 
   if(is.vector(points_coordinates)){
     points_coordinates <- matrix(points_coordinates, nrow=1)
     colnames(points_coordinates) <- names(data[["space"]][["coordinates"]])

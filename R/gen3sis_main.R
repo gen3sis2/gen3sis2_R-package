@@ -91,7 +91,7 @@ run_simulation <- function(config = NA,
   ####### User defined variables (config.R) ############
   #----------------------------------------------------#
   system_time_start <- Sys.time() #Starting timer
-  
+  # TODO fix modifiers and trait_evolution to work with the new name
   # Checking save_states
   recognized_save_states <- c("all", "last")
   if(!all(is.na(save_state)) && 
@@ -101,14 +101,12 @@ run_simulation <- function(config = NA,
   } else if (is.numeric(save_state) && any(save_state < 0)){
     warning("save_state negative timesteps are meaningless, simulation will not save.")
   }
-  #
   
   directories <- prepare_directories(config_file = config,
                                      input_directory = space,
                                      output_directory = output_directory)
 
-  # TODO rewrite this conditional to enable copying the config file if object is on RAM
-  if(is.na(config)[1]){ # TODO shouldn't this test be before using the config?
+  if(is.na(config)[1]){ 
     stop("please provide either a config file or a config object")
   } else if (is(config, "gen3sis_config")){
     file.copy(config$directories$config_path, directories$output)
@@ -121,14 +119,12 @@ run_simulation <- function(config = NA,
     stop("this is not a known config, please provide either a config file or a config object")
   }
   
-  
   if(!verify_config(config)){
     stop("config verification failed")
   } else {
     cat("\nUsing config:",config$gen3sis$general$config_name,"\n")
   }
 
-  
   val <- list("data" = list(),
               "vars" = list(),
               "config" = config)
@@ -220,7 +216,7 @@ run_simulation <- function(config = NA,
 
     # update space
     if(!is.null(val$data$space_modifiers)){
-      val$data$space$environment <- val$config$user$modify_space$apply_modifiers(
+      val$data$space$environment <- val$config$gen3sis$space_modifier$apply_modifiers(
         val$data$space,
         val$data$space_modifiers
       )
@@ -297,7 +293,7 @@ run_simulation <- function(config = NA,
     }
     
     # Environmental dynamics
-    val$data$space_modifiers <- val$config$user$modify_space$get_modifiers(val$data$space, val$data$all_species)
+    val$data$space_modifiers <- val$config$gen3sis$space_modifier$get_modifiers(val$data$space, val$data$all_species)
     
     if(val$vars$ti %in% val$vars$save_steps){
       call_main_observer(val$data, val$vars, val$config)

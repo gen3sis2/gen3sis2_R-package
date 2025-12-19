@@ -14,20 +14,20 @@
 #'
 #' @return the mutated species traits matrix
 #' @export
-apply_evolution <- function(species, cluster_indices, space, config){
+apply_trait_evolution <- function(species, cluster_indices, space, config){
   stop("this function documents the user function interface only, do not use it")
 }
 
 
 loop_evolution <- function(config, data, vars){
   if(config$gen3sis$general$verbose>=3){
-    cat(paste("entering mutation module \n"))
+    cat(paste("entering trait evolution module \n"))
   }
 
   data$all_species <- lapply(data$all_species, evolve, data$space, data$distance, config)
 
   if(config$gen3sis$general$verbose>=3){
-    cat(paste("exiting mutation module \n"))
+    cat(paste("exiting trait evolution module \n"))
   }
   return(list(config = config, data = data, vars = vars))
 }
@@ -46,7 +46,7 @@ evolve <- function(species, space, distance_matrix, config){
                                                          drop=FALSE], distances, 1)
   cluster_indices <- cluster_indices[order(permutation)]
 
-  new_traits <- config$gen3sis$mutation$apply_evolution(species, cluster_indices, space, config)
+  new_traits <- config$gen3sis$trait_evolution$apply_trait_evolution(species, cluster_indices, space, config)
 
   species_traits <- colnames(species[["traits"]])
   species[["traits"]][ , species_traits] <- new_traits[, species_traits, drop=FALSE]

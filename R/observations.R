@@ -676,6 +676,34 @@ get_space_subset <- function(space, site_vector){
 }
 
 
+
+#' Get effective population size
+#' 
+#' This function calculates the effective population size based on the harmonic mean of individuals over time
+#' it is designed to be called iteratively over time steps and use age of the population, i.e. n_steps
+#' an a number of individuals proxy at the current timestep so that harmonic mean can be calculated
+#' without storing all previous population sizes.
+#' This function should be called at the apply_trait_evolution stage, and species object must contain 
+#' an age attribute and a trait that stores the individuals time proxy so that effective population size can be calculated
+#' at any time.
+#' @param n_steps number of time steps the population has existed. Can be specie age
+#' @param individuals_time_proxy the sum of the inverse of individuals at each time step
+#' @param individuals the number of individuals at the current time step
+#' @returns a list with effective population size (Ne) and updated individuals_time_proxy
+#' @keywords support
+#' @export
+#' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
+#' @example inst/examples/support_functions/get_effective_population_size_help.R
+get_effective_population_size <- function(n_steps, individuals_time_proxy, individuals){
+  if (individuals<=0){
+    return(list(Ne=0, individuals_time_proxy=0))
+  } else{
+    individuals_time_proxy <- individuals_time_proxy + (1/individuals)
+    ne <- (n_steps+1)/individuals_time_proxy
+    return(list(Ne=ne, individuals_time_proxy=individuals_time_proxy))
+  }
+}
+
 # missiteaneous tools ----
 
 #' Diverisification summary

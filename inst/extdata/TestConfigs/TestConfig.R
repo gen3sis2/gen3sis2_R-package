@@ -11,6 +11,7 @@ max_number_of_species =20000
 max_number_of_coexisting_species =20000
 initial_abundance =  10
 
+# start user defined functions
 # ecological local equilibria variable J*
 get_J <- function(a_ff, a_fh, K_f){
   J <- sum((a_ff*K_f)/(a_ff-a_fh), na.rm=T)/(1+sum((a_fh/(a_ff-a_fh)), na.rm=T)) # new
@@ -49,6 +50,7 @@ apply_trs_tradeoff <- function(traits){
     return(traits)
   }
 }
+# end user defined functions
 
 # a list of traits to include with each species, traits with ss_eff_ are hack traits to extract in site processes
 trait_names = c("dispersal", "t_opt", "t_range", "competition")
@@ -94,7 +96,7 @@ create_ancestor_species <- function(space, config) {
     # i <- 3
     initial_sites <- rownames(co[abs(co[,"y"]-yls[i])<30,]) #tolerance of 5 degrees
     # initial_sites <- sample(initial_sites, 1)
-    print(paste("i", i, "yls", yls[i], "n_sites", length(initial_sites)))
+    # print(paste("i", i, "yls", yls[i], "n_sites", length(initial_sites)))
     new_species[[i]] <- create_species(initial_sites, config)
     #set local adaptation to max optimal temp equals local temp
     new_species[[i]]$traits[ , "dispersal"] <- 1

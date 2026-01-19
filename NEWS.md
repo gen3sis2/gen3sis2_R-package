@@ -13,5 +13,4 @@
 -   Time logic were redesign. The config and the space can have different time-frames.
 -   Plotting was reconstructed with `ggplot2`.
 -   Added many new support functions and utilities.
--   This release addresses prior caveats: temporal behavior now scales consistently with timestep choice, dispersal and clustering are calibrated across raster resolutions, and polar-distance corrections avoid the earlier bias of overly easy high-latitude dispersal.
 

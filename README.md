@@ -29,9 +29,9 @@ devtools::install_github(repo = "ohagen/gen3sis_rf",
 ```
 Below the status of the automatic CI R-CMD-check tests
 
-DEVELOPMENT [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/project-gen3sis/R-package/actions/workflows/R-CMD-check.yaml)
+DEVELOPMENT [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelopment)
 
-MASTER [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/project-gen3sis/R-package/actions/workflows/R-CMD-check.yaml)
+MASTER [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml)
 
 ### How to use
 

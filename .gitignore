@@ -16,3 +16,4 @@ Gen3sis.Rproj
 /doc/
 /Meta/
 *.Rproj
+*.code-workspace

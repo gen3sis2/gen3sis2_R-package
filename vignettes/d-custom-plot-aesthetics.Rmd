@@ -31,7 +31,7 @@ Let's see an example:
 ```{r}
 library(gen3sis2)
 # Load some spaces.rds create with create_spaces_raster...
-space <- readRDS(system.file("extdata/SouthAmerica/landscape/spaces.rds", package = "gen3sis2"))
+space <- readRDS(system.file("extdata/SouthAmerica/space/spaces.rds", package = "gen3sis2"))
 
 # ... and plot it!
 # "env_names" selects the variables of interest
@@ -69,7 +69,7 @@ config <- create_input_config(system.file("extdata/SouthAmerica/config/config_so
 
 data <- simulate_space_format(
   config = system.file("extdata/SouthAmerica/config/config_southamerica.R", package = "gen3sis2"),
-  space = system.file("extdata/SouthAmerica/landscape", package = "gen3sis2"),
+  space = system.file("extdata/SouthAmerica/space", package = "gen3sis2"),
   output_directory = tempdir()
 )
 

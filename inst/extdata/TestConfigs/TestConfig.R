@@ -65,6 +65,7 @@ trait_names = c("dispersal", "t_opt", "t_range", "competition")
 
 end_of_timestep_observer = function(data, vars, config){
   plot_richness(data$all_species, data$space)
+  plot_ranges(data$all_species, data$space)
   save_species()
   save_abundance()
   save_divergence()

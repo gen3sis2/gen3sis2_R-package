@@ -560,7 +560,7 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
   names(shape_colors) <- unique(spp_list$shape)
   
   # plot
-  base_plot + # background
+  p <- base_plot + # background
   ggplot2::geom_jitter( # the species symbols (shape and color)
     data = spp_list,
     mapping = ggplot2::aes(x = x, y = y, shape = shape, color = shape),
@@ -576,6 +576,8 @@ plot_ranges <- function(species_list, space, disturb=0, max_sps=10) {
     x = "", ## nothing in x axis
     y = "" ## nothing in y axis 
   )
+  
+  plot(p)
 }
 
 
@@ -602,11 +604,6 @@ conditional_plot <- function(title, plot_fun, ...){
     dir.create(plot_folder, showWarnings=FALSE, recursive=TRUE)
     file_name <- file.path(plot_folder, paste0(title, "_t_", space$id, ".png"))
     
-    # svg(file_name)
-    # p <- plot_fun(...)
-    # p
-    # dev.off()
-    
     p <- plot_fun(...)
     # ggplot2::ggsave(filename = file_name,
     #                 plot = p,
@@ -622,7 +619,8 @@ conditional_plot <- function(title, plot_fun, ...){
                     units = "px",
                     dpi = 300)
   }
-  plot_fun(...)
+  p <- plot_fun(...)
+  plot(p)
 }
 
 # Generic plot single function
@@ -660,7 +658,6 @@ plot_single <- function(no_data = 0, legend = TRUE, ...) {
 #' 
 #' @noRd
 plot_single.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
-  
   space <- list(...)$space
   values <- list(...)$values
   title <- list(...)$title2
@@ -680,7 +677,6 @@ plot_single.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
   temp_df <- merge(as.data.frame(temp_ras, xy=T), img, all.x=T)
   temp_df <- temp_df[,-which(colnames(temp_df)==names(temp_ras)[1])]
   
-  #ras <- terra::rast(img, type="xyz", resolution = space$type_spec_res)
   # Release temporary raster object and free memory
   rm(temp_ras) 
   gc()
@@ -698,14 +694,14 @@ plot_single.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
   # test data nature
   if (length(unique(values)) <= 10) {
     # discrete, must be converted to factor and treat low values to deal with NA values
-    values_vec <- terra::values(ras) 
-    if ((max(values_vec, na.rm = T) - min(values_vec, na.rm = T)) < 1 &&
-        (max(values_vec, na.rm = T) != min(values_vec, na.rm = T))) {
-      while ((max(values_vec, na.rm = T) - min(values_vec, na.rm = T)) < 1) {
-        values_vec <- values_vec * 10
-      }
-    }
-    terra::values(ras) <- values_vec  
+    # values_vec <- terra::values(ras) 
+    # if ((max(values_vec, na.rm = T) - min(values_vec, na.rm = T)) < 1 &&
+    #     (max(values_vec, na.rm = T) != min(values_vec, na.rm = T))) {
+    #   while ((max(values_vec, na.rm = T) - min(values_vec, na.rm = T)) < 1) {
+    #     values_vec <- values_vec * 10
+    #   }
+    # }
+    # terra::values(ras) <- values_vec  
     
     # converting to factor
     ras <- as.factor(ras)
@@ -722,7 +718,9 @@ plot_single.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
       ggplot2::scale_fill_manual( # to construct the legend
         values = col,
         name = title,
-        na.translate = F
+        na.translate = T,
+        na.value = "transparent",
+        breaks = names(col)[!is.na(names(col))] # to deal with the NA distortion
       ) +
       raster_plot_aesthetics(space, col, x_breaks, y_breaks, title = paste0(title, " ", space$timestep, " t_", space[["id"]])) # gen3sis2 standard aesthetic
   } else {

@@ -16,30 +16,28 @@ Gen3sis2 is implemented in a mix of R and C++ code, and wrapped into an R-packag
 
 # 1. Load gen3sis and all necessary input data is set (space and config).
 
-library(gen3sis)
+library(gen3sis2)
 
 # get path to example input inside package
-datapath <- system.file(file.path("extdata", "WorldCenter"), package = "gen3sis")
-path_config <- file.path(datapath, "config/config_worldcenter.R")
-path_space <- file.path(datapath, "space")
+path_config <- system.file("extdata/TestConfigs/TestConfig.R", package = "gen3sis2")
+path_space <- system.file("extdata/TestSpaces/geodynamic_spaces/raster", package = "gen3sis2")
 
 # 2. Run simulation
 
-sim <- run_simulation(config = path_config, space = path_space)
+sim <- run_simulation(
+  config = path_config, 
+  space = path_space,
+  output_directory = tempdir())
 
 # 3. Visualize the outputs
-
 # plot summary of entire simulation
 plot_summary(sim)
-
 # plot richness at a given time-step 
 # this only works if species is saved for this time-step
-space_t_150 <- readRDS(file.path(datapath, 
-"output", "config_worldcenter", "spaces", "space_t_150.rds"))   
-species_t_150 <- readRDS(file.path(datapath, 
-"output", "config_worldcenter", "species", "species_t_150.rds"))   
-plot_richness(species_t_150, space_t_150)   
+space_t_3 <- readRDS(file.path(tempdir(),"TestConfig","spaces","space_t_3.rds"))
+species_t_3 <- readRDS(file.path(tempdir(),"TestConfig","species","species_t_3.rds"))
 
+plot_richness(species_t_3, space_t_3)   
 }
 }
 \references{

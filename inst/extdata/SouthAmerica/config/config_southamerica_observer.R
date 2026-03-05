@@ -130,7 +130,7 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
 ######################################
 
 # mutate the traits of a species and return the new traits matrix
-apply_evolution <- function(species, cluster_indices, space, config) {
+apply_trait_evolution <- function(species, cluster_indices, space, config) {
   
   trait_evolutionary_power <- 0.001
   traits <- species[["traits"]]
@@ -183,4 +183,15 @@ apply_ecology <- function(abundance, traits, space, config) {
   }
   
   return(abundance)
+}
+
+
+# Space modifiers
+get_modifiers <- function(space, all_species){
+  modifiers <- NULL
+  return(modifiers)
+}
+
+apply_modifiers <- function(space, modifiers){
+  return(space$environment)
 }

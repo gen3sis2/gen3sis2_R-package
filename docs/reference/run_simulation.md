@@ -99,8 +99,8 @@ sim <- run_simulation(
   space = spaces,
   output_directory = tempdir()
 )
-#> config found:  /tmp/RtmpUuJ7Bs/temp_libpath19b6792db934/gen3sis2/extdata/TestConfigs/TestConfig.Rspace found: /tmp/RtmpUuJ7Bs/temp_libpath19b6792db934/gen3sis2/extdata/TestSpaces/geostatic_spaces/raster 
-#> Output directory is: /tmp/RtmpjAyokR/TestConfig 
+#> config found:  /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/TestConfigs/TestConfig.Rspace found: /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/TestSpaces/geostatic_spaces/raster 
+#> Output directory is: /tmp/RtmpOiAvPM/TestConfig 
 #> 
 #> Using config: TestConfig 
 #> --- Initializing --- 
@@ -111,12 +111,22 @@ sim <- run_simulation(
 #> [1] "i 5 yls -2 n_sites 10"
 #> --- Running simulation --- 
 #> step = 4 , species alive = 5 , species total = 5 
+
 #> step = 3 , species alive = 5 , species total = 5 
+
+
 #> step = 2 , species alive = 5 , species total = 5 
+
+
 #> step = 1 , species alive = 5 , species total = 5 
+
+
 #> step = 0 , species alive = 5 , species total = 5 
+
+
+
 #> Simulation finished. All OK 
-#> Simulation runtime:  0.001187268  hours
+#> Simulation runtime:  0.001826332  hours
 
 # plot summary object
 plot_summary(sim)

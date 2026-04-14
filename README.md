@@ -23,22 +23,23 @@ install.packages("gen3sis")
 --->
 you can install the latest development release from GitHub via 
 
-```{r}
-devtools::install_github(repo = "ohagen/gen3sis_rf", 
-  dependencies = TRUE, build_vignettes = TRUE)
 ```
-Below the status of the automatic CI R-CMD-check tests
+devtools::install_github(repo = "ohagen/gen3sis_rf", dependencies = TRUE, build_vignettes = TRUE)
+```
 
-DEVELOPMENT [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelopment)
+Below the status of the automatic CI R-CMD-check tests for the main branches:
 
-MASTER [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml)
+- DEVELOPMENT [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelopment)
+
+- MASTER [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml)
 
 ### How to use
 
 #### Run one simulation
 
-Load and run a simulation with the desired config and spaces. Exemple data is provided with the package
-```{r}
+Load and run a simulation with the desired config and spaces. Example data is provided with the package.
+
+```
 library("gen3sis2")
 
 datapath <- system.file(file.path("extdata", "WorldCenter"), package = "gen3sis")
@@ -48,19 +49,22 @@ sim <- run_simulation(config = file.path(datapath, "config/config_worldcenter.R"
                output_directory = tempdir(),
                verbose=0)
 ```
+
 A summary statistics is stored at 'sim' more data can be save using the observer function
 
 ####  Visualize a simulation
 
 Plot the summary statistics of a simulation
-```{r}
+
+```
 plot_summary(sim)
 ```
 
 #### Check installed version
 
 Make sure you have the latest gen3sis version
-```{r}
+
+```
 #print package version
 paste("gen3sis2 version:", packageVersion("gen3sis2"))
 ```
@@ -81,17 +85,29 @@ We thank the developers of the following methods and dependencies:
 
 - **BH** Dirk Eddelbuettel, John W. Emerson and Michael J. Kane (2021). BH: Boost C++ Header Files. R package. https://CRAN.R-project.org/package=BH
 
-- **Matrix** Douglas Bates and Martin Maechler (2019). Matrix: Sparse and Dense Matrix Classes and Methods. R package. https://CRAN.R-project.org/package=Matrix
+- **Matrix** Bates D, Maechler M, Jagan M (2025). Matrix: Sparse and Dense Matrix Classes and Methods. R package. https://CRAN.R-project.org/package=Matrix
 
-- **raster** Robert J. Hijmans (2021). raster: Geographic Data Analysis and Modeling. R package. https://CRAN.R-project.org/package=raster
+- **tidyterra** Hernangómez D. (2023). Using the tidyverse with terra objects: the tidyterra package. https://doi.org/10.21105/joss.05751
 
-- **gdistance** van Etten, J. (2017). R package gdistance: Distances and routes on geographical grids. Journal of Statistical Software, 76(1), 1–21. https://doi.org/10.18637/jss.v076.i13
+- **terra** Hijmans R, Brown A, Barbosa M (2026). terra: Spatial Data Analysis  https://cran.r-project.org/web/packages/terra/index.html
+
+- **h3jsr** O'Brien L. (2023). h3jsr: Access Uber's H3 Library. https://CRAN.R-project.org/package=h3jsr
+
+- **sf** Pebesma E. (2018). Simple Features for R: Standardized Support for Spatial Vector Data. https://r-spatial.github.io/sf/
+
+- **igraph** Csárdi G., Nepusz T. (2006). The igraph software package for complex network research. https://igraph.org>
 
 - **sp** Roger S. Bivand, Edzer Pebesma, Virgilio Gomez-Rubio, 2013. Applied spatial data analysis with R, Second edition. Springer, NY. https://asdar-book.org/
 
-- **stringr** Hadley Wickham (2019). stringr: Simple, Consistent Wrappers for Common String Operations. R package. https://CRAN.R-project.org/package=stringr
+- **stringr** Wickham H (2025). stringr: Simple, Consistent Wrappers for Common String Operations. https://CRAN.R-project.org/package=stringr
 
-- **testthat** Hadley Wickham (2011). testthat: Get Started with Testing. The R Journal, vol. 3, no. 1, pp. 5--10, https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf
+- **ggplot2** Wickham H. (2016). https://ggplot2.tidyverse.org
+
+- **scales** Wickham H., Pedersen T., Seidel D. (2025). scales: Scale Functions for Visualization. https://CRAN.R-project.org/package=scales
+
+- **patchwork** Pedersen T. (2025). patchwork: The Composer of Plots. https://CRAN.R-project.org/package=patchwork
+
+- **testthat** Wickham H. (2011). testthat: Get Started with Testing. The R Journal, vol. 3, no. 1, pp. 5--10, https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf
 
 - **formatR** Yihui Xie (2021). formatR: Format R Code Automatically. R package. https://CRAN.R-project.org/package=formatR
 

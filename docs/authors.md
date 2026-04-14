@@ -7,6 +7,10 @@
 - **Oskar Hagen**. Author, maintainer.  
   space Ecology, WSL and ETH Zürich, Switzerland
 
+- **Admir C. de O. Junior**. Author.
+
+- **Bouwe Reijenga**. Author.
+
 - **Benjamin Flück**. Author.  
   space Ecology, WSL and ETH Zürich, Switzerland
 
@@ -35,8 +39,6 @@
 - **Loïc Pellissier**. Author, thesis advisor.  
   space Ecology, WSL and ETH Zürich, Switzerland
 
-- **Admir C. de O. Junior**. Author.
-
 ## Citation
 
 Source:
@@ -60,14 +62,14 @@ Biology, 19(7), 1-31, https://doi.org/10.1371/journal.pbio.3001340
       journal = {PLoS Biology},
     }
 
-Hagen O, Flück B, Fopp F, Cabral JS, Hartig F, Pontarp M, Rangel TF,
-Pellissier L, de O. Junior A (2024). *gen3sis2: General Engine for
-Eco-Evolutionary Simulations*. R package version 1.0.0,
+Hagen O, de O. Junior A, Bouwe Reijenga, Flück B, Fopp F, Cabral JS,
+Hartig F, Pontarp M, Rangel TF, Pellissier L (2024). *gen3sis2: General
+Engine for Eco-Evolutionary Simulations*. R package version 1.0.0,
 <https://github.com/project-Gen3sis/R-package>.
 
     @Manual{,
       title = {gen3sis2: General Engine for Eco-Evolutionary Simulations},
-      author = {Oskar Hagen and Benjamin Flück and Fabian Fopp and Juliano S. Cabral and Florian Hartig and Mikael Pontarp and Thiago F. Rangel and Loïc Pellissier and Admir C. {de O. Junior}},
+      author = {Oskar Hagen and Admir C. {de O. Junior} and {Bouwe Reijenga} and Benjamin Flück and Fabian Fopp and Juliano S. Cabral and Florian Hartig and Mikael Pontarp and Thiago F. Rangel and Loïc Pellissier},
       year = {2024},
       note = {R package version 1.0.0},
       url = {https://github.com/project-Gen3sis/R-package},

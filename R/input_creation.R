@@ -37,7 +37,6 @@
 #' }
 #' @return no return object. This function saves the space input files for gen3sis at the output_directory
 #' @keywords spaces
-#' @importFrom gdistance transition costDistance
 #' @example inst/examples/create_spaces_raster_help.R
 #' @seealso \code{\link{run_simulation}} 
 #' @export
@@ -229,7 +228,6 @@ compile_spaces <-  function(spaces, timesteps, habitability_masks) {
 #' @param directions the number and layout of the direct local to consider, 4,8,16 or adj according to the gdistance package
 #'
 #' @return an adjecency matrix with the local distances
-#' @importFrom gdistance geoCorrection transition
 #' @importFrom methods as
 #' @noRd
 get_local_distances <- function(space_stack, habitable_mask, cost_function, directions, crs) {

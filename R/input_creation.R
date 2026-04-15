@@ -37,6 +37,7 @@
 #' }
 #' @return no return object. This function saves the space input files for gen3sis at the output_directory
 #' @keywords spaces
+#' @importFrom terra crs
 #' @example inst/examples/create_spaces_raster_help.R
 #' @seealso \code{\link{run_simulation}} 
 #' @export
@@ -107,8 +108,8 @@ create_spaces_raster <- function(raster_list, # old spaces
                      ...
   )
     # check if raster has coordinate reference system, if not use default from create_spaces
-  if (crs(ex_r)==""){
-    crs(ex_r) <- gs$meta$crs
+  if (terra::crs(ex_r)==""){
+    terra::crs(ex_r) <- gs$meta$crs
   }
   total_area <- sum(terra::cellSize(ex_r, unit="km")[])
   n_sites <- ncol(ex_r)*nrow(ex_r)
@@ -244,7 +245,7 @@ get_local_distances <- function(space_stack, habitable_mask, cost_function, dire
   # -> important in case of asymmetrical distances
   
   #ref_raster <- raster(ext = ext, resolution = rs, crs = crs(space_stack), vals = 1:prod(dim(space_stack)[1:2]))
-  ref_raster <- terra::rast(ext = ext, resolution = rs, crs = crs(space_stack), vals = 1:prod(dim(space_stack)[1:2]))
+  ref_raster <- terra::rast(ext = ext, resolution = rs, crs = terra::crs(space_stack), vals = 1:prod(dim(space_stack)[1:2]))
   
   # -> IMPORTANT NOTE FOR DEVELOPERS <-
   # As of June 2025, the code has been changed to remove the dependency on gdistance. 
@@ -474,7 +475,7 @@ get_transition_correction <- function(x, tr_fun, dir) {
   i <- as.integer(adj[,2] - 1)
   j <- as.integer(adj[,1] - 1)
   xv <- as.vector(correctionValues) #check for Inf values!
-  dims <- ncell(x)
+  dims <- terra::ncell(x)
   correctionMatrix <- new("dgTMatrix", i = i, j = j, x = xv, Dim = as.integer(c(dims,dims)))
   correctionMatrix <- (as(correctionMatrix,"sparseMatrix"))
   

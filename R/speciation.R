@@ -91,7 +91,7 @@ loop_speciation <- function(config, data, vars) {
     gen_dist_spi <- compress_divergence(gen_dist_spi)
 
     species[["divergence"]] <- gen_dist_spi
-
+    # scan if any cluster exceeds the threshold
     clu_gen_spi_ti_c <- Tdbscan(gen_dist_spi$compressed_matrix, config$gen3sis$speciation$divergence_threshold, 1)
     clu_gen_spi_ti <- clu_gen_spi_ti_c[gen_dist_spi$index]
     n_new_sp <- max(clu_gen_spi_ti)-1
@@ -99,7 +99,7 @@ loop_speciation <- function(config, data, vars) {
     # update count of new species at this time-step
     vars$n_new_sp_ti <- vars$n_new_sp_ti + n_new_sp
 
-    if ( n_new_sp > 0 ){ #if a speciation occured
+    if ( n_new_sp > 0 ){ #if a speciation event occurred
       if(config$gen3sis$general$verbose>=3){
         cat(paste("[!]   Wellcome Strange  Thing   [!] \n"))
         cat(paste(n_new_sp,"speciation event(s) happened \n"))
@@ -115,7 +115,7 @@ loop_speciation <- function(config, data, vars) {
                                             "Extinction.Time" = rep(vars$ti, n_new_sp),
                                             "Speciation.Type"=rep("Genetic", n_new_sp)))
 
-      #required for proper initialiaztion of new species
+      #required for proper initialization of new species
       full_gen_dist <- gen_dist_spi
 
       gen_dist_spi$index <- gen_dist_spi$index[clu_gen_spi_ti == 1]
@@ -139,7 +139,7 @@ loop_speciation <- function(config, data, vars) {
                                                     config)
         data$all_species <- append(data$all_species, list(new_species))
 
-      } # end loop over descendents
+      } # end loop over descendants
 
       species <- limit_species_to_cells(species = species,
                                         cells = names(species[["abundance"]][clu_gen_spi_ti == 1]))

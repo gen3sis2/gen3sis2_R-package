@@ -41,12 +41,15 @@ Load and run a simulation with the desired config and spaces. Exemple data is pr
 ```{r}
 library("gen3sis2")
 
-datapath <- system.file(file.path("extdata", "WorldCenter"), package = "gen3sis")
+spaces <- system.file(file.path("extdata", "TestSpaces","geostatic_spaces","raster"), package="gen3sis2")
+config_file <- system.file(file.path("extdata", "TestConfigs","TestConfig.R"), package="gen3sis2")
 
-sim <- run_simulation(config = file.path(datapath, "config/config_worldcenter.R"), 
-               space = file.path(datapath, "space"),
-               output_directory = tempdir(),
-               verbose=0)
+sim <- run_simulation(
+  config = config_file, 
+  space = spaces,
+  output_directory = tempdir(),
+  verbose = 0
+)
 ```
 A summary statistics is stored at 'sim' more data can be save using the observer function
 

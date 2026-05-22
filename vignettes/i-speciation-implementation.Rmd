@@ -1,0 +1,215 @@
+---
+title: "Implementing ecological and sympatric speciation"
+author: "Bouwe Reijenga"
+date: "2026-05-21"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Limits on the current implementation
+
+While highly flexible, the past and current version of gen3sis does not allow 
+for within-cell ecological or sympatric speciation. It assumes that the 
+units of speciation are (1) population-cell clusters, and (2) gene flow 
+decreases divergence within population-cell clusters.
+
+
+(i) Population-cell clusters, that operate as the unit of speciation, are 
+determined by distance-based clustering using *Tdbscan_variable()*. The clusters 
+are based on distances between cells and additionally the dispersal ability of
+the species. This limit the frequency of single-cell speciation, and makes 
+within-cell speciation not easily implementable by default.
+
+
+```{r, eval = FALSE}
+# part of the loop_speciation function (L55-L65). This part determines the 
+# population-cell clusters for one species.
+loop_speciation <- function(){
+  
+  # ...
+  
+  if ( length(species_presence)==1 ){#check if only one cell is occupied
+    clu_geo_spi_ti <- 1
+  }else{
+    distances <- config$gen3sis$dispersal$get_dispersal_values(
+      length(species_presence), species, data$space, config)
+
+    permutation <- sample(1:length(species_presence), length(species_presence))
+    clu_geo_spi_ti <- Tdbscan_variable(
+      data$distance_matrix[species_presence[permutation],
+                           species_presence[permutation],
+                           drop=FALSE], distances, 1)
+    clu_geo_spi_ti <- clu_geo_spi_ti[order(permutation)]
+  }
+  
+  # ...
+}
+```
+
+(i) Specifically, clusters become new species if they meet an a priori set
+threshold:
+
+```{r, eval = FALSE}
+
+clu_gen_spi_ti_c <- Tdbscan(gen_dist_spi$compressed_matrix, 
+                            config$gen3sis$speciation$divergence_threshold, 1)
+
+```
+
+(ii) Divergence between populations within the same cluster is decreased 
+by "dfactor", whereas divergence increases between clusters based on the 
+ifactor. The ifactor is derived from the user specified *get_divergence_factor()*
+with a default value of 1, and can result in creative implementations such as 
+divergence between clusters based on environmental factors or species' 
+cluster-level traits. However, it does mean that populations within a cluster
+by default do not diverge from one another. Even if we were to model frequency-
+dependent competiton and/or divergent selection, a population can't split off.
+
+-- Note to self: I don't understand why dfactor
+is compensated for ifactor when dealing with a uniform ifactor, but not when
+ifactor is supplied as a matrix?
+
+```{r, eval = FALSE}
+#' Updates a given divergence matrix
+#'
+#' @param gen_dist_spi a divergence matrix
+#' @param clu_geo_spi_ti a cluster index
+#' @param ifactor the divergence factor by which the clusters distances increase
+#'
+#' @return an updated divergence matrix
+#' @noRd
+update_divergence <- function(divergence, cluster_indices, ifactor) {
+  # update genetic distance
+  clusters <- unique(cluster_indices)
+  if( length(ifactor) == 1 ) {
+    # scalar ifactor
+    divergence <- divergence + ifactor
+    dfactor <- 1+ifactor
+  } else {
+    # matrix ifactor
+    divergence <- divergence + ifactor[cluster_indices, cluster_indices]
+    dfactor <- 1
+  }
+  for ( i in clusters ){
+    # in case they belong to same clusters, subtract -2 (for the default case), 
+    # so that the final difference is -1 given previous addition!
+    divergence[cluster_indices == i, cluster_indices == i] <-
+      divergence[cluster_indices == i, cluster_indices== i] - dfactor
+  }
+  # setting -1 to zero. Genetic differences can not be negative
+  divergence[divergence < 0] <- 0
+  ## end updating genetic distance ##
+  return(divergence)
+}
+```
+
+## Possible solutions
+
+There are multiple solutions to the incorporation of ecological and sympatric 
+speciation. Ideally we would like to make the framework as flexible as possible,
+so that others might implement their own versions. The simplest incorporation
+would be to let a given number of individuals in a cell become a new species. 
+For this to be at all possible, the *loop_speciation()* would need to be updated 
+by either adjusting *update_divergence()*, and/or incorporating a new function or 
+loop that allows for within-cell speciation. e.g.,
+
+
+```{r, eval = FALSE}
+  within_population_speciation <- function(species, space, config, ...){
+    # the function could return a new species but also may have to modify 
+    # the ancestral population/species
+  }
+```
+
+gen3sis2 already offers great flexibility with the storage of traits. These 
+traits store information on a population basis. For instance, consider that not
+only the mean of a ecologically-relevant trait is stored but also for example:
+
+ - z_mean         = mean phenotype in the cell
+ - z_within_sd    = within-mode standard deviation
+ - z_mode_delta   = separation between two latent ecological modes
+ - z_mode_p       = frequency of mode 1
+ - z_bimodality   = derived index of how clearly two modes exist
+ - z_internal_RI  = accumulated within-cell reproductive isolation
+ - assortment     = strength of assortative mating / habitat fidelity
+
+*z_internal_RI* could then be used to either probabilistically determine speciation
+or by some a priori set threshold, being influenced by the trait distribution.
+High bimodality of the trait may then result in high within-cell RI. upon 
+speciation, so as output of *within_population_speciation()*, we might then see
+a split between the species:
+
+###### Before
+- species A in cell i
+  - abundance = 100
+  - z_mode_p = 0.55
+  - mode_1 = 0.2
+  - mode_2 = 0.8
+
+###### After:
+- species A in cell i
+  - abundance = 55
+  - z_mean = 0.2
+  - z_mode_delta = 0
+- species B in cell i
+  - abundance = 45
+  - z_mean = 0.8
+  - z_mode_delta = 0
+
+Such an implementation would be preferential over, say, modelling multiple demes
+per cell, as that would require a more extensive rework and may conflict with the
+philosophy behind gen3sis. Alternative rules, perhaps making 
+*within_population_speciation()* user specified (?) could follow:
+
+- z_internal_RI > RI_threshold 
+  - (where *z_internal_RI* may also be a function of 
+    homogenisation in *update_divergence()*)
+- z_bimodality > bimodality_threshold 
+  - (strictly ecological trait based)
+- z_mode_delta / z_within_sd > separation_threshold 
+  - (are the distributions separated enough/non-overlapping?)
+- min(z_mode_p, 1 - z_mode_p) > minimum_mode_frequency 
+  - (minimum frequency of the two peaks)
+- abundance * min(z_mode_p, 1 - z_mode_p) > minimum_mode_abundance 
+  - (or abundance based)
+
+*apply_ecology()* and *apply_evolution()* already offer staggering flexibility, 
+as *apply_ecology* is supplied with abundance, traits, environment, and the 
+config and *apply_trait_evolution()* with species, cluster_indices, space, and 
+the config. *apply_ecology()* updates abundances and could do this for distinct 
+modes for the trait distribution of a population. However, It is currently 
+hard coded that *apply_ecology()* only returns abundances in *loop_ecology()*: 
+
+```{r, eval = FALSE}
+# L85 in loop_ecology()
+NEW_abd <- config$gen3sis$ecology$apply_ecology(abundance, traits, 
+                                                local_environment, config)
+```
+
+###### What I think therefore needs to be added or discussed:
+- Speciation of a single species in a single cell into two
+- Partitioning of abundance among the two derived lineages
+- Not sure how gen3sis handles will handle such a phylogenetic split
+  - i.e. which population remains with the rest of the range?
+- create overlapping ranges in the same cell
+- mode-specific dispersal? How does the trait distribution affect dispersers?
+- *update_divergence()*, *loop_speciation()*, *loop_ecology()* and perhaps more
+
+###### We would probably not be modelling:
+ - Demes
+ - Allele frequencies
+ - Linkage disequilibrium
+ - Hybridisation
+ - Recombination
+ - Mate choice
+
+The implementation would thus not explicitly consider pop gen, and remain 
+largely phenomenological. However, perhaps the Ne implementation can have 
+a synergistic relationship.
+
+

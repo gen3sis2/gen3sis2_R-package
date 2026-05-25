@@ -11,6 +11,27 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## A working definition for both ecological and sympatric speciation
+
+*Sympatric speciation*: Speciation in which reproductive isolation evolves 
+without geographic isolation; i.e., lineages split while occupying the same 
+geographic area or while geographic barriers do not prevent gene flow. 
+Bolnick & Fitzpatrick (2007) *AREES*, Coyne (2007) *Curr Biol*
+
+
+*Ecological speciation*: a speciation process in which divergent natural selection
+drives the evolution of reproductive incompatibility (i.e. isolation) between
+taxa. Nosil *et al.* (2008) *TREE*
+
+## Motivation
+
+Currently the implementation of speciation in gen3sis is limited to allopatric 
+speciation of geographically isolated clusters. The divergence factor functions 
+are flexible enough to allow for factors such as the environment and species' 
+traits to influence cluster divergence and speciation. However, speciation can't
+happen within a cluster. This rules out the occurrence of sympatric speciation 
+ and fine-scale ecological speciation modes.
+
 ## Limits on the current implementation
 
 While highly flexible, the past and current version of gen3sis does not allow 

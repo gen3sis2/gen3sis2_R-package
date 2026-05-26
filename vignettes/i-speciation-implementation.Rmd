@@ -25,12 +25,38 @@ taxa. Nosil *et al.* (2008) *TREE*
 
 ## Motivation
 
-Currently the implementation of speciation in gen3sis is limited to allopatric 
-speciation of geographically isolated clusters. The divergence factor functions 
-are flexible enough to allow for factors such as the environment and species' 
-traits to influence cluster divergence and speciation. However, speciation can't
-happen within a cluster. This rules out the occurrence of sympatric speciation 
- and fine-scale ecological speciation modes.
+Speciation is often classified based on the spatial context under which 
+reproductive isolation evolves. Under allopatric speciation, populations diverge 
+after geographical isolation prevents or reduces gene flow; under peripatric 
+speciation, isolated peripheral populations diverge; under parapatric speciation 
+neighbouring populations diverge despite some spatial contact and gene flow; and 
+under sympatric speciation, reproductive isolation evolves without geographic 
+separation. These spatial modes are distinct from the mechanisms generating reproductive 
+isolation, which may arise through ecologically based divergent selection 
+(ecological speciation) or through non-ecological processes such as the fixation 
+of different incompatible mutations under similar selection pressures 
+(mutation-order speciation). 
+
+The specific spatial context and mechanism are expected to result in distinct 
+spatial and trait-based biodiversity patterns. For instance, sympatric speciation 
+could result in newly arisen species that immediately show geographic range overlap 
+and have diverged in important ecological traits such as their preferred food source. 
+In contrast, allopatric mutation-order speciation will result in geographically 
+isolated, ecologically-equivalent sister taxa. The build-up of diversity on a 
+macroecological scale will therefore differ dramatically, but little is known about 
+the precise consequences.
+
+Currently, the implementation of speciation in gen3sis is limited to allopatric 
+speciation, where geographically isolated clusters are the units that accumulate 
+divergence. The *get_divergence_factor*-function allows environmental conditions 
+and species traits to modify the rate of divergence between clusters. However, 
+because divergence only accumulates between clusters and not within, the current 
+implementation does not allow speciation within a cluster or at a finer spatial 
+scale such as within a cell. This hard-coded assumption rules out sympatric 
+speciation and finer-scale ecological speciation, even though they may result in 
+distinct local and macroecological patterns.
+
+
 
 ## Limits on the current implementation
 

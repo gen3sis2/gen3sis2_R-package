@@ -13,49 +13,58 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## A working definition for both ecological and sympatric speciation
 
-*Sympatric speciation*: Speciation in which reproductive isolation evolves 
-without geographic isolation; i.e., lineages split while occupying the same 
-geographic area or while geographic barriers do not prevent gene flow. 
-Bolnick & Fitzpatrick (2007) *AREES*, Coyne (2007) *Curr Biol*
+*Sympatric speciation*: "Sympatric speciation involves the splitting of an 
+ancestral species into two or more reproductively isolated groups without 
+geographical isolation of those groups. The key aspect of sympatric speciation 
+is that it occurs when incipient species are in physical contact with each 
+other, potentially able to interbreed and exchange genes." 
+Coyne (2007) *Current Biology*
 
 
 *Ecological speciation*: a speciation process in which divergent natural selection
 drives the evolution of reproductive incompatibility (i.e. isolation) between
-taxa. Nosil *et al.* (2008) *TREE*
+taxa. Nosil *et al.* (2008) *Trends in Ecology and Evolution*
 
 ## Motivation
 
 Speciation is often classified based on the spatial context under which 
-reproductive isolation evolves. Under allopatric speciation, populations diverge 
-after geographical isolation prevents or reduces gene flow; under peripatric 
-speciation, isolated peripheral populations diverge; under parapatric speciation 
-neighbouring populations diverge despite some spatial contact and gene flow; and 
-under sympatric speciation, reproductive isolation evolves without geographic 
-separation. These spatial modes are distinct from the mechanisms generating reproductive 
-isolation, which may arise through ecologically based divergent selection 
+reproductive isolation evolves and the mechanism that drives the build up of 
+reproductive isolation. The spatial context is mainly classified in four ways:
+Under allopatric speciation, populations diverge after geographical isolation 
+prevents or reduces gene flow; under peripatric speciation, isolated peripheral 
+populations diverge; under parapatric speciation neighbouring populations diverge 
+despite some spatial contact and gene flow; and under sympatric speciation, 
+reproductive isolation evolves without geographic separation. Out of these 
+scenarios, allopatric speciation is often seen as the most common and as a 
+general baseline for the development of theoretical models such as gen3sis.
+
+Spatial modes are distinct from the mechanisms generating reproductive 
+isolation. Reproductive isolation may arise through ecologically based divergent selection 
 (ecological speciation) or through non-ecological processes such as the fixation 
 of different incompatible mutations under similar selection pressures 
-(mutation-order speciation). 
+(mutation-order speciation). The build up of reproductive isolation through ecological 
+factors may happen while sympatric, after an initial phase of allopatry upon 
+secondary contact between incipient species, or fully in allopatry. In contrast 
+to sympatric speciation, ecological speciation is less controversial and a 
+well-supported route to speciation.
 
-The specific spatial context and mechanism are expected to result in distinct 
+The specific spatial context and mechanism matters for emerging 
 spatial and trait-based biodiversity patterns. For instance, sympatric speciation 
-could result in newly arisen species that immediately show geographic range overlap 
-and have diverged in important ecological traits such as their preferred food source. 
+results in species that immediately show geographic range overlap and have 
+diverged in important ecological traits such as their preferred food source. 
 In contrast, allopatric mutation-order speciation will result in geographically 
 isolated, ecologically-equivalent sister taxa. The build-up of diversity on a 
-macroecological scale will therefore differ dramatically, but little is known about 
-the precise consequences.
+macroecological scale through time and space could therefore differ, but precise 
+consequences are difficult to predict.
 
 Currently, the implementation of speciation in gen3sis is limited to allopatric 
 speciation, where geographically isolated clusters are the units that accumulate 
-divergence. The *get_divergence_factor*-function allows environmental conditions 
-and species traits to modify the rate of divergence between clusters. However, 
-because divergence only accumulates between clusters and not within, the current 
-implementation does not allow speciation within a cluster or at a finer spatial 
-scale such as within a cell. This hard-coded assumption rules out sympatric 
-speciation and finer-scale ecological speciation, even though they may result in 
-distinct local and macroecological patterns.
-
+divergence. These clusters may differentiate based on environmental conditions 
+and species traits, so ecological speciation can be modelled at the landscape/cluster 
+scale. However, because divergence only accumulates between clusters and not within, 
+the current implementation does not allow for ecological speciation at a finer 
+spatial scale such as within a cluster, speciation at periphery of a species range, 
+or sympatric speciation within a single cell. 
 
 
 ## Limits on the current implementation
@@ -119,7 +128,11 @@ dependent competiton and/or divergent selection, a population can't split off.
 
 -- Note to self: I don't understand why dfactor
 is compensated for ifactor when dealing with a uniform ifactor, but not when
-ifactor is supplied as a matrix?
+ifactor is supplied as a matrix? Benjamin's response: Because a scalar i-factor 
+gets added to the diagonal (within cluster divergence). Therefore to reduce the 
+within cluster divergence by -1 we need to subtract (1 + ifactor). In the matrix 
+case the user is responsible for keeping the diagonal at 0, or <1 for slower 
+convergence, or <0 for faster convergence.
 
 ```{r, eval = FALSE}
 #' Updates a given divergence matrix
@@ -159,11 +172,19 @@ update_divergence <- function(divergence, cluster_indices, ifactor) {
 
 There are multiple solutions to the incorporation of ecological and sympatric 
 speciation. Ideally we would like to make the framework as flexible as possible,
-so that others might implement their own versions. The simplest incorporation
-would be to let a given number of individuals in a cell become a new species. 
-For this to be at all possible, the *loop_speciation()* would need to be updated 
-by either adjusting *update_divergence()*, and/or incorporating a new function or 
-loop that allows for within-cell speciation. e.g.,
+so that others might implement their own versions. There are three ways of 
+speciation that could be incorporated: (1) the main between-cluster speciation as 
+currently incorporated, (2) The within-cluster speciation that splits of multiple 
+cells at once (i.e. speciation with gene flow), and (3) within-cell speciation that
+could mimic point-speciation or sympatric speciation (i.e. the ancestor is sympatric 
+with the new species). Out of these options I explore the latter below, as it would 
+likely require a new function (e.g. (2) could be an extension of the current cluster-based 
+speciation although focussing on trait-based clusters instead). 
+
+The simplest incorporation would be to let a given number of individuals in a cell 
+become a new species. For this to be at all possible, the *loop_speciation()* 
+would need to be updated by either adjusting *update_divergence()*, and/or 
+incorporating a new function or loop that allows for within-cell speciation. e.g.,
 
 
 ```{r, eval = FALSE}

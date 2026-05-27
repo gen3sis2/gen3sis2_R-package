@@ -35,8 +35,8 @@ prevents or reduces gene flow; under peripatric speciation, isolated peripheral
 populations diverge; under parapatric speciation neighbouring populations diverge 
 despite some spatial contact and gene flow; and under sympatric speciation, 
 reproductive isolation evolves without geographic separation. Out of these 
-scenarios, allopatric speciation is often seen as the most common and as a 
-general baseline for the development of theoretical models such as gen3sis.
+scenarios, allopatric speciation is often seen as the most common and has been 
+used as a baseline for the development of theoretical models such as gen3sis.
 
 Spatial modes are distinct from the mechanisms generating reproductive 
 isolation. Reproductive isolation may arise through ecologically based divergent selection 
@@ -44,18 +44,18 @@ isolation. Reproductive isolation may arise through ecologically based divergent
 of different incompatible mutations under similar selection pressures 
 (mutation-order speciation). The build up of reproductive isolation through ecological 
 factors may happen while sympatric, after an initial phase of allopatry upon 
-secondary contact between incipient species, or fully in allopatry. In contrast 
-to sympatric speciation, ecological speciation is less controversial and a 
-well-supported route to speciation.
+secondary contact between incipient species, fully in allopatry, or a mix of the above. 
+Although genome sequences have revealed support for both sympatric and ecological 
+speciation, ecological speciation is a less controversial route to speciation.
 
 The specific spatial context and mechanism matters for emerging 
 spatial and trait-based biodiversity patterns. For instance, sympatric speciation 
 results in species that immediately show geographic range overlap and have 
 diverged in important ecological traits such as their preferred food source. 
-In contrast, allopatric mutation-order speciation will result in geographically 
-isolated, ecologically-equivalent sister taxa. The build-up of diversity on a 
+In contrast, allopatric modes of speciation will result in geographically 
+isolated, largely ecological equivalent sister taxa. The build-up of diversity on a 
 macroecological scale through time and space could therefore differ, but precise 
-consequences are difficult to predict.
+consequences are unclear without deeper theoretical study.
 
 Currently, the implementation of speciation in gen3sis is limited to allopatric 
 speciation, where geographically isolated clusters are the units that accumulate 
@@ -64,8 +64,162 @@ and species traits, so ecological speciation can be modelled at the landscape/cl
 scale. However, because divergence only accumulates between clusters and not within, 
 the current implementation does not allow for ecological speciation at a finer 
 spatial scale such as within a cluster, speciation at periphery of a species range, 
-or sympatric speciation within a single cell. 
+speciation under gene flow within a cluster (parapatry), or sympatric speciation 
+within a single cell. 
 
+```{r speciation_modes_plot, fig.width=7, fig.height=8, echo=FALSE}
+# Base R schematic of speciation modes with touching hexagons
+
+# ---------- helper functions ----------
+
+hex_coords <- function(x, y, r = 0.5) {
+  # pointy-top hexagon
+  angles <- pi / 6 + seq(0, 2 * pi, length.out = 7)
+  cbind(x + r * cos(angles), y + r * sin(angles))
+}
+
+draw_hex <- function(x, y, r = 0.5, border = "grey50", col = "grey95") {
+  h <- hex_coords(x, y, r)
+  polygon(h[, 1], h[, 2], border = border, col = col, lwd = 1.2)
+}
+
+individual_offsets <- function(scale = 0.18) {
+  data.frame(
+    dx = scale * c(-0.7,  0.0,  0.7, -0.35, 0.35, 0.0),
+    dy = scale * c( 0.45, 0.65, 0.45, -0.35, -0.35, -0.7)
+  )
+}
+
+draw_individuals <- function(x, y, state = rep("ancestral", 6)) {
+  offs <- individual_offsets()
+
+  cols <- ifelse(state == "derived", "red3", "black")
+  pchs <- ifelse(state == "derived", 17, 16)
+
+  points(
+    x + offs$dx,
+    y + offs$dy,
+    pch = pchs,
+    col = cols,
+    cex = 1.1
+  )
+}
+
+draw_panel <- function(title, cell_states, cells, hex_r) {
+  plot(
+    NA,
+    xlim = c(min(cells$x) - 1.0, max(cells$x) + 1.2),
+    ylim = c(min(cells$y) - 1.1, max(cells$y) + 1.1),
+    asp = 1,
+    axes = FALSE,
+    xlab = "",
+    ylab = "",
+    main = title
+  )
+
+  for (i in seq_len(nrow(cells))) {
+    draw_hex(cells$x[i], cells$y[i], r = hex_r)
+    draw_individuals(cells$x[i], cells$y[i], cell_states[[i]])
+  }
+
+  text(mean(cells$x[1:3]), min(cells$y) - 0.85, "Cluster A", cex = 0.8)
+  text(mean(cells$x[4:5]), min(cells$y) - 0.85, "Cluster B", cex = 0.8)
+}
+
+# ---------- honeycomb geometry ----------
+
+hex_r <- 0.5
+
+# For pointy-top hexagons, adjacent centers that share an edge are:
+dx <- sqrt(3) * hex_r
+dy <- 1.5 * hex_r
+
+# Three-cell cluster: all cells touch by edges
+left_cluster <- data.frame(
+  cell = paste0("L", 1:3),
+  x = c(0, dx, dx / 2),
+  y = c(0, 0, dy)
+)
+
+# Two-cell cluster: two touching cells
+shift_x <- 5.0
+right_cluster <- data.frame(
+  cell = paste0("R", 1:2),
+  x = shift_x + c(0, dx),
+  y = c(0, 0)
+)
+
+cells <- rbind(left_cluster, right_cluster)
+
+# ---------- define states ----------
+
+ancestral <- rep("ancestral", 6)
+derived   <- rep("derived", 6)
+mixed     <- c(rep("derived", 3), rep("ancestral", 3))
+
+initial_state <- list(
+  ancestral, ancestral, ancestral,
+  ancestral, ancestral
+)
+
+allopatric_state <- list(
+  derived, derived, derived,
+  ancestral, ancestral
+)
+
+within_cluster_state <- list(
+  derived, derived, ancestral,
+  ancestral, ancestral
+)
+
+within_cell_state <- list(
+  mixed, ancestral, ancestral,
+  ancestral, ancestral
+)
+
+# ---------- plot ----------
+
+old_par <- par(no.readonly = TRUE)
+
+par(
+  mfrow = c(4, 1),
+  mar = c(1.2, 1, 2.2, 1),
+  oma = c(0, 0, 0, 0)
+)
+
+draw_panel(
+  "(i) Initial state: same species in all cells",
+  initial_state,
+  cells, hex_r
+)
+
+draw_panel(
+  "(ii) Allopatric speciation: isolated cluster changes species",
+  allopatric_state,
+  cells, hex_r
+)
+
+draw_panel(
+  "(iii) Within-cluster speciation: part of one cluster changes species",
+  within_cluster_state,
+  cells, hex_r
+)
+
+draw_panel(
+  "(iv) Within-cell speciation: part of one cell changes species",
+  within_cell_state,
+  cells, hex_r
+)
+
+par(old_par)
+```
+
+**Figure 1** Spatial modes of speciation. The figure shows the different modes of 
+speciation in a spatial cell-based context. (i) The initial state prior to 
+speciation. The two clusters are isolated and therefore build up divergence over 
+time. (ii) In the current implementation of gen3sis, these two clusters may become 
+different species. Because of the current restrictions (iii) within-cluster speciation, 
+e.g. parapatry, is not possible, nor is (iv) within-cell sympatric speciation.
 
 ## Limits on the current implementation
 
@@ -73,6 +227,8 @@ While highly flexible, the past and current version of gen3sis does not allow
 for within-cell ecological or sympatric speciation. It assumes that the 
 units of speciation are (1) population-cell clusters, and (2) gene flow 
 decreases divergence within population-cell clusters.
+
+
 
 
 (i) Population-cell clusters, that operate as the unit of speciation, are 

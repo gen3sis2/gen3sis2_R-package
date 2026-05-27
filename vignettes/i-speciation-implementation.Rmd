@@ -223,20 +223,30 @@ e.g. parapatry, is not possible, nor is (iv) within-cell sympatric speciation.
 
 ## Limits on the current implementation
 
-While highly flexible, the past and current version of gen3sis does not allow 
-for within-cell ecological or sympatric speciation. It assumes that the 
-units of speciation are (1) population-cell clusters, and (2) gene flow 
-decreases divergence within population-cell clusters.
-
-
+While highly flexible, the past and current version of gen3sis assumes that (1) the 
+units of speciation are population-cell clusters, that (2) gene flow 
+decreases divergence within population-cell clusters purely based on being part 
+of the same geographical cluster (but see (ii) below), and (3) that these clusters are determined 
+based on dispersal ability (e.g. not affected by large trait differences that 
+may affect hybrid fitness, important in ecological speciation).
 
 
 (i) Population-cell clusters, that operate as the unit of speciation, are 
 determined by distance-based clustering using *Tdbscan_variable()*. The clusters 
-are based on distances between cells and additionally the dispersal ability of
-the species. This limit the frequency of single-cell speciation, and makes 
-within-cell speciation not easily implementable by default.
+are based on distances between cells and the dispersal ability of
+the populations (potentially informed by traits and the environment).
+This limits the occurrence of peripheral speciation unless the populations are 
+separated in space and beyond dispersal kernels. Additionally, within-cell 
+speciation is currently not possible.
 
+Note that *config\$gen3sis\$dispersal\$get_dispersal_values()* is user specified. 
+While the dispersal kernels of individual populations (and cells) can be made 
+dependent on the trait values of the population, i.e. populations can be made to 
+disperse further based on their trait value, dispersal and by extension gene flow 
+cannot be reduced specifically between populations that differ strongly in trait value. 
+As a result, ecological reproductive barriers that depend on pairwise
+trait divergence among populations cannot affect the formation of reproductive
+clusters under the current clustering implementation.
 
 ```{r, eval = FALSE}
 # part of the loop_speciation function (L55-L65). This part determines the 
@@ -248,10 +258,12 @@ loop_speciation <- function(){
   if ( length(species_presence)==1 ){#check if only one cell is occupied
     clu_geo_spi_ti <- 1
   }else{
+    # obtain the dispersal kernels that are handed to the cluster-function
     distances <- config$gen3sis$dispersal$get_dispersal_values(
       length(species_presence), species, data$space, config)
 
     permutation <- sample(1:length(species_presence), length(species_presence))
+    # cluster based on distances between cells and kernels
     clu_geo_spi_ti <- Tdbscan_variable(
       data$distance_matrix[species_presence[permutation],
                            species_presence[permutation],
@@ -263,8 +275,8 @@ loop_speciation <- function(){
 }
 ```
 
-(i) Specifically, clusters become new species if they meet an a priori set
-threshold:
+Clusters become new species if they meet an *a priori* set
+threshold *config\$gen3sis\$speciation\$divergence_threshold*:
 
 ```{r, eval = FALSE}
 
@@ -274,21 +286,23 @@ clu_gen_spi_ti_c <- Tdbscan(gen_dist_spi$compressed_matrix,
 ```
 
 (ii) Divergence between populations within the same cluster is decreased 
-by "dfactor", whereas divergence increases between clusters based on the 
-ifactor. The ifactor is derived from the user specified *get_divergence_factor()*
+by *dfactor*, whereas divergence increases between clusters based on the 
+*ifactor*. The *ifactor* is derived from the user specified *get_divergence_factor()*
 with a default value of 1, and can result in creative implementations such as 
 divergence between clusters based on environmental factors or species' 
 cluster-level traits. However, it does mean that populations within a cluster
-by default do not diverge from one another. Even if we were to model frequency-
-dependent competiton and/or divergent selection, a population can't split off.
+by default do not diverge from one another (although there may be some flexibility 
+if an ifactor-matrix is used; see comment below). Even if we were to model 
+frequency-dependent competiton, divergent selection, assortative mating, etc., a 
+within-cluster speciation event cannot occur.
 
--- Note to self: I don't understand why dfactor
-is compensated for ifactor when dealing with a uniform ifactor, but not when
-ifactor is supplied as a matrix? Benjamin's response: Because a scalar i-factor 
-gets added to the diagonal (within cluster divergence). Therefore to reduce the 
-within cluster divergence by -1 we need to subtract (1 + ifactor). In the matrix 
-case the user is responsible for keeping the diagonal at 0, or <1 for slower 
-convergence, or <0 for faster convergence.
+Note that if *ifactor* is a matrix, and that divergence happens distinctly between 
+clusters, e.g. based on traits, the diagonal can be used to compensate for convergence 
+of cells within a cluster. Specifically, the user is responsible for keeping the 
+diagonal at 0, or <1 for slower convergence, or <0 for faster convergence. While not 
+directly available now, this can be used to track the possibility of within-cluster 
+speciation in the future, because convergence could be made dependent on the trait 
+or environmental differences within a cluster.
 
 ```{r, eval = FALSE}
 #' Updates a given divergence matrix
@@ -326,21 +340,25 @@ update_divergence <- function(divergence, cluster_indices, ifactor) {
 
 ## Possible solutions
 
-There are multiple solutions to the incorporation of ecological and sympatric 
-speciation. Ideally we would like to make the framework as flexible as possible,
-so that others might implement their own versions. There are three ways of 
-speciation that could be incorporated: (1) the main between-cluster speciation as 
-currently incorporated, (2) The within-cluster speciation that splits of multiple 
-cells at once (i.e. speciation with gene flow), and (3) within-cell speciation that
-could mimic point-speciation or sympatric speciation (i.e. the ancestor is sympatric 
-with the new species). Out of these options I explore the latter below, as it would 
-likely require a new function (e.g. (2) could be an extension of the current cluster-based 
-speciation although focussing on trait-based clusters instead). 
+There are multiple solutions to the incorporation of ecological, peripetric, 
+parapatric, and sympatric speciation. Ideally we would like to make the framework 
+as flexible as possible, so that others might implement their own versions. There 
+are three ways of speciation that could be incorporated (Figure 1): (1) the main 
+between-cluster speciation as currently incorporated, (2) The within-cluster 
+speciation that splits of multiple cells at once (i.e. speciation with gene flow), 
+and (3) within-cell speciation that could mimic point-speciation or sympatric 
+speciation (i.e. the ancestor is sympatric with the new species). 
+Out of these options I explore an ecologically-motivated example of the latter 
+below, as it would likely require a new function (e.g. (2) could be an extension 
+of the current cluster-based speciation although focusing on trait-based 
+clusters instead). 
 
-The simplest incorporation would be to let a given number of individuals in a cell 
-become a new species. For this to be at all possible, the *loop_speciation()* 
-would need to be updated by either adjusting *update_divergence()*, and/or 
-incorporating a new function or loop that allows for within-cell speciation. e.g.,
+The simplest incorporation of sympatric speciation would be to let a given number 
+of individuals in a cell become a new species. For this to be at all possible, 
+the *loop_speciation()* would need to be updated by either adjusting *update_divergence()*, 
+and/or incorporating a new function or loop that allows for within-cell speciation. 
+We think that the best solution, however, is to add a separate function that exists 
+in parallel to the current allopatric speciation loop. e.g.,
 
 
 ```{r, eval = FALSE}
@@ -386,7 +404,7 @@ a split between the species:
   - z_mode_delta = 0
 
 Such an implementation would be preferential over, say, modelling multiple demes
-per cell, as that would require a more extensive rework and may conflict with the
+(or habitats) per cell, as that would require a more extensive rework and may conflict with the
 philosophy behind gen3sis. Alternative rules, perhaps making 
 *within_population_speciation()* user specified (?) could follow:
 
@@ -402,29 +420,29 @@ philosophy behind gen3sis. Alternative rules, perhaps making
 - abundance * min(z_mode_p, 1 - z_mode_p) > minimum_mode_abundance 
   - (or abundance based)
 
-*apply_ecology()* and *apply_evolution()* already offer staggering flexibility, 
-as *apply_ecology* is supplied with abundance, traits, environment, and the 
-config and *apply_trait_evolution()* with species, cluster_indices, space, and 
+*apply_ecology()* and *apply_trait_evolution()* already offer flexibility to calculate 
+these metrics, as *apply_ecology* is supplied with abundance, traits, environment, 
+and the config and *apply_trait_evolution()* with species, cluster_indices, space, and 
 the config. *apply_ecology()* updates abundances and could do this for distinct 
 modes for the trait distribution of a population. However, It is currently 
-hard coded that *apply_ecology()* only returns abundances in *loop_ecology()*: 
+hard coded, and expected from other functions, that *apply_ecology()* only returns 
+abundances in *loop_ecology()*. This is problematic if we are to model, e.g., 
+divergent selection that causes changes in abundances and trait values at the same 
+instance.
 
-```{r, eval = FALSE}
-# L85 in loop_ecology()
-NEW_abd <- config$gen3sis$ecology$apply_ecology(abundance, traits, 
-                                                local_environment, config)
-```
-
-###### What I think therefore needs to be added or discussed:
+###### What I think therefore needs to be added:
 - Speciation of a single species in a single cell into two
 - Partitioning of abundance among the two derived lineages
-- Not sure how gen3sis handles will handle such a phylogenetic split
+- Clarfiy how gen3sis will handle such phylogenetic splits
   - i.e. which population remains with the rest of the range?
-- create overlapping ranges in the same cell
+  - How do speciation modes and the loops interact: Do we get allopatric speciation 
+  immediately following sympatric speciation?
+- Consider overlapping ranges in the same cell
 - mode-specific dispersal? How does the trait distribution affect dispersers?
-- *update_divergence()*, *loop_speciation()*, *loop_ecology()* and perhaps more
+- *update_divergence()*, *loop_speciation()*, *loop_ecology()* and perhaps more 
+functions require to be updated.
 
-###### We would probably not be modelling:
+###### We may not be modelling:
  - Demes
  - Allele frequencies
  - Linkage disequilibrium
@@ -432,7 +450,7 @@ NEW_abd <- config$gen3sis$ecology$apply_ecology(abundance, traits,
  - Recombination
  - Mate choice
 
-The implementation would thus not explicitly consider pop gen, and remain 
+The implementation would thus not explicitly consider population genetics, and remain 
 largely phenomenological. However, perhaps the Ne implementation can have 
 a synergistic relationship.
 

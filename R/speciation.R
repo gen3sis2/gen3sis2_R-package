@@ -67,11 +67,15 @@ loop_speciation <- function(config, data, vars) {
     gen_dist_spi <- decompress_divergence(species[["divergence"]])
     # update genetic distances
     ifactor <- config$gen3sis$speciation$get_divergence_factor(species, clu_geo_spi_ti, data[["space"]], config)
+    # get the divergence decay from the config
+    dfactor <- config$gen3sis$speciation$divergence_decay
     
     # checks if divergence factor needs to be time-scaled
     if (config$user$needs_scaling[["get_divergence_factor"]]){
       # time-scale the genetic distance
       ifactor <- ifactor * config$user$scale_time
+      # time-scale the divergence decay
+      dfactor <- dfactor * config$user$scale_time
       
       # check whether the scaled divergence factor is greater than the divergence threshold.
       # This may indicate that time-scaling is distorting the divergence process, potentially 
@@ -87,7 +91,7 @@ loop_speciation <- function(config, data, vars) {
       }
     }
     
-    gen_dist_spi <- update_divergence(gen_dist_spi, clu_geo_spi_ti, ifactor = ifactor )
+    gen_dist_spi <- update_divergence(gen_dist_spi, clu_geo_spi_ti, ifactor = ifactor, dfactor = dfactor)
 
     gen_dist_spi <- compress_divergence(gen_dist_spi)
 
@@ -174,17 +178,17 @@ loop_speciation <- function(config, data, vars) {
 #'
 #' @return an updated divergence matrix
 #' @noRd
-update_divergence <- function(divergence, cluster_indices, ifactor) {
+update_divergence <- function(divergence, cluster_indices, ifactor, dfactor) {
   #udpate genetic distance
   clusters <- unique(cluster_indices)
   if( length(ifactor) == 1 ) {
     # scalar ifactor
     divergence <- divergence + ifactor
-    dfactor <- 1+ifactor
+    dfactor <- dfactor + ifactor
   } else {
     # matrix ifactor
     divergence <- divergence + ifactor[cluster_indices, cluster_indices]
-    dfactor <- 1
+    # it is assumed that the user already modifies the diagonal of the ifactor matrix so dfactor is not touched
   }
   for ( i in clusters ){
     #in case they belong to same clusters, subtract -2 (for the default case), to that final diference is -1 given previous addition!

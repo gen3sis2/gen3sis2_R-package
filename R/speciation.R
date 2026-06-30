@@ -78,10 +78,12 @@ loop_speciation <- function(config, data, vars) {
       # i.e., if the divergence threshold is 2, and it ifactor is 3, it means an instant speciation
       # if it happens every time-step, the population should speciate at every time-step
       # it makes less sense than a gradual speciation for most species and most likely is a product of time-scaling
-      if(ifactor > config$gen3sis$speciation$divergence_threshold && !threw_warning){
+      
+      ifactor_exceeds_threshold <- any(ifactor > config$gen3sis$speciation$divergence_threshold)
+      
+      if(ifactor_exceeds_threshold && !threw_warning){
         # set the flag to avoid spamming the console
         threw_warning <- TRUE
-        message(paste0("Cumulative genetic distance is ",  ifactor / config$gen3sis$speciation$divergence_threshold," times greater than divergence_threshold. Time scaling is likely distorting the process. Review recommended."))
         warning(paste0("Cumulative genetic distance is ",  ifactor / config$gen3sis$speciation$divergence_threshold," times greater than divergence_threshold. Time scaling is likely distorting the process. Review recommended.")) 
       }
     }

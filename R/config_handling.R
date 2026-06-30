@@ -330,6 +330,7 @@ create_empty_config <- function(){
                                                 "get_dispersal_values" = NULL
                                                  ),
                             "speciation" = list( "divergence_threshold" = NULL,
+                                                 "divergence_decay" = NULL,
                                                  "get_divergence_factor" = NULL
                                                  ),
                             "trait_evolution" = list( "apply_trait_evolution" = NULL

@@ -669,7 +669,7 @@ plot_single.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
                           ymin=space$extent[["ymin"]],
                           ymax=space$extent[["ymax"]],
                           resolution = space$type_spec_res)
-  values(temp_ras) <- no_data
+  terra::values(temp_ras) <- no_data
   
   img <- cbind(space[["coordinates"]], no_data)
   img[names(values), 3] <- values
@@ -704,10 +704,10 @@ plot_single.gen3sis_space_raster <- function(no_data = 0, legend = TRUE, ...) {
     # terra::values(ras) <- values_vec  
     
     # converting to factor
-    ras <- as.factor(ras)
-    lvl <- levels(ras)[[1]]
-    lvl$no_data <- c(unique(values) |> sort() |> as.character())
-    levels(ras) <- lvl
+    ras <- terra::as.factor(ras)
+    # lvl <- levels(ras)[[1]]
+    # lvl$no_data <- c(unique(values) |> sort() |> as.character())
+    # levels(ras) <- lvl
     
     col <- unique(col)
     names(col) <- unique(values)

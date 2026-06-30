@@ -45,6 +45,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
+<li class="nav-item"><a class="nav-link" href="CONTRIBUTING.html">Contributing</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -83,9 +84,12 @@ install.packages("gen3sis")
 ```
 --->
 <p>you can install the latest development release from GitHub via</p>
-<p><code>{r} devtools::install_github(repo = "ohagen/gen3sis_rf",    dependencies = TRUE, build_vignettes = TRUE)</code> Below the status of the automatic CI R-CMD-check tests</p>
-<p>DEVELOPMENT <a href="https://github.com/project-gen3sis/R-package/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development" alt="R-CMD-check"></a></p>
-<p>MASTER <a href="https://github.com/project-gen3sis/R-package/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master" alt="R-CMD-check"></a></p>
+<pre><code><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span>repo <span class="op">=</span> <span class="st">"ohagen/gen3sis_rf"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre>
+<p>Below the status of the automatic CI R-CMD-check tests for the main branches:</p>
+<ul>
+<li><p>DEVELOPMENT <a href="https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelopment" class="external-link"><img src="https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development" alt="R-CMD-check"></a></p></li>
+<li><p>MASTER <a href="https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master" alt="R-CMD-check"></a></p></li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="how-to-use">How to use<a class="anchor" aria-label="anchor" href="#how-to-use"></a>
@@ -93,21 +97,29 @@ install.packages("gen3sis")
 <div class="section level4">
 <h4 id="run-one-simulation">Run one simulation<a class="anchor" aria-label="anchor" href="#run-one-simulation"></a>
 </h4>
-<p>Load and run a simulation with the desired config and spaces. Exemple data is provided with the package ```{r} library(“gen3sis2”)</p>
-<p>datapath &lt;- system.file(file.path(“extdata”, “WorldCenter”), package = “gen3sis”)</p>
-<p>sim &lt;- run_simulation(config = file.path(datapath, “config/config_worldcenter.R”), space = file.path(datapath, “space”), output_directory = tempdir(), verbose=0)</p>
-<pre><code>A summary statistics is stored at 'sim' more data can be save using the observer function
-
-####  Visualize a simulation
-
-Plot the summary statistics of a simulation
-```{r}
-plot_summary(sim)</code></pre>
+<p>Load and run a simulation with the desired config and spaces. Example data is provided with the package.</p>
+<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/project-Gen3sis/R-package" class="external-link">"gen3sis2"</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">datapath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"WorldCenter"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"gen3sis"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_simulation.html">run_simulation</a></span><span class="op">(</span>config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">datapath</span>, <span class="st">"config/config_worldcenter.R"</span><span class="op">)</span>,</span>
+<span>               space <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">datapath</span>, <span class="st">"space"</span><span class="op">)</span>,</span>
+<span>               output_directory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>               verbose<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></code></pre>
+<p>A summary statistics is stored at ‘sim’ more data can be save using the observer function</p>
+</div>
+<div class="section level4">
+<h4 id="visualize-a-simulation">Visualize a simulation<a class="anchor" aria-label="anchor" href="#visualize-a-simulation"></a>
+</h4>
+<p>Plot the summary statistics of a simulation</p>
+<pre><code><span><span class="fu"><a href="reference/plot_summary.html">plot_summary</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="check-installed-version">Check installed version<a class="anchor" aria-label="anchor" href="#check-installed-version"></a>
 </h4>
-<p>Make sure you have the latest gen3sis version <code>{r} #print package version paste("gen3sis2 version:", packageVersion("gen3sis2"))</code></p>
+<p>Make sure you have the latest gen3sis version</p>
+<pre><code><span><span class="co">#print package version</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"gen3sis2 version:"</span>, <span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"gen3sis2"</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -128,12 +140,18 @@ plot_summary(sim)</code></pre>
 <ul>
 <li><p><strong>Rcpp</strong> Dirk Eddelbuettel and James Joseph Balamuta (2018). Extending R with C++: A Brief Introduction to Rcpp. The American Statistician. 72(1). URL <a href="https://doi.org/10.1080/00031305.2017.1375990" class="external-link uri">https://doi.org/10.1080/00031305.2017.1375990</a>.</p></li>
 <li><p><strong>BH</strong> Dirk Eddelbuettel, John W. Emerson and Michael J. Kane (2021). BH: Boost C++ Header Files. R package. <a href="https://CRAN.R-project.org/package=BH" class="external-link uri">https://CRAN.R-project.org/package=BH</a></p></li>
-<li><p><strong>Matrix</strong> Douglas Bates and Martin Maechler (2019). Matrix: Sparse and Dense Matrix Classes and Methods. R package. <a href="https://CRAN.R-project.org/package=Matrix" class="external-link uri">https://CRAN.R-project.org/package=Matrix</a></p></li>
-<li><p><strong>raster</strong> Robert J. Hijmans (2021). raster: Geographic Data Analysis and Modeling. R package. <a href="https://CRAN.R-project.org/package=raster" class="external-link uri">https://CRAN.R-project.org/package=raster</a></p></li>
-<li><p><strong>gdistance</strong> van Etten, J. (2017). R package gdistance: Distances and routes on geographical grids. Journal of Statistical Software, 76(1), 1–21. <a href="https://doi.org/10.18637/jss.v076.i13" class="external-link uri">https://doi.org/10.18637/jss.v076.i13</a></p></li>
+<li><p><strong>Matrix</strong> Bates D, Maechler M, Jagan M (2025). Matrix: Sparse and Dense Matrix Classes and Methods. R package. <a href="https://CRAN.R-project.org/package=Matrix" class="external-link uri">https://CRAN.R-project.org/package=Matrix</a></p></li>
+<li><p><strong>tidyterra</strong> Hernangómez D. (2023). Using the tidyverse with terra objects: the tidyterra package. <a href="https://doi.org/10.21105/joss.05751" class="external-link uri">https://doi.org/10.21105/joss.05751</a></p></li>
+<li><p><strong>terra</strong> Hijmans R, Brown A, Barbosa M (2026). terra: Spatial Data Analysis <a href="https://cran.r-project.org/web/packages/terra/index.html" class="external-link uri">https://cran.r-project.org/web/packages/terra/index.html</a></p></li>
+<li><p><strong>h3jsr</strong> O’Brien L. (2023). h3jsr: Access Uber’s H3 Library. <a href="https://CRAN.R-project.org/package=h3jsr" class="external-link uri">https://CRAN.R-project.org/package=h3jsr</a></p></li>
+<li><p><strong>sf</strong> Pebesma E. (2018). Simple Features for R: Standardized Support for Spatial Vector Data. <a href="https://r-spatial.github.io/sf/" class="external-link uri">https://r-spatial.github.io/sf/</a></p></li>
+<li><p><strong>igraph</strong> Csárdi G., Nepusz T. (2006). The igraph software package for complex network research. <a href="https://igraph.org" class="external-link uri">https://igraph.org</a>&gt;</p></li>
 <li><p><strong>sp</strong> Roger S. Bivand, Edzer Pebesma, Virgilio Gomez-Rubio, 2013. Applied spatial data analysis with R, Second edition. Springer, NY. <a href="https://asdar-book.org/" class="external-link uri">https://asdar-book.org/</a></p></li>
-<li><p><strong>stringr</strong> Hadley Wickham (2019). stringr: Simple, Consistent Wrappers for Common String Operations. R package. <a href="https://CRAN.R-project.org/package=stringr" class="external-link uri">https://CRAN.R-project.org/package=stringr</a></p></li>
-<li><p><strong>testthat</strong> Hadley Wickham (2011). testthat: Get Started with Testing. The R Journal, vol. 3, no. 1, pp. 5–10, <a href="https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf" class="external-link uri">https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf</a></p></li>
+<li><p><strong>stringr</strong> Wickham H (2025). stringr: Simple, Consistent Wrappers for Common String Operations. <a href="https://CRAN.R-project.org/package=stringr" class="external-link uri">https://CRAN.R-project.org/package=stringr</a></p></li>
+<li><p><strong>ggplot2</strong> Wickham H. (2016). <a href="https://ggplot2.tidyverse.org" class="external-link uri">https://ggplot2.tidyverse.org</a></p></li>
+<li><p><strong>scales</strong> Wickham H., Pedersen T., Seidel D. (2025). scales: Scale Functions for Visualization. <a href="https://CRAN.R-project.org/package=scales" class="external-link uri">https://CRAN.R-project.org/package=scales</a></p></li>
+<li><p><strong>patchwork</strong> Pedersen T. (2025). patchwork: The Composer of Plots. <a href="https://CRAN.R-project.org/package=patchwork" class="external-link uri">https://CRAN.R-project.org/package=patchwork</a></p></li>
+<li><p><strong>testthat</strong> Wickham H. (2011). testthat: Get Started with Testing. The R Journal, vol. 3, no. 1, pp. 5–10, <a href="https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf" class="external-link uri">https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf</a></p></li>
 <li><p><strong>formatR</strong> Yihui Xie (2021). formatR: Format R Code Automatically. R package. <a href="https://CRAN.R-project.org/package=formatR" class="external-link uri">https://CRAN.R-project.org/package=formatR</a></p></li>
 <li><p><strong>scico</strong> Crameri, F. (2018). Scientific colour maps. Zenodo. <a href="http://doi.org/10.5281/zenodo.1243862" class="external-link uri">http://doi.org/10.5281/zenodo.1243862</a> &amp; Crameri, F., G.E. Shephard, and P.J. Heron (2020). The misuse of colour in science communication, Nature Communications, 11, 5444. <a href="doi:10.1038/s41467-020-19160-7" class="uri">doi:10.1038/s41467-020-19160-7</a></p></li>
 </ul>
@@ -173,6 +191,8 @@ plot_summary(sim)</code></pre>
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Oskar Hagen <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Admir C. de O. Junior <br><small class="roles"> Author </small>   </li>
+<li>Bouwe Reijenga <br><small class="roles"> Author </small>   </li>
 <li>Benjamin Flück <br><small class="roles"> Author </small>   </li>
 <li>Fabian Fopp <br><small class="roles"> Author </small>   </li>
 <li>Juliano S. Cabral <br><small class="roles"> Author </small>   </li>
@@ -180,7 +200,6 @@ plot_summary(sim)</code></pre>
 <li>Mikael Pontarp <br><small class="roles"> Author </small>   </li>
 <li>Thiago F. Rangel <br><small class="roles"> Author </small>   </li>
 <li>Loïc Pellissier <br><small class="roles"> Author, thesis advisor </small>   </li>
-<li>Admir C. de O. Junior <br><small class="roles"> Author </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -192,7 +211,7 @@ plot_summary(sim)</code></pre>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Oskar Hagen, Benjamin Flück, Fabian Fopp, Juliano S. Cabral, Florian Hartig, Mikael Pontarp, Thiago F. Rangel, Loïc Pellissier, Admir C. de O. Junior.</p>
+  <p>Developed by Oskar Hagen, Admir C. de O. Junior, Bouwe Reijenga, Benjamin Flück, Fabian Fopp, Juliano S. Cabral, Florian Hartig, Mikael Pontarp, Thiago F. Rangel, Loïc Pellissier.</p>
 </div>
 
 <div class="pkgdown-footer-right">

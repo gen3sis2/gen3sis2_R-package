@@ -42,10 +42,10 @@ test_that("create_spaces_raster works properly",{
   # Geodynamic
   
   # modify the raster
-  values(r[[2]])[13,1] <- NA
-  values(r[[3]])[12,1] <- NA
-  values(r[[3]])[13,1] <- NA
-  values(r[[3]])[14,1] <- NA
+  terra::values(r[[2]])[13,1] <- NA
+  terra::values(r[[3]])[12,1] <- NA
+  terra::values(r[[3]])[13,1] <- NA
+  terra::values(r[[3]])[14,1] <- NA
   
   withr::with_tempdir({
     create_spaces_raster(
@@ -125,10 +125,10 @@ test_that("geodynamic is FALSE but environment says otherwise", {
   ),
   3)
   
-  values(r[[2]])[13, 1] <- NA
-  values(r[[3]])[12, 1] <- NA
-  values(r[[3]])[13, 1] <- NA
-  values(r[[3]])[14, 1] <- NA
+  terra::values(r[[2]])[13, 1] <- NA
+  terra::values(r[[3]])[12, 1] <- NA
+  terra::values(r[[3]])[13, 1] <- NA
+  terra::values(r[[3]])[14, 1] <- NA
   
   # define a cost function
   cf <- function(source, dest){

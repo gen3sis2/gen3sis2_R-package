@@ -148,7 +148,6 @@ setup_variables <- function(config, data, vars) {
 #'
 #' @importFrom grDevices pdf dev.off
 #' @importFrom graphics par
-#' @import raster
 #' @noRd
 init_attribute_ancestor_distribution <- function(config, data, vars) {
   #oldpar <- par(no.readonly = TRUE)

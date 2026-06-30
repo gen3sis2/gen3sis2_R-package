@@ -31,7 +31,7 @@ Let’s see an example:
 ``` r
 library(gen3sis2)
 # Load some spaces.rds create with create_spaces_raster...
-space <- readRDS(system.file("extdata/SouthAmerica/landscape/spaces.rds", package = "gen3sis2"))
+space <- readRDS(system.file("extdata/SouthAmerica/space/spaces.rds", package = "gen3sis2"))
 
 # ... and plot it!
 # "env_names" selects the variables of interest
@@ -76,13 +76,13 @@ config <- create_input_config(system.file("extdata/SouthAmerica/config/config_so
 
 data <- simulate_space_format(
   config = system.file("extdata/SouthAmerica/config/config_southamerica.R", package = "gen3sis2"),
-  space = system.file("extdata/SouthAmerica/landscape", package = "gen3sis2"),
+  space = system.file("extdata/SouthAmerica/space", package = "gen3sis2"),
   output_directory = tempdir()
 )
 ```
 
-    ## config found:  /tmp/RtmpUuJ7Bs/temp_libpath19b6792db934/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /tmp/RtmpUuJ7Bs/temp_libpath19b6792db934/gen3sis2/extdata/SouthAmerica/landscape 
-    ## Output directory is: /tmp/RtmpfRXovc/config_southamerica
+    ## config found:  /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/SouthAmerica/space 
+    ## Output directory is: /tmp/Rtmpl22iSg/config_southamerica
 
 ``` r
 names(data)
@@ -212,7 +212,11 @@ apply `ggplot2` syntax `gen3sis2` plots:
 ``` r
 # storing plot in an object 
 p <- plot_species_presence(sp, data$space, col = c("black","#1B8200"))
+```
 
+![](d-custom-plot-aesthetics_files/figure-html/unnamed-chunk-9-1.png)
+
+``` r
 # applying ggplot2 syntax
 p +
   ggplot2::theme_dark() +
@@ -221,7 +225,7 @@ p +
   )
 ```
 
-![](d-custom-plot-aesthetics_files/figure-html/unnamed-chunk-9-1.png)
+![](d-custom-plot-aesthetics_files/figure-html/unnamed-chunk-9-2.png)
 
 ### Customizing `gen3sis2` default aesthetics
 
@@ -246,7 +250,7 @@ gen3sis2:::.default_raster_plot_aesthetics
     ##             axis.text = element_blank(), axis.ticks = element_blank()), 
     ##         ggplot2::labs(title = title), ggplot2::coord_fixed(ratio = 1))
     ## }
-    ## <bytecode: 0x64b18cb2d7a8>
+    ## <bytecode: 0x6540f0d3de30>
     ## <environment: namespace:gen3sis2>
 
 Now, let’s override it, defining our own aesthetics:

@@ -13,6 +13,11 @@
   - raster
   - H3
   - points
-- Time logic were redesign. The config and the space can have different
-  time-frames.
+- Spaces now carry richer metadata and can be compressed/decompressed
+  with spac3tools for easier sharing and reproducibility.
+- Added an explicit biotic-to-abiotic feedback pathway so simulations
+  can look back from biotic outcomes to the underlying environment.
+- Time logic were redesign (from, to, by) with units a, ka, Ma and Ga.
+- The config and the space can have different time-frames.
 - Plotting was reconstructed with `ggplot2`.
+- Added many new support functions and utilities.

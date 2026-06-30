@@ -1,5 +1,6 @@
 ![](./man/figures/gen3sis_logo.png)
 
+[![Contributors](https://img.shields.io/github/contributors/gen3sis2/gen3sis2_R-package)](https://github.com/gen3sis2/gen3sis2_R-package/graphs/contributors)
 
 # General Engine for Eco-Evolutionary Simulations
 
@@ -99,3 +100,104 @@ We thank the developers of the following methods and dependencies:
 - **formatR** Yihui Xie (2021). formatR: Format R Code Automatically. R package. https://CRAN.R-project.org/package=formatR
 
 - **scico** Crameri, F. (2018). Scientific colour maps. Zenodo. http://doi.org/10.5281/zenodo.1243862 & Crameri, F., G.E. Shephard, and P.J. Heron (2020). The misuse of colour in science communication, Nature Communications, 11, 5444. doi:10.1038/s41467-020-19160-7
+
+## Contributors
+
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropensci/allcontributors) following the [allcontributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+
+<table>
+
+<tr>
+<td align="center">
+<a href="https://github.com/ohagen">
+<img src="https://avatars.githubusercontent.com/u/17259233?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=ohagen">ohagen</a>
+</td>
+<td align="center">
+<a href="https://github.com/AdmirJr">
+<img src="https://avatars.githubusercontent.com/u/102635734?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=AdmirJr">AdmirJr</a>
+</td>
+<td align="center">
+<a href="https://github.com/benj919">
+<img src="https://avatars.githubusercontent.com/u/926479?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=benj919">benj919</a>
+</td>
+<td align="center">
+<a href="https://github.com/florianhartig">
+<img src="https://avatars.githubusercontent.com/u/5457753?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=florianhartig">florianhartig</a>
+</td>
+<td align="center">
+<a href="https://github.com/loic-pellissier">
+<img src="https://avatars.githubusercontent.com/u/62331405?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=loic-pellissier">loic-pellissier</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/bouwerutger">
+<img src="https://avatars.githubusercontent.com/u/44290366?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bouwerutger">bouwerutger</a>
+</td>
+<td align="center">
+<a href="https://github.com/yihui">
+<img src="https://avatars.githubusercontent.com/u/163582?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=yihui">yihui</a>
+</td>
+<td align="center">
+<a href="https://github.com/FFopp">
+<img src="https://avatars.githubusercontent.com/u/62299258?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=FFopp">FFopp</a>
+</td>
+<td align="center">
+<a href="https://github.com/mmore500">
+<img src="https://avatars.githubusercontent.com/u/10763333?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=mmore500">mmore500</a>
+</td>
+<td align="center">
+<a href="https://github.com/ZHG2017">
+<img src="https://avatars.githubusercontent.com/u/31282190?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=ZHG2017">ZHG2017</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/cakloecker">
+<img src="https://avatars.githubusercontent.com/u/62482275?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=cakloecker">cakloecker</a>
+</td>
+<td align="center">
+<a href="https://github.com/cndesantana">
+<img src="https://avatars.githubusercontent.com/u/5500983?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=cndesantana">cndesantana</a>
+</td>
+</tr>
+
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+

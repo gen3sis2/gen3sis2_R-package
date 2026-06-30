@@ -48,8 +48,8 @@ config_object$gen3sis$general$random_seed <- 2025
                         space = file.path(datapath, "raster"), 
                         output_directory = tempdir())
 #> Config found: using config object 
-#> space found: /tmp/RtmpUuJ7Bs/temp_libpath19b6792db934/gen3sis2/extdata/TestSpaces/geodynamic_spaces/raster 
-#> Output directory is: /tmp/RtmpjAyokR/your_config 
+#> space found: /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/TestSpaces/geodynamic_spaces/raster 
+#> Output directory is: /tmp/RtmpOiAvPM/your_config 
 #> 
 #> Using config: your_config 
 #> --- Initializing --- 
@@ -60,11 +60,21 @@ config_object$gen3sis$general$random_seed <- 2025
 #> [1] "i 5 yls -2 n_sites 5"
 #> --- Running simulation --- 
 #> step = 4 , species alive = 5 , species total = 5 
+
 #> step = 3 , species alive = 5 , species total = 5 
+
+
 #> step = 2 , species alive = 5 , species total = 5 
+
+
 #> step = 1 , species alive = 5 , species total = 5 
+
+
 #> step = 0 , species alive = 5 , species total = 5 
+
+
+
 #> Simulation finished. All OK 
-#> Simulation runtime:  0.001194257  hours
+#> Simulation runtime:  0.001988837  hours
 # }
 ```

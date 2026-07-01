@@ -23,7 +23,7 @@ select_habitable_hab <- function(what) {
 #' calculate the richness of a list of species over a given space
 #'
 #' @param species_list a list of species to include in the richness calculations
-#' @param space the space to calculate the richnness over
+#' @param space the space to calculate the richness over
 #'
 #' @return a vector with the richness for every cell in the input space
 #' @keywords support

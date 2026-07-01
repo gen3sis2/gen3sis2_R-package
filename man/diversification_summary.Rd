@@ -2,7 +2,7 @@
 % Please edit documentation in R/observations.R
 \name{diversification_summary}
 \alias{diversification_summary}
-\title{Diverisification summary}
+\title{Diversification summary}
 \usage{
 diversification_summary(gen3sis_output)
 }

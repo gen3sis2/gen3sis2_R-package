@@ -91,7 +91,7 @@ prepare_directories <- function(config_file = NA,
 #' Creates either an empty configuration or a pre-filled configuration object from a config file
 #'
 #' @param config_file the path to a valid configuration file. if NA it creates an empty config
-#' @param config_name the name of the configuration. if NULL it will be set to a random name, if a empty config is creasted, or use the file name
+#' @param config_name the name of the configuration. if NULL it will be set to a random name, if a empty config is created, or use the file name
 #' @return list of configuration elements, similar generated from reading a config_file.R. The internal elements 
 #' of this list are: "general", "initialization", "dispersal", "speciation", "mutation" and "ecology"
 #' @keywords config

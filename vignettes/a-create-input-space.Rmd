@@ -88,7 +88,7 @@ spaces_list <- list(
 
 Additionally, we need to define a *cost function* which defines the connection cost between sites. The species dispersal ability will determine if sites are reachable (i.e. if the dispersal event is higher than the connection cost).
 
-First, we will look at a very simple case, where no additional cost is added to the geographical distances, meaning that connections costs equal distance in grid cell units multiplied by the raster resolution. For spaces with a coordinate system (*crs*) the cost is defined in meters, as defined by the coordinate system. By dividing the cost function by 1000 we get the cost of traveling for 1 km. We can define a simple cost function in which the dispersal is not penalized:
+First, we will look at a very simple case, where no additional cost is added to the geographical distances, meaning that connections costs equal distance in grid cell units multiplied by the raster resolution. For spaces with a coordinate system (*crs*) the cost is defined in meters, as defined by the coordinate system. By dividing the cost function by 1000 we get the cost of travelling for 1 km. We can define a simple cost function in which the dispersal is not penalized:
 
 ```{r, eval=FALSE}
 cost_function_null <- function(source, dest) {
@@ -224,7 +224,7 @@ Besides the (i) space list, (ii) cost function and (iii) experiment folder, we c
 
 The argument 'directions' requires an integer providing the amount of directions used to calculate distances. It can take 4, 8 or 16 as values to consider the four, eighth or 16 neighboring sites.
 
-The argument 'duration' requires a named list with information about the start ("from"), end ("to"), step size ("by") and time unit ("unit") of the enviromental series. Negative values represent the past, and positive values the future. From example, a duration starting 10 million years ago and ending 10 millions years in the future should look like: `duration = list(from=-10, to=10, by=1, unit="Ma")`. Is also used to name the files and to name the timesteps in the *spaces.rds* space object created by the *create_spaces_raster* function.
+The argument 'duration' requires a named list with information about the start ("from"), end ("to"), step size ("by") and time unit ("unit") of the environmental series. Negative values represent the past, and positive values the future. From example, a duration starting 10 million years ago and ending 10 millions years in the future should look like: `duration = list(from=-10, to=10, by=1, unit="Ma")`. Is also used to name the files and to name the timesteps in the *spaces.rds* space object created by the *create_spaces_raster* function.
 
 The argument 'full_dists' defines whether the *create_spaces_raster* function will create one large distance matrix for all suitable sites (calculate_full_distance_matrices=TRUE) or a list of small distance matrices for the neighboring sites specified in 'directions' around each suitable site (full_dists=FALSE). The full distance matrix confers faster computing speed for the model, but requires a larger storage. The local distance matrices cause a slower computing speed, but require smaller storage. The slower speed emerges form the fact that a full distance matrix is then reconstructed by concatenating local distances matrices each time-step during a simulation run.
 

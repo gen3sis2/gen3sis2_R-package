@@ -128,7 +128,7 @@ where
 
 - $S_t$ is the time-step of the space,
 - $C_t$ is the time-step of the config,
-- $conv\_unit$ is the conversion factor expressing one unit of the space’s time unit in the config’s time unit,
+- $conv\_unit$ is the conversion factor expressing one unit of the space's time unit in the config's time unit,
 - $step\_time$ is the resulting multiplier.
 
 For example, consider the config and space described above, with `step_time = list(x = 500, unit = "ka")` and `duration = list(from = -10, to = 0, by = 1, unit = "Ma")`, respectively. In this case, $S_t = 1$, $C_t = 500$, and since $1\text{Ma} = 1000\text{ka}$, $conv_unit = 1000$. Therefore,
@@ -182,4 +182,4 @@ The file provided by the user is called in `gen3sis2` as "human config". After t
 
 # 3. Conclusion
 
-Time is an important aspect of eco-evolutionary simulations, and dealing with it in `gen3sis2` is straight-forward. Every config file must be written considering time, as well as every space created. Config and space can have different timeframes, but in tis case `gen3sis2` will calculate a multiplier and apply it to config's processes, what can generate distortions.
+Time is an important aspect of eco-evolutionary simulations, and dealing with it in `gen3sis2` is straight-forward. Every config file must be written considering time, as well as every space created. Config and space can have different timeframes, but in this case `gen3sis2` will calculate a multiplier and apply it to config's processes, what can generate distortions.

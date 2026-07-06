@@ -25,19 +25,19 @@ path_space <- system.file("extdata/TestSpaces/geodynamic_spaces/raster", package
 # 2. Run simulation
 
 sim <- run_simulation(
-  config = path_config, 
+  config = path_config,
   space = path_space,
   output_directory = tempdir())
 
 # 3. Visualize the outputs
 # plot summary of entire simulation
 plot_summary(sim)
-# plot richness at a given time-step 
+# plot richness at a given time-step
 # this only works if species is saved for this time-step
 space_t_3 <- readRDS(file.path(tempdir(),"TestConfig","spaces","space_t_3.rds"))
 species_t_3 <- readRDS(file.path(tempdir(),"TestConfig","species","species_t_3.rds"))
 
-plot_richness(species_t_3, space_t_3)   
+plot_richness(species_t_3, space_t_3)
 }
 }
 \references{
@@ -51,6 +51,7 @@ O. Hagen, B. Flück, F. Fopp, J.S. Cabral, F. Hartig, M. Pontarp, T.F. Rangel, L
 
 Authors:
 \itemize{
+  \item Oskar Hagen \email{oskar@hagen.bio} (space Ecology, WSL and ETH Zürich, Switzerland)
   \item Admir C. de O. Junior \email{admircjunior@gmail.com}
   \item Bouwe Reijenga \email{bouwe.reijenga@earth.ox.ac.uk}
   \item Benjamin Flück \email{benjamin.flueck@alumni.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland)

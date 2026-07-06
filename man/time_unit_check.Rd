@@ -23,7 +23,7 @@ Check if the used time unit is accepted
   time_unit_check("Ma")
   time_unit_check("Ga")
   time_unit_check("timestep")
-  
+
   # return FALSE
   time_unit_check("eons")
 }

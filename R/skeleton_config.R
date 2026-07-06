@@ -9,8 +9,9 @@
 #'
 #' @return a string containing the skeleton config
 #' @noRd
-skeleton_config <- function(){
- paste0(c('
+skeleton_config <- function() {
+  paste0(c(
+    '
 #--------------------------------------#
 ####            METADATA            ####
 #--------------------------------------#
@@ -19,8 +20,9 @@ skeleton_config <- function(){
 # Version: 1.0
 #
 # Author:
-# ', paste0("# Date: ", format(Sys.Date(), format="%d.%m.%Y")),                          
-'#
+# ',
+    paste0("# Date: ", format(Sys.Date(), format = "%d.%m.%Y")),
+    '#
 # space:
 #
 # Publications:
@@ -188,5 +190,6 @@ apply_modifiers <- function(space, modifiers){
   return(space$environment)
 }
 
-')) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
+'
+  )) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
 }

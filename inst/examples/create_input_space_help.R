@@ -1,15 +1,15 @@
 # # TODO use rasters?
 # # load needed library
 # library(raster)
-# 
+#
 # # get path containing example rasters
 # datapath <- system.file(file.path("extdata", "WorldCenter"), package="gen3sis")
-# 
+#
 # # create raster bricks
 # temperature_brick <- brick(file.path(datapath, "input_rasters/temp_rasters.grd"))
 # aridity_brick <-  brick(file.path(datapath, "input_rasters/arid_rasters.grd"))
 # area_brick <-  brick(file.path(datapath, "input_rasters/area_rasters.grd"))
-# 
+#
 # # create sub-list of environmental variables for fast example
 # # (i.e. 4 time-steps)
 # spaces_sub_list <- list(temp=NULL, arid=NULL, area=NULL)
@@ -18,7 +18,7 @@
 #   spaces_sub_list$arid <- c(spaces_sub_list$arid, aridity_brick[[i]])
 #   spaces_sub_list$area <- c(spaces_sub_list$area, area_brick[[i]])
 # }
-# 
+#
 # # define cost function, crossing water as double as land sites
 # cost_function_water <- function(source, habitable_src, dest, habitable_dest) {
 #   if(!all(habitable_src, habitable_dest)) {
@@ -27,7 +27,7 @@
 #     return(1/1000)
 #   }
 # }
-# 
+#
 # # \dontrun{
 # # # create input space ready for gen3sis from sub-list
 # # # (i.e. 10 time-steps) and only local-distances.

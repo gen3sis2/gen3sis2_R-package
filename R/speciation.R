@@ -294,13 +294,22 @@ update_within_cluster_divergence <- function(
   G <- G[species_presence, species_presence, drop = FALSE]
   pfactor <- pfactor[species_presence, species_presence, drop = FALSE]
   
+  if(config$user$needs_scaling[["get_divergence_factor"]]){
+    G <- G * config$user$scale_time
+    pfactor <- pfactor * config$user$scale_time
+    # might want to incorporate a warning here that determines if 
+  }
+  
   for (cl in unique(cluster_indices)) {
     idx <- which(cluster_indices == cl)
     
     if (length(idx) <= 1) {
       next
     }
-    
+    # unsure about this still: gene flow both limits further divergence and also removes pre-existing divergence
+    # the latter is optional because the decay can be set to zero however.
+    # the multiplications can happen also between the matrices, so perhaps the p-matrix should be updated by
+    # the G matrix within the get_within_cluster_divergence_factor function? 
     divergence[idx, idx] <-
       divergence[idx, idx, drop = FALSE] +
       pfactor[idx, idx, drop = FALSE] *

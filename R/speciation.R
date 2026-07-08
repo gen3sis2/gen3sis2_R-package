@@ -29,6 +29,38 @@ get_divergence_factor <- function(species, cluster_indices, space, config){
   stop("this function documents the user function interface only, do not use it!")
 }
 
+#' User-specified function determining the rules for within-cluster divergence of populations. 
+#'
+#' @param species the species of the current time step
+#' @param species_presence sites occupied by the species
+#' @param cluster_indices an index vector indicating the cluster every occupied site is part of
+#' @param divergence the uncompressed divergence matrix
+#' @param space the space of the current time step
+#' @param config the config of the simulation
+#'
+#' @return a site by site matrix of potential divergence
+#' @keywords user
+#' @export
+get_within_cluster_divergence_factor <- function(species, species_presence, cluster_indices, divergence, space, config){
+  stop("this function documents the user function interface only, do not use it!")
+}
+
+#' User-specified function determining the rules for within-cluster divergence of populations. 
+#'
+#' @param species the species of the current time step
+#' @param species_presence sites occupied by the species
+#' @param cluster_indices an index vector indicating the cluster every occupied site is part of
+#' @param divergence the uncompressed divergence matrix
+#' @param space the space of the current time step
+#' @param config the config of the simulation
+#'
+#' @return a site by site matrix of effective gene flow between sites
+#' @keywords user
+#' @export
+get_effective_gene_flow <- function(species, species_presence, cluster_indices, divergence, space, config){
+  stop("this function documents the user function interface only, do not use it!")
+}
+
 #' Orchestrates the speciation of any species alive in the simulation
 #'
 #' @param config the current config object
@@ -91,7 +123,25 @@ loop_speciation <- function(config, data, vars) {
       }
     }
     
-    gen_dist_spi <- update_divergence(gen_dist_spi, clu_geo_spi_ti, ifactor = ifactor, dfactor = dfactor)
+    # update the between cluster divergence
+    gen_dist_spi <- update_divergence(
+      gen_dist_spi, 
+      clu_geo_spi_ti, 
+      ifactor = ifactor, 
+      dfactor = dfactor
+      )
+    
+    # update the within cluster divergence (or homogenisation)
+    if (isTRUE(config$gen3sis$within_cluster$enabled) & length(species_presence) > 1) {
+      gen_dist_spi <- update_within_cluster_divergence(
+        divergence = gen_dist_spi,
+        species = species,
+        species_presence = species_presence,
+        cluster_indices = clu_geo_spi_ti,
+        space = data[["space"]],
+        config = config
+      )
+    }
 
     gen_dist_spi <- compress_divergence(gen_dist_spi)
 
@@ -172,9 +222,10 @@ loop_speciation <- function(config, data, vars) {
 
 #' Updates a given divergence matrix
 #'
-#' @param gen_dist_spi a divergence matrix
-#' @param clu_geo_spi_ti a cluster index
+#' @param divergence a divergence matrix
+#' @param cluster_indices a cluster index
 #' @param ifactor the divergence factor by which the clusters distances are to be increased
+#' @param dfactor the homogenisation factor by which the within cluster divergence distances are to be decreased
 #'
 #' @return an updated divergence matrix
 #' @noRd
@@ -201,6 +252,68 @@ update_divergence <- function(divergence, cluster_indices, ifactor, dfactor) {
   return(divergence)
 }
 
+#' Updates a given divergence matrix according to within cluster divergence
+#'
+#' @param divergence a divergence matrix
+#' @param species the species of the current time step
+#' @param species_presence character vector of the current occupied sites by the species
+#' @param cluster_indices an index vector indicating the cluster every occupied site is part of
+#' @param space the space of the current time step
+#' @param config the current config object
+#'
+#' @return an updated divergence matrix
+#' @noRd
+update_within_cluster_divergence <- function(
+    divergence,
+    species,
+    species_presence,
+    cluster_indices,
+    space,
+    config
+) {
+  ps <- config$gen3sis$within_cluster_speciation
+  
+  G <- ps$get_effective_gene_flow(
+    species = species,
+    species_presence = species_presence,
+    cluster_indices = cluster_indices,
+    divergence = divergence,
+    space = space,
+    config = config
+  )
+  
+  pfactor <- ps$get_within_cluster_divergence_factor(
+    species = species,
+    species_presence = species_presence,
+    cluster_indices = cluster_indices,
+    divergence = divergence,
+    space = space,
+    config = config
+  )
+  
+  G <- G[species_presence, species_presence, drop = FALSE]
+  pfactor <- pfactor[species_presence, species_presence, drop = FALSE]
+  
+  for (cl in unique(cluster_indices)) {
+    idx <- which(cluster_indices == cl)
+    
+    if (length(idx) <= 1) {
+      next
+    }
+    
+    divergence[idx, idx] <-
+      divergence[idx, idx, drop = FALSE] +
+      pfactor[idx, idx, drop = FALSE] *
+      (1 - G[idx, idx, drop = FALSE]) -
+      config$speciation$divergence_decay *
+      G[idx, idx, drop = FALSE]
+  }
+  
+  divergence[divergence < 0] <- 0
+  diag(divergence) <- 0
+  
+  return(divergence)
+}
 
 #' Updates the total number of species
 #'

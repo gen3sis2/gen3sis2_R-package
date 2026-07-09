@@ -26,7 +26,6 @@ knitr::include_graphics("../inst/logo/gen3sis_logo.png")
 
 In this vignette you will be introduced to *gen3sis*, an engine for simulating various spatial eco-evolutionary models. Here will create a virtual planet, biodiversify it and examine virtual species.
 
-
 In particular, we will go through the following steps: 
 
 [1. **Set-up**](#setup) *gen3sis* package and check if we are set with all the necessary input data.
@@ -39,28 +38,24 @@ In particular, we will go through the following steps:
 
 <br>
 
-
-
 The first step for running a simulation consists of setting up the folder structure that should contain input data (i.e. config and landscape). 
-
-
 
 ## 1. Set-up {#setup}
 First of all, load the *gen3sis* package. 
 ```{r setup, message=F}
-library(gen3sis)
+library(gen3sis2)
+library(raster)
+library(terra)
 ```
-
 
 From now on, if you run into problems, refer to *gen3sis* the for the full help documentation.
 
 Let's check the version of the *gen3sis* package we are using
 
 ```{r eval=TRUE}
-print(paste("gen3sis version:", packageVersion("gen3sis")))
+# Print the version of the package being used
+packageVersion("gen3sis2")
 ```
-
-
 
 All *gen3sis* simulations need a **landscape** object which define the environment over which the simulation will take place and a **configuration** object which defines the mechanisms of speciation, dispersal, trait evolution and ecological interactions. Here we will use a published example[^1]. We will consider the continent of South America with a time span from 65Ma to 0Ma (1 time-step = 1 myr) and a spatial resolution of 1&deg;.
 
@@ -69,7 +64,12 @@ All the data we will use here (i.e. the **landscape** and the **configuration** 
 To access this dataset, define the path to the data contained inside the package.
 
 ```{r eval=TRUE, echo=FALSE}
-datapath <- system.file(file.path("extdata", "SouthAmerica"), package="gen3sis")
+# Set the filepath to the location in gen3sis2 files with test data
+datapath <- system.file(file.path("extdata", "SouthAmerica"),
+                        package = "gen3sis2")
+
+# Read spaces.rds
+spaces <- readRDS(file.path(datapath, "space/spaces.rds"))
 ```
 
 The full [landscape](https://github.com/project-Gen3sis/Simulations) can be downloaded and stored locally for running the experiment. An experiment folder should look like this:
@@ -84,8 +84,6 @@ The full [landscape](https://github.com/project-Gen3sis/Simulations) can be down
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;>config.R|
 
 
-
-
 ### Landscape
 The **landscape** is the virtual environment in which the processes of speciation, dispersal, evolution and ecology take place (e.g. temperature and aridity data that might be spatially and temporally dynamic). Landscape objects used in *gen3sis* are generated based on temporal sequences of landscapes in the form of raster files, which are summarized in the form of two classes. 
 
@@ -93,89 +91,20 @@ The first landscape class contains: (i) the geographic coordinates of the landsc
 
 The second landscape class defines the permeability of the landscape for species movement between sites via dispersal. Connection cost between sites is computed for each time step from the gridded landscape data based on harvesine geographic distances modified by a user-defined cost function and stored as sparse distance matrices. Distance matrices, containing the connection costs, are provided at every time step as either: (i) a pre-computed full distance matrix, containing all habitable sites in the landscape (faster simulations but more storage required); or (ii) a local distance matrix, computed from neighboring site distances up to a user-defined range limit (slower simulations but less storage required).
 
-
 **NOTE** the *gen3sis* landscape contains several files. The landscape.rds file contains the landscape changing over time with its environmental variables. The distances folder stores the information on how the landscape is connected (connections costs) which will interact with the disperal ability of the modeled organisms. To see how to create a landscape object, refer to [**design_landscape vignette**](design_landscape.html) and [**create_input_landscape vignette**](create_input_landscape.html).
 
+```{r eval=T, fig.width=7, fig.height=4, message=F, echo=F, warning=T, results='hide', fig.cap='This figure shows the temperature and aridity of the landscape used in this vignette at 5 and 0Ma.'}
+# Create rasters for each timestep
+area_5 <- rasterFromXYZ(spaces$env$area[, c(1,2,3)])
+area_0 <- rasterFromXYZ(spaces$env$area[, c(1,2,8)]) 
+arid_5 <- rasterFromXYZ(spaces$env$arid[, c(1,2,3)])
+arid_0 <- rasterFromXYZ(spaces$env$arid[, c(1,2,8)]) 
+temp_5 <- rasterFromXYZ(spaces$env$temp[, c(1,2,3)])
+temp_0 <- rasterFromXYZ(spaces$env$temp[, c(1,2,8)])
 
+# Plot
+plot(temp_0); plot(temp_5)
 
-
-```{r eval=T, fig.width=7, fig.height=4, message=F, echo=F, warning=T, results='hide', fig.cap='This figure shows the temperature and aridity of the lanscape used in this vignette at 65, 30 and 0Ma.'}
-library(raster)
-# read landscapes.rds
-landscapes <- readRDS(file.path(datapath, "landscape/landscapes.rds"))
-# create rasters for each timestep
-temp_65 <- rasterFromXYZ(landscapes$temp[, c(1,2,68)])
-temp_30 <- rasterFromXYZ(landscapes$temp[, c(1,2,33)])
-temp_0 <- rasterFromXYZ(landscapes$temp[, c(1,2,3)])   
-
-# TEMPERATURE
-oldpar <- par(no.readonly = TRUE)
-par(mar=c(1,2,3,1), oma=c(0,0,3,0))
-layout(matrix(c(1,1,1,4,
-                2,2,2,4,
-                3,3,3,4), ncol=3))
-maxtemp <- 33
-mintemp <- -27
-temp_breaks <- seq(mintemp, maxtemp, by=1)
-temp_colors <- rev(heat.colors(length(temp_breaks)-1))
-image(temp_65, col=temp_colors, breaks=temp_breaks, main='65 Ma')
-image(temp_30, col=temp_colors, breaks=temp_breaks, main='30 Ma')
-title(main=expression('Temperature [\u00B0C]'), line=1, outer=T, cex.main=2)
-image(temp_0, col=temp_colors, breaks=temp_breaks, main='0 Ma')
-
-plot.new()
-legend_df <- as.data.frame(cbind(seq(0, length(temp_breaks)-1, length.out=(length(temp_breaks))), rep(0.25, (length(temp_breaks))), temp_breaks))
-legend_image <- rasterFromXYZ(legend_df, res=0.01)
-plot(legend_image, legend.only=T, col=temp_colors, horizontal=T, smallplot=c(0.2, 0.8, 0.55, 0.7), 
-   axis.args=list(at=seq(mintemp, maxtemp, 5),labels=seq(mintemp, maxtemp, 5)))
-
-# ARIDITY
-arid_300 <- rasterFromXYZ(landscapes$arid[, c(1,2,68)])
-arid_65 <- rasterFromXYZ(landscapes$arid[, c(1,2,33)])
-arid_0 <- rasterFromXYZ(landscapes$arid[, c(1,2,3)])   
-
-par(mar=c(1,2,3,1), oma=c(0,0,3,0))
-layout(matrix(c(1,1,1,4,
-                2,2,2,4,
-                3,3,3,4), ncol=3))
-maxarid <- 1
-minarid <- 0
-arid_breaks <- seq(minarid, maxarid, by=0.01)
-arid_colors <- colorRampPalette(c('grey95', 'peru'))(length(arid_breaks)-1)
-image(arid_300, col=arid_colors, breaks=arid_breaks, main='65 Ma')
-image(arid_65, col=arid_colors, breaks=arid_breaks, main='30 Ma')
-title(main=expression('Aridity [index]'), line=1, outer=T, cex.main=2)
-image(arid_0, col=arid_colors, breaks=arid_breaks, main='0 Ma')
-
-plot.new()
-legend_df <- as.data.frame(cbind(seq(0, length(arid_breaks)-1, length.out=(length(arid_breaks))), rep(0.25, (length(arid_breaks))), arid_breaks))
-legend_image <- rasterFromXYZ(legend_df, res=0.01)
-plot(legend_image, legend.only=T, col=arid_colors, horizontal=T, smallplot=c(0.2, 0.8, 0.55, 0.7), 
-axis.args=list(at=seq(minarid, maxarid, 0.2),labels=seq(minarid, maxarid, 0.2)))
-par(oldpar)
-# # AREA
-# area_300 <- rasterFromXYZ(landscapes$area[, c(1,2,68)])
-# area_65 <- rasterFromXYZ(landscapes$area[, c(1,2,38)])
-# area_0 <- rasterFromXYZ(landscapes$area[, c(1,2,3)])   
-# 
-# par(mar=c(1,2,3,1), oma=c(0,0,3,0))
-# layout(matrix(c(1,1,1,4,
-#                 2,2,2,4,
-#                 3,3,3,4), ncol=3))
-# maxarea <- 197000
-# minarea <- 151000
-# area_breaks <- seq(minarea, maxarea, by=1000)
-# area_colors <- rev(gray(seq(0.05, 0.9, length.out=length(area_breaks)-1)))
-# image(area_300, col=area_colors, breaks=area_breaks, main='65 Ma')
-# image(area_65, col=area_colors, breaks=area_breaks, main='30 Ma')
-# title(main=expression('Area [' ~km^2~ ']'), line=1, outer=T, cex.main=2)
-# image(area_0, col=area_colors, breaks=area_breaks, main='0 Ma')
-#  
-# plot.new()
-# legend_df <- as.data.frame(cbind(seq(0, length(area_breaks)-1, length.out=(length(area_breaks))), rep(0.25, (length(area_breaks))), area_breaks))
-# legend_image <- rasterFromXYZ(legend_df, res=0.01)
-# plot(legend_image, legend.only=T, col=area_colors, horizontal=T, smallplot=c(0.2, 0.8, 0.55, 0.7), 
-# axis.args=list(at=seq(minarea, maxarea, 7500),labels=seq(minarea, maxarea, 7500)))
 ``` 
    
 

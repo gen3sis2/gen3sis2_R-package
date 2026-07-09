@@ -54,7 +54,7 @@ get_within_cluster_divergence_factor <- function(species, species_presence, clus
 #' @param space the space of the current time step
 #' @param config the config of the simulation
 #'
-#' @return a site by site matrix of effective gene flow between sites
+#' @return a site by site matrix of effective proportional gene flow between sites
 #' @keywords user
 #' @export
 get_effective_gene_flow <- function(species, species_presence, cluster_indices, divergence, space, config){
@@ -271,9 +271,10 @@ update_within_cluster_divergence <- function(
     space,
     config
 ) {
-  ps <- config$gen3sis$within_cluster_speciation
-  
-  G <- ps$get_effective_gene_flow(
+
+  # the product of this function should be a matrix with values bounded between 0 and 1
+  # this reflects either completely independent evolution or complete connectivity and the strongest homogenisation 
+  G <- config$gen3sis$within_cluster_speciation$get_effective_gene_flow(
     species = species,
     species_presence = species_presence,
     cluster_indices = cluster_indices,
@@ -282,7 +283,7 @@ update_within_cluster_divergence <- function(
     config = config
   )
   
-  pfactor <- ps$get_within_cluster_divergence_factor(
+  pfactor <- config$gen3sis$within_cluster_speciation$get_within_cluster_divergence_factor(
     species = species,
     species_presence = species_presence,
     cluster_indices = cluster_indices,

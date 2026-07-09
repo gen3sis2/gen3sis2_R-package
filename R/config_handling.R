@@ -146,6 +146,7 @@ internal_categories <- c("general",
                          "initialization",
                          "dispersal",
                          "speciation",
+                         "within_cluster_speciation",
                          "trait_evolution",
                          "ecology",
                          "space_modifier"

@@ -132,7 +132,7 @@ loop_speciation <- function(config, data, vars) {
       )
     
     # update the within cluster divergence (or homogenisation)
-    if (isTRUE(config$gen3sis$within_cluster$enabled) & length(species_presence) > 1) {
+    if (isTRUE(config$gen3sis$speciation$within_cluster_enabled) & length(species_presence) > 1) {
       gen_dist_spi <- update_within_cluster_divergence(
         divergence = gen_dist_spi,
         species = species,

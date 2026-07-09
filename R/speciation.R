@@ -70,7 +70,7 @@ get_effective_gene_flow <- function(species, species_presence, cluster_indices, 
 #' @return an expanded species list including all newly created species
 #' @noRd
 loop_speciation <- function(config, data, vars) {
-  threw_warning <- FALSE
+  threw_warning <- threw_warning_2 <- FALSE
   if(config$gen3sis$general$verbose>=3){
     cat(paste("entering speciation module \n"))
   }
@@ -133,6 +133,12 @@ loop_speciation <- function(config, data, vars) {
     
     # update the within cluster divergence (or homogenisation)
     if (isTRUE(config$gen3sis$speciation$within_cluster_enabled) & length(species_presence) > 1) {
+      if(dfactor > 0 & !threw_warning_2){
+        warning(paste0("Within-cluster divergence is decayed both in update_divergence and update_within_cluster_divergence!",
+                       " When isTRUE(config$gen3sis$speciation$within_cluster_enabled), dfactor should equal 0.")) 
+        threw_warning_2 <- TRUE
+      }
+      
       gen_dist_spi <- update_within_cluster_divergence(
         divergence = gen_dist_spi,
         species = species,
@@ -294,10 +300,12 @@ update_within_cluster_divergence <- function(
   
   G <- G[species_presence, species_presence, drop = FALSE]
   pfactor <- pfactor[species_presence, species_presence, drop = FALSE]
+  hrate <- config$gen3sis$within_cluster_speciation$homogenisation_rate
   
   if(config$user$needs_scaling[["get_divergence_factor"]]){
-    G <- G * config$user$scale_time
+    # G <- G * config$user$scale_time # because G is proportional, it should not be time-scaled
     pfactor <- pfactor * config$user$scale_time
+    hrate <- hrate * config$user$scale_time
     # might want to incorporate a warning here that determines if 
   }
   
@@ -315,7 +323,7 @@ update_within_cluster_divergence <- function(
       divergence[idx, idx, drop = FALSE] +
       pfactor[idx, idx, drop = FALSE] *
       (1 - G[idx, idx, drop = FALSE]) -
-      config$speciation$divergence_decay *
+      hrate *
       G[idx, idx, drop = FALSE]
   }
   

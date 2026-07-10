@@ -417,7 +417,7 @@ write_config_skeleton <- function(file_path = "./config_skeleton.R", overwrite =
 #'
 #' @returns For internal use only.
 #' @noRd
-simulation_timeframe <- function(step_time, time_unit, space = space, needs_scaling) {
+simulation_timeframe <- function(step_time, time_unit, space = space) {
   if(time_unit == "timestep") {
     return(1)
   }
@@ -443,8 +443,6 @@ simulation_timeframe <- function(step_time, time_unit, space = space, needs_scal
       "Significant mismatch between space time and config time. Review recommended."
     )
   }
-  
-  message(c("The following will be implicitly time-scaled:", paste0("\n- ",names(which(needs_scaling)))))
   
   return(scale_time)
 }
@@ -490,14 +488,11 @@ config_interpreter <- function(config_file) {
     any(grepl("\\bscale_time\\b", human_config[lines]))
   })
   
-  ### deactivated for now
-  # add divergence_threshold 
-  # uses_scale_time <- c(
-  #   uses_scale_time,
-  #   divergence_threshold = any(grepl("\\bscale_time\\b", human_config[grepl("^divergence_threshold", human_config)]))
-  # )
-  ###
-  
+  # add divergence_threshold
+  uses_scale_time <- c(
+    uses_scale_time,
+    divergence_threshold = any(grepl("\\bscale_time\\b", human_config[grepl("^divergence_threshold", human_config)]))
+  )
   
   needs_scaling <- !uses_scale_time
   

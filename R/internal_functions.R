@@ -177,6 +177,7 @@ conv_unit <- function(x, from, to) {
   if (from == "timestep" || to == "timestep"){
     return(x)
   }
+  
   exponents <- c(a = 0, ka = 3, Ma = 6, Ga = 9)
   factor <- 10^(exponents[from] - exponents[to])
   return(x*factor[[1]])

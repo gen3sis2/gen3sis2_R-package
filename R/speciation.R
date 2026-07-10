@@ -235,26 +235,25 @@ loop_speciation <- function(config, data, vars) {
 #'
 #' @return an updated divergence matrix
 #' @noRd
-update_divergence <- function(divergence, cluster_indices, ifactor, dfactor) {
-  #udpate genetic distance
-  clusters <- unique(cluster_indices)
+update_divergence <- function(divergence, cluster_indices, ifactor) {
+  # update genetic distance
   if( length(ifactor) == 1 ) {
     # scalar ifactor
-    divergence <- divergence + ifactor
-    dfactor <- dfactor + ifactor
+    # first determine if the sites/clusters belong to the same clusters
+    between_clusters <- outer(cluster_indices, cluster_indices, "!=")
+    # only add the ifactor to divergences from different clusters
+    divergence[between_clusters] <-
+      divergence[between_clusters] + ifactor
   } else {
     # matrix ifactor
     divergence <- divergence + ifactor[cluster_indices, cluster_indices]
-    # it is assumed that the user already modifies the diagonal of the ifactor matrix so dfactor is not touched
+    # it is assumed that the user already modifies the diagonal of the ifactor matrix
+    # this means that the default is likely 0 meaning no change in divergence within clusters
   }
-  for ( i in clusters ){
-    #in case they belong to same clusters, subtract -2 (for the default case), to that final diference is -1 given previous addition!
-    divergence[cluster_indices == i, cluster_indices == i] <-
-      divergence[cluster_indices == i, cluster_indices== i] - dfactor
-  }
-  #setting -1 to zero. Genetic differences can not be negative
+
+  # Genetic differences can not be negative
   divergence[divergence < 0] <- 0
-  ##end updating genetic distance##
+  # end updating genetic distance##
   return(divergence)
 }
 

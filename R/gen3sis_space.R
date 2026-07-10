@@ -172,7 +172,7 @@ check_names <- function(reference, datags, error_report=NULL){
           "\n")
       }
     } # end NA comparison loop
-  } else if (any(is.na(datags[[reference]]))){ # if there is NA
+  } else if (anyNA(datags[[reference]])){ # if there is NA
     error_report <- paste(
       error_report,
       (paste0("! >", reference, "< can not be NA! please specify")),
@@ -225,10 +225,10 @@ is_geodynamic <- function(env){
     # identify rows that are all NA
     all_na <- apply(data, 1, function(row) all(is.na(row)))
     # identify rows that have no NA values (i.e., all non-NA)
-    all_non_na <- apply(data, 1, function(row) all(!is.na(row)))
+    all_non_na <- apply(data, 1, function(row) !anyNA(row))
     # determine if the matrix is geodynamic
     # r=TRUE, aka it is geodynamic  if there is at least one row that is neither all NA nor all non-NA
-    r <- any(!(all_na | all_non_na))
+    r <- !all((all_na | all_non_na))
     return(r)
   })))
   return(geodynamic)

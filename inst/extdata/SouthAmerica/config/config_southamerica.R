@@ -173,7 +173,7 @@ apply_ecology <- function(abundance, traits, space, config) {
     # print(paste("should:", k, "is:", total_ab, "DIFF:", round(subtract,0) ))
     while (total_ab>k){
       alive <- abundance>0
-      loose <- sample(1:length(abundance[alive]),1)
+      loose <- sample(seq_along(abundance[alive]),1)
       abundance[alive][loose] <- abundance[alive][loose]-1
       total_ab <- sum(abundance)
     }

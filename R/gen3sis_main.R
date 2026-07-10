@@ -288,7 +288,7 @@ run_simulation <- function(config = NA,
     val <- update_extinction_times(val$config, val$data, val$vars)
 
     if (verbose>=1){
-      cat('step =', ti, ', species alive =', val$vars$n_sp_alive, ', species total =', val$vars$n_sp, '\n')
+      cat("step =", ti, ", species alive =", val$vars$n_sp_alive, ", species total =", val$vars$n_sp, "\n")
       if(verbose>=2){cat("--\n")} 
     }
     

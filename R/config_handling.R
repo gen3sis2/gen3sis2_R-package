@@ -191,7 +191,7 @@ populate_config <- function(config, config_file) {
     presence <- presence | (user_settings %in% names(config[["gen3sis"]][[category]]))
   }
   
-  if(any(!presence)){
+  if(!all(presence)){
     for( i in user_settings[which(!presence)] ) {
       config[["user"]][[i]] <- user_config_env[[i]]
     }
@@ -431,9 +431,9 @@ simulation_timeframe <- function(step_time, time_unit, space = space, needs_scal
     message(
       paste0(
         'Space time unit is "',space_tunit,'" but config time unit is "', time_unit,'".\n',
-        '1 ',space_tunit,' = ',conv_unit(1, from = space_tunit, to = time_unit),' ',time_unit,'\n',
-        'Each space timestep comprises ', space_timestep,' ', space_tunit, '\n',
-        'Specified config values will be mutiplied by ', scale_time, 'to cope with space.'
+        "1 ",space_tunit," = ",conv_unit(1, from = space_tunit, to = time_unit)," ",time_unit,"\n",
+        "Each space timestep comprises ", space_timestep," ", space_tunit, "\n",
+        "Specified config values will be mutiplied by ", scale_time, "to cope with space."
       )
     )  
   }

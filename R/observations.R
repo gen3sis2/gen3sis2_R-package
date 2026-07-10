@@ -690,7 +690,7 @@ get_space_subset <- function(space, site_vector){
 #' @seealso \code{vignette("h-support-functions", package = "gen3sis2")}
 #' @example inst/examples/support_functions/diversification_summary_help.R
 diversification_summary <- function(gen3sis_output){
-  extant_lineages <- gen3sis_output$summary$phylo_summary[1:nrow(gen3sis_output$summary$phylo_summary)-1,2] 
+  extant_lineages <- gen3sis_output$summary$phylo_summary[seq_len(nrow(gen3sis_output$summary$phylo_summary))-1,2] 
   speciation <- gen3sis_output$summary$phylo_summary[2:nrow(gen3sis_output$summary$phylo_summary),3]
   extinction <- gen3sis_output$summary$phylo_summary[2:nrow(gen3sis_output$summary$phylo_summary),4]
   

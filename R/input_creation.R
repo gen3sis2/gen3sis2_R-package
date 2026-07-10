@@ -66,11 +66,11 @@ create_spaces_raster <- function(raster_list, # old spaces
     # prepare directories
   create_directories(output_directory, overwrite_output, full_dists)
   
-  if(!is.list(duration) || any(!c("from", "to", "by", "unit") %in% names(duration))){
+  if(!is.list(duration) || !all(c("from", "to", "by", "unit") %in% names(duration))){
     stop("Duration is ideally informed as a list with from, to, by and unit.")
   } 
   
-  if(any(is.na(duration))) {
+  if(anyNA(duration)) {
     required_elements <- names(which(is.na(duration)))
     
     if(length(required_elements) > 1){
@@ -147,7 +147,7 @@ create_spaces_raster <- function(raster_list, # old spaces
   
   for( step in 1:nts ) {
     if (verbose) {
-      cat(paste("starting distance calculations for timestep", step, '\n'))
+      cat(paste("starting distance calculations for timestep", step, "\n"))
     }
     space_stack <- stack_spaces(raster_list, step)
     habitable_mask <- get_habitable_mask(habitability_masks, space_stack, step)
@@ -194,7 +194,7 @@ compile_spaces <-  function(spaces, timesteps, habitability_masks) {
   # setup coordinates
   #coords <- terra::as.data.frame(space_stack, xy=TRUE, na.rm = FALSE)[,c("x", "y")]
   coords <- terra::crds(space_stack, na.rm = FALSE)
-  rownames(coords) <- 1:nrow(coords)
+  rownames(coords) <- seq_len(nrow(coords))
   for (name in names(spaces)) {
     # name <- names(spaces)[1]
     compiled <- append(compiled, list(coords))
@@ -202,7 +202,7 @@ compile_spaces <-  function(spaces, timesteps, habitability_masks) {
   names(compiled) <- names(spaces)
 
   # collect environments for every time-step
-  for (i in 1:length(timesteps)) {
+  for (i in seq_along(timesteps)) {
     # collect spaces
     space_stack <- stack_spaces(spaces, i)
     space_df <- terra::as.data.frame(space_stack, na.rm = FALSE)
@@ -300,7 +300,7 @@ get_local_distances <- function(space_stack, habitable_mask, cost_function, dire
   # #
   
   
-  for(k in 1:nrow(transition_cells)){
+  for(k in seq_len(nrow(transition_cells))){
     ind_i <- transition_cells[k, "i"] # destination
     ind_j <- transition_cells[k, "j"] # origin
 
@@ -359,10 +359,10 @@ get_local_distances <- function(space_stack, habitable_mask, cost_function, dire
 #' @noRd
 get_habitable_mask <- function(habitability_masks, space_stack, i) {
   if(is.null(habitability_masks)) {
-    habitable_mask <- !any(is.na(space_stack)) # TODO is this the best solution?
+    habitable_mask <- !anyNA(space_stack) # TODO is this the best solution?
   } else if( is.character(habitability_masks[[i]])){
     habitable_mask <- terra::rast(habitability_masks[[i]])
-  } else if( "SpatRaster" %in% class(habitability_masks[[i]])) {
+  } else if( inherits(habitability_masks[[i]], "SpatRaster")) {
     habitable_mask <- habitability_masks[[i]]
   } else {
     stop("unknown habitability_mask; it has to be null, a list of rasters, or paths to raster files")

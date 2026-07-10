@@ -114,7 +114,6 @@ create_ancestor_species <- function(space, config) {
 
 # returns n dispersal values (proba distrib function)
 get_dispersal_values <- function(n, species, space, config) {
-  scale_time
   # mean_abd <- mean(species$abundance)
   # weight_abd <- species$abundance/mean_abd
   # # if shape =1 then it is an exponential distribution
@@ -133,7 +132,6 @@ divergence_threshold = 1 # between 10 and 50 ? as 0.1 to 0.5 Myrs or 100 - 500 k
 
 # adds a value of 1 to each geographic population cluster
 get_divergence_factor <- function(species, cluster_indices, space, config) {
-  scale_time
   return(1)
 }
 

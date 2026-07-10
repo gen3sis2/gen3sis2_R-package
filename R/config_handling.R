@@ -162,23 +162,7 @@ internal_categories <- c("general",
 #' @noRd
 populate_config <- function(config, config_file) {
   user_config_env <- new.env()
-<<<<<<< HEAD
-  
-  machine_config <- config_interpreter(config_file)
-  
-  current_wd <- getwd()
-  config_wd <- dirname(normalizePath(config_file))
-  setwd(config_wd)
-  on.exit(setwd(current_wd), add = TRUE)
-   
-  for (i in seq_along(machine_config$machine_config)){
-    eval(machine_config$machine_config, envir = user_config_env) 
-  }
-  
-  # source(config_file, chdir=TRUE, local=user_config_env)
-=======
   source(config_file, chdir=TRUE, local=user_config_env)
->>>>>>> parent of 6b56e92 (Merge pull request #24 from ohagen/time_config)
   for ( category in internal_categories) {
     config[["gen3sis"]][[category]] <- populate_settings_list(config[["gen3sis"]][[category]], user_config_env)
   }

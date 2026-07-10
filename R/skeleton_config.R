@@ -40,7 +40,7 @@ random_seed = NA
 # set the starting time step or leave NA to use the earliest/highest time-step.
 start_time = NA
 
-# set the end time (in the same unit as step_time) or leave as NA to use the latest/lowest time-step (0).
+# set the end time step or leave as NA to use the latest/lowest time-step (0).
 end_time = NA
 
 # maximum total number of species in the simulation before it is aborted.

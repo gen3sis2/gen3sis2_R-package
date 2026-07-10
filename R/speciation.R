@@ -66,13 +66,6 @@ loop_speciation <- function(config, data, vars) {
     gen_dist_spi <- decompress_divergence(species[["divergence"]])
     # update genetic distances
     ifactor <- config$gen3sis$speciation$get_divergence_factor(species, clu_geo_spi_ti, data[["space"]], config)
-    
-    # checks if divergence factor needs to be time-scaled
-    if (config$user$needs_scaling[["get_divergence_factor"]]){
-      # time-scale the genetic distance
-      ifactor <- ifactor * config$user$scale_time
-    }
-    
     gen_dist_spi <- update_divergence(gen_dist_spi, clu_geo_spi_ti, ifactor = ifactor )
 
     gen_dist_spi <- compress_divergence(gen_dist_spi)

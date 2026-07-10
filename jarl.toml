@@ -1,0 +1,8 @@
+[lint]
+extend-select = ["quotes", "TESTTHAT"]
+ignore = ["expect_type"]
+fixable = ["ALL"]
+fix-roxygen = true
+
+[lint.quotes]
+quote = "double"

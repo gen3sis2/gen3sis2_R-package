@@ -146,7 +146,6 @@ internal_categories <- c("general",
                          "initialization",
                          "dispersal",
                          "speciation",
-                         "within_cluster_speciation",
                          "trait_evolution",
                          "ecology",
                          "space_modifier"
@@ -331,13 +330,8 @@ create_empty_config <- function(){
                                                 "get_dispersal_values" = NULL
                                                  ),
                             "speciation" = list( "divergence_threshold" = NULL,
-                                                 "divergence_decay" = NULL,
                                                  "get_divergence_factor" = NULL,
-                                                 "within_cluster_enabled" = FALSE
-                                                 ),
-                            "within_cluster_speciation" = list("get_effective_gene_flow" = NA,
-                                                               "get_within_cluster_divergence_factor" = NA,
-                                                               "homogenisation_rate" = NA
+                                                 "get_within_cluster_divergence_factor" = NULL
                                                  ),
                             "trait_evolution" = list( "apply_trait_evolution" = NULL
                                                ),

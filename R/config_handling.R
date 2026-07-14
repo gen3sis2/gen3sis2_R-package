@@ -266,6 +266,21 @@ verify_config <- function(config) {
       message()
     return(FALSE)
   }
+
+  # check if time_unit is accepted 
+  # time_unit_check() returns a logical when a time unit is provided
+  # and a character vector of accepted units when called with NULL.
+  tu <- NULL
+  if (!is.null(config$user$step_time) && !is.null(config$user$step_time$unit)) {
+    tu <- config$user$step_time$unit
+  }
+  accepted <- time_unit_check(tu)
+  # accepted should be a single TRUE value for a valid unit
+  if (!is.logical(accepted) || length(accepted) != 1 || is.na(accepted) || !accepted) {
+    message(paste0("Time unit '",tu,"' is not accepted. \nAccepted time units are: ", paste(time_unit_check(), collapse = " ")))
+    return(FALSE)
+  }
+
   return(TRUE)
 }
 
@@ -366,5 +381,36 @@ write_config_skeleton <- function(file_path = "./config_skeleton.R", overwrite =
     writeLines(skeleton_config(), new_file)
     close(new_file)
     return(TRUE)
+  }
+}
+
+#' Check if the used time unit is accepted
+#'
+#' @param time_unit character. The used time unit. If NULL, returns a vector of accepted time units.
+#'
+#' @returns if time_unit is character, return TRUE or FALSE. If time_unit = NULL, returns a vector of accepted time units. 
+#' @keywords support
+#' @export
+#'
+#' @examples 
+#' \dontrun{
+#'   # return TRUE
+#'   time_unit_check("yr")
+#'   time_unit_check("Kyr")
+#'   time_unit_check("Myr")
+#'   time_unit_check("Gyr")
+#'   time_unit_check("timestep")
+#'   
+#'   # return FALSE
+#'   time_unit_check("eons")
+#' }
+time_unit_check <- function(time_unit=NULL){
+  accepted_timeunits <- c("yr","Kyr", "Myr", "Gyr","timestep")
+  
+  if(is.null(time_unit)){
+    return(accepted_timeunits)
+  } else {
+    is.accepted <- time_unit %in% accepted_timeunits
+    return(is.accepted) 
   }
 }

@@ -45,22 +45,6 @@ get_within_cluster_divergence_factor <- function(species, species_presence, clus
   stop("this function documents the user function interface only, do not use it!")
 }
 
-#' User-specified function determining the rules for within-cluster divergence of populations. 
-#'
-#' @param species the species of the current time step
-#' @param species_presence sites occupied by the species
-#' @param cluster_indices an index vector indicating the cluster every occupied site is part of
-#' @param divergence the uncompressed divergence matrix
-#' @param space the space of the current time step
-#' @param config the config of the simulation
-#'
-#' @return a site by site matrix of effective proportional gene flow between sites
-#' @keywords user
-#' @export
-get_effective_gene_flow <- function(species, species_presence, cluster_indices, divergence, space, config){
-  stop("this function documents the user function interface only, do not use it!")
-}
-
 #' Orchestrates the speciation of any species alive in the simulation
 #'
 #' @param config the current config object
@@ -127,7 +111,7 @@ loop_speciation <- function(config, data, vars) {
       )
     
     # update the within cluster divergence (or homogenisation)
-    if (isTRUE(config$gen3sis$speciation$within_cluster_enabled) & length(species_presence) > 1) {
+    if (length(species_presence) > 1) {
       
       gen_dist_spi <- update_within_cluster_divergence(
         divergence = gen_dist_spi,
@@ -267,53 +251,27 @@ update_within_cluster_divergence <- function(
     config
 ) {
 
-  # the product of this function should be a matrix with values bounded between 0 and 1
-  # this reflects either completely independent evolution or complete connectivity and the strongest homogenisation 
-  G <- config$gen3sis$within_cluster_speciation$get_effective_gene_flow(
-    species = species,
-    species_presence = species_presence,
-    cluster_indices = cluster_indices,
-    divergence = divergence,
-    space = space,
-    config = config
-  )
+  divergence_update <-
+    config$gen3sis$speciation$
+    get_within_cluster_divergence_factor(
+      species = species,
+      species_presence = species_presence,
+      cluster_indices = cluster_indices,
+      divergence = divergence,
+      space = space,
+      config = config
+    )
   
-  pfactor <- config$gen3sis$within_cluster_speciation$get_within_cluster_divergence_factor(
-    species = species,
-    species_presence = species_presence,
-    cluster_indices = cluster_indices,
-    divergence = divergence,
-    space = space,
-    config = config
-  )
+  within_cluster <- outer(cluster_indices, cluster_indices, "==")
+  diag(within_cluster) <- FALSE
   
-  G <- G[species_presence, species_presence, drop = FALSE]
-  pfactor <- pfactor[species_presence, species_presence, drop = FALSE]
-  hrate <- config$gen3sis$within_cluster_speciation$homogenisation_rate
-  
-  if(config$user$needs_scaling[["get_divergence_factor"]]){
-    # G <- G * config$user$scale_time # because G is proportional, it should not be time-scaled
-    pfactor <- pfactor * config$user$scale_time
-    hrate <- hrate * config$user$scale_time
-    # might want to incorporate a warning here that determines if 
-  }
-  
-  for (cl in unique(cluster_indices)) {
-    idx <- which(cluster_indices == cl)
-    
-    if (length(idx) <= 1) {
-      next
-    }
-    # unsure about this still: gene flow both limits further divergence and also removes pre-existing divergence
-    # the latter is optional because the decay can be set to zero however.
-    # the multiplications can happen also between the matrices, so perhaps the p-matrix should be updated by
-    # the G matrix within the get_within_cluster_divergence_factor function? 
-    divergence[idx, idx] <-
-      divergence[idx, idx, drop = FALSE] +
-      pfactor[idx, idx, drop = FALSE] *
-      (1 - G[idx, idx, drop = FALSE]) -
-      hrate *
-      G[idx, idx, drop = FALSE]
+  if (length(divergence_update) == 1L) {
+    divergence[within_cluster] <-
+      divergence[within_cluster] + divergence_update
+  } else {
+    divergence[within_cluster] <-
+      divergence[within_cluster] +
+      divergence_update[within_cluster]
   }
   
   divergence[divergence < 0] <- 0

@@ -131,13 +131,23 @@ get_dispersal_values <- function(n, species, space, config) {
 # threshold for genetic distance after which a speciation event takes place
 divergence_threshold = 1 # between 10 and 50 ? as 0.1 to 0.5 Myrs or 100 - 500 kyrs
 
-# set the value for the decay of divergence within geographic population clusters due to gene flow
-divergence_decay = 1
-
 # adds a value of 1 to each geographic population cluster
 get_divergence_factor <- function(species, cluster_indices, space, config) {
   scale_time
   return(1)
+}
+
+# Set within-cluster divergence to decay by 1 per time step (as was the default prior)
+# note that scale time is not present here as we will have to add this later
+get_within_cluster_divergence_factor <- function(
+    species,
+    species_presence,
+    cluster_indices,
+    divergence,
+    space,
+    config
+) {
+  -1
 }
 
 #-----------------------#

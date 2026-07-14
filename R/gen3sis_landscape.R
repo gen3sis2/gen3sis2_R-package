@@ -19,7 +19,7 @@
 #'
 #' @return returns a space of class "gen3sis_space"
 #' @noRd
-create_space <- function(id, timestep, environment, coordinates, extent=NA, duration=NA, geodynamic=NA, type = NA, type_spec_res=NA) {
+create_space <- function(id, timestep, environment, coordinates, extent=NA, geodynamic=NA, type = NA, type_spec_res=NA) {
   # space <- list()
   # space[["id"]] <- id
   # space[["timestep"]] <- timestep
@@ -32,8 +32,7 @@ create_space <- function(id, timestep, environment, coordinates, extent=NA, dura
                               timestep=timestep, 
                               environment=environment, 
                               coordinates=coordinates, 
-                              extent=extent,
-                              duration=duration,
+                              extent=extent, 
                               geodynamic=geodynamic,
                               type=type, 
                               type_spec_res=type_spec_res),

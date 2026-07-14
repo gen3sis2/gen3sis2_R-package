@@ -70,7 +70,7 @@ get_effective_gene_flow <- function(species, species_presence, cluster_indices, 
 #' @return an expanded species list including all newly created species
 #' @noRd
 loop_speciation <- function(config, data, vars) {
-  threw_warning <- threw_warning_2 <- FALSE
+  threw_warning <- FALSE
   if(config$gen3sis$general$verbose>=3){
     cat(paste("entering speciation module \n"))
   }
@@ -99,15 +99,11 @@ loop_speciation <- function(config, data, vars) {
     gen_dist_spi <- decompress_divergence(species[["divergence"]])
     # update genetic distances
     ifactor <- config$gen3sis$speciation$get_divergence_factor(species, clu_geo_spi_ti, data[["space"]], config)
-    # get the divergence decay from the config
-    dfactor <- config$gen3sis$speciation$divergence_decay
     
     # checks if divergence factor needs to be time-scaled
     if (config$user$needs_scaling[["get_divergence_factor"]]){
       # time-scale the genetic distance
       ifactor <- ifactor * config$user$scale_time
-      # time-scale the divergence decay
-      dfactor <- dfactor * config$user$scale_time
       
       # check whether the scaled divergence factor is greater than the divergence threshold.
       # This may indicate that time-scaling is distorting the divergence process, potentially 
@@ -127,17 +123,11 @@ loop_speciation <- function(config, data, vars) {
     gen_dist_spi <- update_divergence(
       gen_dist_spi, 
       clu_geo_spi_ti, 
-      ifactor = ifactor, 
-      dfactor = dfactor
+      ifactor = ifactor
       )
     
     # update the within cluster divergence (or homogenisation)
     if (isTRUE(config$gen3sis$speciation$within_cluster_enabled) & length(species_presence) > 1) {
-      if(dfactor > 0 & !threw_warning_2){
-        warning(paste0("Within-cluster divergence is decayed both in update_divergence and update_within_cluster_divergence!",
-                       " When isTRUE(config$gen3sis$speciation$within_cluster_enabled), dfactor should equal 0.")) 
-        threw_warning_2 <- TRUE
-      }
       
       gen_dist_spi <- update_within_cluster_divergence(
         divergence = gen_dist_spi,

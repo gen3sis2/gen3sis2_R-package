@@ -57,7 +57,7 @@ loop_speciation <- function(config, data, vars) {
     }else{
       distances <- config$gen3sis$dispersal$get_dispersal_values(length(species_presence), species, data$space, config)
 
-      permutation <- sample(1:length(species_presence), length(species_presence))
+      permutation <- sample(seq_along(species_presence), length(species_presence))
       clu_geo_spi_ti <- Tdbscan_variable(data$distance_matrix[species_presence[permutation],species_presence[permutation],
                                                             drop=FALSE], distances, 1)
       clu_geo_spi_ti <- clu_geo_spi_ti[order(permutation)]
@@ -103,9 +103,9 @@ loop_speciation <- function(config, data, vars) {
       gen_dist_spi$compressed_matrix <- gen_dist_spi$compressed_matrix[ue,ue, drop=FALSE]
       #update names
       if (length(ue)>0) {
-        fullrange <- 1:length(ue)
+        fullrange <- seq_along(ue)
         dimnames(gen_dist_spi$compressed_matrix) <- list(fullrange, fullrange)
-        for (i in 1:length(gen_dist_spi$index)){
+        for (i in seq_along(gen_dist_spi$index)){
           gen_dist_spi$index[i] <- fullrange[ue==gen_dist_spi$index[i]]
         }
       }

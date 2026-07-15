@@ -39,10 +39,10 @@ random_seed = NA
 
 # set the time unit
 # Currently available units are:
-# "a": annum (1 year)
-# "ka": kilo annum (1,000 years)
-# "Ma": mega annum (1,000,000 years)
-# "Ga": giga annum (1,000,000,000 years)
+# "yr": year (1 year)
+# "Kyr": kilo year (1,000 years)
+# "Myr": mega year (1,000,000 years)
+# "Gyr": giga year (1,000,000,000 years)
 # "timestep": bypass the entire time-conversion and assumes the config in the same unit as the space 
 step_time <- list(x = NA, unit = "timestep")
 

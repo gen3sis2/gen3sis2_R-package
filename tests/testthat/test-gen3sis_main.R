@@ -693,7 +693,7 @@ test_that("simulation loop breaks if the species limits are reached",{
 #   
 #   # TODO find an alternative to use spaces.rds
 #   # spac3tools::space_to_space(dir_input = file.path(datapath,"space"),
-#   #                                duration = list(from = 139, to = 0, by = -1, unit = "Ma"))
+#   #                                duration = list(from = 139, to = 0, by = -1, unit = "Myr"))
 #   
 #   
 #   s <- run_simulation(config = config,

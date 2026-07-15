@@ -8,7 +8,7 @@
 #' *to* CAN ONLY BE smaller than *from*, since *to* is the latest time
 #' *by* is the time interval increment. Note that this is constant and can only be positive;
 #' *unit* is the time unit used. Accepted units are \code{check_spaces()$duration}
-#' e.g. list(-20, 0, 1, "Ma") has a space that covers the last 20 Ma until the present, every 1 Ma.
+#' e.g. list(-20, 0, 1, "Myr") has a space that covers the last 20 Ma until the present, every 1 Ma.
 #'      list(-800, 300, 10, "mil") has a space that covers the last 800 kyra or mil for millions of years
 #'      and goes until the future 300 kya at every 100 mil years.
 #' @param area list containing information on the 2D spacial dimension: list(extent, total_area, n_sites, unit)
@@ -40,7 +40,7 @@
 #' @example inst/examples/create_spaces_help.R
 create_spaces <- function(env=list(NA),
                          type="raster",
-                         duration=list(from=NA, to=NA, by=NA, unit="Ma"),
+                         duration=list(from=NA, to=NA, by=NA, unit="Myr"),
                          area=list(extent=NA, total_area=NA, n_sites=NA, unit="km2"),
                          #crs="+proj=longlat +datum=WGS84 +no_defs",
                          crs = "EPSG:4326",
@@ -94,12 +94,8 @@ create_spaces <- function(env=list(NA),
 #' }
 check_spaces <- function(spaces=NULL){
   accepted <- list()
-  
   accepted[["type"]] <- c("raster", "points", "h3")
-  
-  #dur_units <- c("day", "wk", "mon", "yr", "dec", "cen", "mil", "Ma")
   accepted[["duration_unit"]] <- time_unit_check()
-  
   # area_units <- c("m2", "km2", "ha")
   # accepted[["area_unit"]]<- area_units[area_units%in%measurements::conv_unit_options$area]
 

@@ -135,17 +135,13 @@ run_simulation <- function(config = NA,
 
   #val$config$gen3sis$version <- "1.1"
   #val$config$gen3sis$nickname <- "Quintessenced"
-  
+
   # #---------------------------------------------------------#
   # ###### ATTRIBUTE ANCESTOR DISTRIBUTION (simulation.R) #####
   # #---------------------------------------------------------#
   val <- setup_inputs(val$config, val$data, val$vars)
   val <- setup_variables(val$config, val$data, val$vars)
   val <- setup_space(val$config, val$data, val$vars)
-  
-  # getsa multiplier which expresses how many times events described in config happen in a single timestep
-  val$config$user$scale_time <- simulation_timeframe(val$config$user$step_time$x, val$config$user$step_time$unit, val$data$space, val$config$user$needs_scaling)
-
   # conceptually the result of the initialization is the "end" of a previous timestep
   val$data$space$id <- val$data$space$id + 1
   

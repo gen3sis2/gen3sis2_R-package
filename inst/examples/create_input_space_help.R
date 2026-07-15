@@ -36,7 +36,7 @@
 # #   cost_function = cost_function_water,
 # #   output_directory = file.path(tempdir(), "space_sub"),
 # #   directions = 8, # surrounding sites for each site
-# #   timesteps = paste0(round(150:147,2), "Ma"),
+# #   timesteps = paste0(round(150:147,2), "Myr"),
 # #   calculate_full_distance_matrices = FALSE) # full distance matrix
 # #
 # #
@@ -55,7 +55,7 @@
 # #   cost_function = cost_function_water,
 # #   output_directory = file.path(tempdir(), "space_WorldCenter_5"),
 # #   directions = 8, # surrounding sites for each site
-# #   timesteps = paste0(round(150:100,2), "Ma"),
+# #   timesteps = paste0(round(150:100,2), "Myr"),
 # #   crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0",
 # #   calculate_full_distance_matrices = FALSE) # full distance matrix
 # # }

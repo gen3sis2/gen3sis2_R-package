@@ -150,15 +150,6 @@ run_simulation <- function(
   val <- setup_inputs(val$config, val$data, val$vars)
   val <- setup_variables(val$config, val$data, val$vars)
   val <- setup_space(val$config, val$data, val$vars)
-
-  # getsa multiplier which expresses how many times events described in config happen in a single timestep
-  val$config$user$scale_time <- simulation_timeframe(
-    val$config$user$step_time$x,
-    val$config$user$step_time$unit,
-    val$data$space,
-    val$config$user$needs_scaling
-  )
-
   # conceptually the result of the initialization is the "end" of a previous timestep
   val$data$space$id <- val$data$space$id + 1
 
@@ -306,19 +297,9 @@ run_simulation <- function(
 
     val <- update_extinction_times(val$config, val$data, val$vars)
 
-    if (verbose >= 1) {
-      cat(
-        'step =',
-        ti,
-        ', species alive =',
-        val$vars$n_sp_alive,
-        ', species total =',
-        val$vars$n_sp,
-        '\n'
-      )
-      if (verbose >= 2) {
-        cat("--\n")
-      }
+    if (verbose>=1){
+      cat("step =", ti, ", species alive =", val$vars$n_sp_alive, ", species total =", val$vars$n_sp, "\n")
+      if(verbose>=2){cat("--\n")} 
     }
 
     # Environmental dynamics

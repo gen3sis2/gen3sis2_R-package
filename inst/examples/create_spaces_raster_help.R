@@ -27,7 +27,7 @@ create_spaces_raster(
   full_dists = TRUE, # save full distance matrices
   overwrite_output = TRUE,
   verbose = TRUE,
-  duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
+  duration = list(from = 65, to = 0, by = -1, unit = "Myr"),
   geodynamic = TRUE
 )
 }

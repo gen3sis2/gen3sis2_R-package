@@ -8,7 +8,7 @@
 #' *to* CAN ONLY BE smaller than *from*, since *to* is the latest time
 #' *by* is the time interval increment. Note that this is constant and can only be positive;
 #' *unit* is the time unit used. Accepted units are \code{check_spaces()$duration}
-#' e.g. list(-20, 0, 1, "Ma") has a space that covers the last 20 Ma until the present, every 1 Ma.
+#' e.g. list(-20, 0, 1, "Myr") has a space that covers the last 20 Ma until the present, every 1 Ma.
 #'      list(-800, 300, 10, "mil") has a space that covers the last 800 kyra or mil for millions of years
 #'      and goes until the future 300 kya at every 100 mil years.
 #' @param area list containing information on the 2D spacial dimension: list(extent, total_area, n_sites, unit)
@@ -94,12 +94,8 @@ create_spaces <- function(
 #' }
 check_spaces <- function(spaces = NULL) {
   accepted <- list()
-
   accepted[["type"]] <- c("raster", "points", "h3")
-
-  #dur_units <- c("day", "wk", "mon", "yr", "dec", "cen", "mil", "Ma")
   accepted[["duration_unit"]] <- time_unit_check()
-
   # area_units <- c("m2", "km2", "ha")
   # accepted[["area_unit"]]<- area_units[area_units%in%measurements::conv_unit_options$area]
 
@@ -245,10 +241,10 @@ is_geodynamic <- function(env) {
     # identify rows that are all NA
     all_na <- apply(data, 1, function(row) all(is.na(row)))
     # identify rows that have no NA values (i.e., all non-NA)
-    all_non_na <- apply(data, 1, function(row) all(!is.na(row)))
+    all_non_na <- apply(data, 1, function(row) !anyNA(row))
     # determine if the matrix is geodynamic
     # r=TRUE, aka it is geodynamic  if there is at least one row that is neither all NA nor all non-NA
-    r <- any(!(all_na | all_non_na))
+    r <- !all((all_na | all_non_na))
     return(r)
   })))
   return(geodynamic)

@@ -25,8 +25,8 @@
 #' @param verbose print distance calculation progress (default: FALSE)
 #' @param duration list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
 #' E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
-#'    \code{duration = list(from = -10, to = 10, by = 5, unit = "Ma")}
-#' @param geodynamic True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL,
+#'    \code{duration = list(from = -10, to = 10, by = 5, unit = "Myr")}
+#' @param geodynamic True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 #' i.e. deciding final value based on the input data using \code{?is_geodynamic}.
 #' @param ... additional arguments to be passed to the \code{\link{create_spaces}} function. Possible arguments include:
 #' \itemize{
@@ -52,7 +52,7 @@ create_spaces_raster <- function(
   full_dists = FALSE,
   overwrite_output = FALSE,
   verbose = FALSE,
-  duration = list(from = NA, to = NA, by = NA, unit = "Ma"),
+  duration = list(from = NA, to = NA, by = NA, unit = "Myr"),
   geodynamic = NULL,
   ...
 ) {
@@ -89,7 +89,7 @@ create_spaces_raster <- function(
       "to" = duration$from +
         ((terra::nlyr(raster_list[[1]]) - 1) * duration$by),
       "by" = 1,
-      "unit" = "Ma"
+      "unit" = "Myr"
     )
 
     duration[[required_elements]] <- fill
@@ -156,7 +156,7 @@ create_spaces_raster <- function(
 
   for (step in 1:nts) {
     if (verbose) {
-      cat(paste("starting distance calculations for timestep", step, '\n'))
+      cat(paste("starting distance calculations for timestep", step, "\n"))
     }
     space_stack <- stack_spaces(raster_list, step)
     habitable_mask <- get_habitable_mask(habitability_masks, space_stack, step)
@@ -217,7 +217,7 @@ compile_spaces <- function(spaces, timesteps, habitability_masks) {
   # setup coordinates
   #coords <- terra::as.data.frame(space_stack, xy=TRUE, na.rm = FALSE)[,c("x", "y")]
   coords <- terra::crds(space_stack, na.rm = FALSE)
-  rownames(coords) <- 1:nrow(coords)
+  rownames(coords) <- seq_len(nrow(coords))
   for (name in names(spaces)) {
     # name <- names(spaces)[1]
     compiled <- append(compiled, list(coords))
@@ -225,7 +225,7 @@ compile_spaces <- function(spaces, timesteps, habitability_masks) {
   names(compiled) <- names(spaces)
 
   # collect environments for every time-step
-  for (i in 1:length(timesteps)) {
+  for (i in seq_along(timesteps)) {
     # collect spaces
     space_stack <- stack_spaces(spaces, i)
     space_df <- terra::as.data.frame(space_stack, na.rm = FALSE)

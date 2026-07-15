@@ -85,19 +85,9 @@ disperse <- function(species, space, distance_matrix, config) {
   all_cells <- rownames(space$coordinates)
   free_cells <- all_cells[!(all_cells %in% presence_spi_ti)]
   num_draws <- length(free_cells) * length(presence_spi_ti)
-  r_disp <- config$gen3sis$dispersal$get_dispersal_values(
-    num_draws,
-    species,
-    space,
-    config
-  )
-
-  # checks if the dispersal needs to be time-scaled
-  if (config$user$needs_scaling[["get_dispersal_values"]]) {
-    r_disp <- r_disp * config$user$scale_time
-  }
-
-  geo_disp <- distance_matrix[presence_spi_ti, free_cells, drop = FALSE] #lines mark where they are present, cols the possible suitable sites
+  r_disp <- config$gen3sis$dispersal$get_dispersal_values(num_draws, species, space, config)
+  
+  geo_disp <- distance_matrix[presence_spi_ti, free_cells, drop=FALSE] #lines mark where they are present, cols the possible suitable sites
   geo_disp <- geo_disp <= r_disp
 
   colonized <- rep(FALSE, length(all_cells))
@@ -108,7 +98,7 @@ disperse <- function(species, space, distance_matrix, config) {
   if (length(tep_occ_id) > 0) {
     # if there are new occurrences....
     # destiny of genes
-    dest <- which(colonized == TRUE)
+    dest <- which(colonized)
     # origin of genes
     if (length(presence_spi_ti) == 1) {
       orig <- rep(1, length(dest))

@@ -1,0 +1,11 @@
+[lint]
+extend-select = ["quotes", "TESTTHAT"]
+ignore = ["expect_type"]
+fixable = ["ALL"]
+fix-roxygen = true
+
+[lint.assignment]
+operator = "="
+
+[lint.quotes]
+quote = "double"

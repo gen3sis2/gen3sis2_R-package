@@ -180,7 +180,7 @@ setup_variables <- function(config, data, vars) {
   vars$flag <- "OK"
 
   return(list(config = config, data = data, vars = vars))
-}
+    }
 
 
 #' Calls the creation for the initial species and prepares further data storage

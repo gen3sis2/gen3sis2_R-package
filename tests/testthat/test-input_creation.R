@@ -35,7 +35,7 @@ test_that("create_spaces_raster works properly", {
       full_dists = TRUE,
       overwrite_output = TRUE,
       verbose = FALSE,
-      duration = list(from = -100, to = 0, by = 50, unit = "Ma"),
+      duration = list(from = -100, to = 0, by = 50, unit = "Myr"),
       geodynamic = FALSE
     )
 
@@ -65,7 +65,7 @@ test_that("create_spaces_raster works properly", {
       full_dists = TRUE,
       overwrite_output = TRUE,
       verbose = FALSE,
-      duration = list(from = -100, to = 0, by = 50, unit = "Ma"),
+      duration = list(from = -100, to = 0, by = 50, unit = "Myr"),
       geodynamic = TRUE
     )
 
@@ -167,7 +167,7 @@ test_that("geodynamic is FALSE but environment says otherwise", {
       full_dists = TRUE,
       overwrite_output = TRUE,
       verbose = FALSE,
-      duration = list(from = -100, to = 0, by = 50, unit = "Ma"),
+      duration = list(from = -100, to = 0, by = 50, unit = "Myr"),
       geodynamic = FALSE
     ) |>
       capture_warnings() -> warned
@@ -364,7 +364,7 @@ test_that("create_directories works", {
 
   create_directories("test", overwrite = FALSE, full_matrices = FALSE)
   expect_true("test" %in% new_dirs)
-  expect_true(!("test/distances_full" %in% new_dirs))
+  expect_false("test/distances_full" %in% new_dirs)
 
   # create directory for full matrices
   new_dirs <- list()

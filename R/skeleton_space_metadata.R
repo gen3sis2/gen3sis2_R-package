@@ -1,9 +1,7 @@
 # Copyright (c) 2020, ETH Zurich
 
 # DO NOT USE ' IN THIS space META DATA
-skeleton_space_metadata <- paste0(
-  c(
-    '
+skeleton_space_metadata <- paste0(c("
 gen3sis space
 
 Version: 
@@ -11,9 +9,8 @@ Version:
 
 Author:
 
-',
-    paste0("Date: \n", format(Sys.Date(), format = "%d.%m.%Y")),
-    '
+", paste0("Date: \n", format(Sys.Date(), format="%d.%m.%Y")),                          
+"
 Spatial extent: 
    (e.g.: Theoretical Island 4-81 sites; Global; America; Japan; World latitude [-40;40] longitude [-80;80])
 
@@ -42,7 +39,4 @@ Publications:
 
 Description: 
     (e.g.: landmasses with water as NA; full description of methods here)
-'
-  ),
-  collapse = "\n"
-) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
+"), collapse ="\n") # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT

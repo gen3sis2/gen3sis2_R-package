@@ -25,7 +25,7 @@
 #' @param verbose print distance calculation progress (default: FALSE)
 #' @param duration list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
 #' E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
-#'    \code{duration = list(from = -10, to = 10, by = 5, unit = "Ma")}
+#'    \code{duration = list(from = -10, to = 10, by = 5, unit = "Myr")}
 #' @param geodynamic True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 #' i.e. deciding final value based on the input data using \code{?is_geodynamic}.
 #' @param ... additional arguments to be passed to the \code{\link{create_spaces}} function. Possible arguments include:
@@ -51,7 +51,7 @@ create_spaces_raster <- function(raster_list, # old spaces
                           full_dists = FALSE,
                           overwrite_output = FALSE,
                           verbose = FALSE,
-                          duration=list(from=NA, to=NA, by=NA, unit="Ma"),
+                          duration=list(from=NA, to=NA, by=NA, unit="Myr"),
                           geodynamic=NULL,
                           ...) {
   # # in case outpu_directory is NULL, use the same directory as the input
@@ -81,7 +81,7 @@ create_spaces_raster <- function(raster_list, # old spaces
                      "from" = duration$to-((terra::nlyr(raster_list[[1]])-1)*duration$by),
                      "to" = duration$from+((terra::nlyr(raster_list[[1]])-1)*duration$by),
                      "by" = 1,
-                     "unit" = "Ma"
+                     "unit" = "Myr"
     )
     
     duration[[required_elements]] <- fill

@@ -12,7 +12,7 @@ create_spaces_raster(
   full_dists = FALSE,
   overwrite_output = FALSE,
   verbose = FALSE,
-  duration = list(from = NA, to = NA, by = NA, unit = "Ma"),
+  duration = list(from = NA, to = NA, by = NA, unit = "Myr"),
   geodynamic = NULL,
   ...
 )
@@ -46,7 +46,7 @@ If FALSE (default), only local distances are calculated (slower CPU time when si
 
 \item{duration}{list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
 E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
-   \code{duration = list(from = -10, to = 10, by = 5, unit = "Ma")}}
+   \code{duration = list(from = -10, to = 10, by = 5, unit = "Myr")}}
 
 \item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 i.e. deciding final value based on the input data using \code{?is_geodynamic}.}
@@ -99,7 +99,7 @@ create_spaces_raster(
   full_dists = TRUE, # save full distance matrices
   overwrite_output = TRUE,
   verbose = TRUE,
-  duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
+  duration = list(from = 65, to = 0, by = -1, unit = "Myr"),
   geodynamic = TRUE
 )
 }

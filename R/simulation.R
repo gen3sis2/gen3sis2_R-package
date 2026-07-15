@@ -105,7 +105,6 @@ setup_variables <- function(config, data, vars) {
   if(is.na(config$gen3sis$general$end_time)) {
     # ends at the latest available time-step 
     config$gen3sis$general$end_time <- 0
-    
   } else if (is.character(config$gen3sis$general$end_time)) {
     # ignores the string, warns the user and ends at the latest available time-step
     config$gen3sis$general$end_time <- 0
@@ -135,7 +134,7 @@ setup_variables <- function(config, data, vars) {
   vars$flag <- "OK"
 
   return(list(config = config, data = data, vars = vars))
-}
+    }
 
 
 #' Calls the creation for the initial species and prepares further data storage

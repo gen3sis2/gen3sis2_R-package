@@ -188,5 +188,6 @@ apply_modifiers <- function(space, modifiers){
   return(space$environment)
 }
 
-')) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
+'
+  )) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
 }

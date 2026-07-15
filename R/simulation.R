@@ -20,19 +20,24 @@ setup_inputs <- function(config, data, vars) {
 
   # environmental matrices
   environments <- list()
-  for (name in space_names){
+  for (name in space_names) {
     tmp <- as.matrix(spaces[[name]][, -c(1:2)])
     # scaling
-    if (name %in% names(config[["gen3sis"]][["general"]][["environmental_ranges"]]) ) {
-      range <- config[["gen3sis"]][["general"]][["environmental_ranges"]][[name]]
-      if( anyNA(range) ) {
-        r_min <- min(tmp, na.rm=TRUE)
-        r_max <- max(tmp, na.rm=TRUE)
+    if (
+      name %in%
+        names(config[["gen3sis"]][["general"]][["environmental_ranges"]])
+    ) {
+      range <- config[["gen3sis"]][["general"]][["environmental_ranges"]][[
+        name
+      ]]
+      if (any(is.na(range))) {
+        r_min <- min(tmp, na.rm = TRUE)
+        r_max <- max(tmp, na.rm = TRUE)
         range <- c(r_min, r_max)
       } else {
         range <- range
       }
-      tmp <- ( tmp - range[1] ) / ( range[2] - range[1] )
+      tmp <- (tmp - range[1]) / (range[2] - range[1])
     } else {
       # not in list, do not scale
     }
@@ -54,7 +59,7 @@ setup_inputs <- function(config, data, vars) {
   data[["inputs"]][["geodynamic"]] <- spaces_rds$meta$geodynamic
   # duration
   data[["inputs"]][["duration"]] <- spaces_rds$meta$duration
-  
+
   return(list(config = config, data = data, vars = vars))
 }
 
@@ -72,59 +77,100 @@ setup_variables <- function(config, data, vars) {
   # in a sequence {n-1, n-2, n-3, ..., 0}, with n elements. For example, if the spaces has 5 time-steps,
   # they will be indexed in a sequence {4, 3, 2, 1, 0}. That way the latest time-step will be always 0,
   # and the earlist time-step will always n-1, what ensures compatibility across all possible situations.
-  # TL;DR: -1 as time-steps are 0-based, i.e., latest must be 0 and earliest must be the length-1 
-  zero_base_ts <- (length(data$inputs$timesteps)-1):0
+  # TL;DR: -1 as time-steps are 0-based, i.e., latest must be 0 and earliest must be the length-1
+  zero_base_ts <- (length(data$inputs$timesteps) - 1):0
   if (is.na(config$gen3sis$general$start_time)) {
     # start at the earliest available time-step
-    config$gen3sis$general$start_time <- length(data[["inputs"]][["timesteps"]]) - 1
+    config$gen3sis$general$start_time <- length(data[["inputs"]][[
+      "timesteps"
+    ]]) -
+      1
   } else if (is.character(config$gen3sis$general$start_time)) {
     # warns the user and ignores the string, starting at the earliest time-step
-    message("start_time must be numerical. Starting simulation from the first time-step.")
-    config$gen3sis$general$start_time <- length(data[["inputs"]][["timesteps"]]) - 1
+    message(
+      "start_time must be numerical. Starting simulation from the first time-step."
+    )
+    config$gen3sis$general$start_time <- length(data[["inputs"]][[
+      "timesteps"
+    ]]) -
+      1
   } else if (is.numeric(config$gen3sis$general$start_time)) {
     # assumes that the numeric value expresses a "date", not a time-step
     # e.g.: -2000 means 2000 time units in the past
-    
+
     # fetch the start_time
     start_time <- config$gen3sis$general$start_time
     # convert it from the config time unit to the space time unit
-    start_time <- conv_unit(start_time, config$user$step_time$unit, data$inputs$duration$unit)
+    start_time <- conv_unit(
+      start_time,
+      config$user$step_time$unit,
+      data$inputs$duration$unit
+    )
 
     # gets the absolute time for each timesteps in the space
     # e.g.: {"-10Ma", "-5Ma", "0Ma"} -> {-10, -5, 0}
-    ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric()
+    ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |>
+      as.numeric()
     # gets which time-step is closer in time to the start_time
     time_distance <- abs(start_time - ts_times)
-    eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
-    
+    eq_index <- ifelse(
+      length(which(time_distance == min(time_distance))) > 1,
+      which(time_distance == min(time_distance))[1],
+      which(time_distance == min(time_distance))
+    )
+
     # sets the start_time as the closest time-step in the time
-    config$gen3sis$general$start_time <- zero_base_ts[which(data$inputs$timesteps == data$inputs$timesteps[eq_index])]
-    message("Simulation will start at timestep ",config$gen3sis$general$start_time,", ", data$inputs$timesteps[eq_index])
+    config$gen3sis$general$start_time <- zero_base_ts[which(
+      data$inputs$timesteps == data$inputs$timesteps[eq_index]
+    )]
+    message(
+      "Simulation will start at timestep ",
+      config$gen3sis$general$start_time,
+      ", ",
+      data$inputs$timesteps[eq_index]
+    )
   }
 
-  if(is.na(config$gen3sis$general$end_time)) {
-    # ends at the latest available time-step 
+  if (is.na(config$gen3sis$general$end_time)) {
+    # ends at the latest available time-step
     config$gen3sis$general$end_time <- 0
   } else if (is.character(config$gen3sis$general$end_time)) {
     # ignores the string, warns the user and ends at the latest available time-step
     config$gen3sis$general$end_time <- 0
-    message("start_time must be numerical. Starting simulation from the first time-step.")
-    
+    message(
+      "start_time must be numerical. Starting simulation from the first time-step."
+    )
   } else if (is.numeric(config$gen3sis$general$end_time)) {
     # fetches the end_time and converts from the config time unit to the space time unit
     end_time <- config$gen3sis$general$end_time
-    end_time <- conv_unit(end_time, config$user$step_time$unit, data$inputs$duration$unit)
-    
+    end_time <- conv_unit(
+      end_time,
+      config$user$step_time$unit,
+      data$inputs$duration$unit
+    )
+
     # gets the absolute time for each timesteps in the space
     # e.g.: {"-10Ma", "-5Ma", "0Ma"} -> {-10, -5, 0}
-    ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |> as.numeric() 
-    
+    ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |>
+      as.numeric()
+
     # gets the closes time-step in time
     time_distance <- abs(end_time - ts_times)
-    eq_index <- ifelse(length(which(time_distance == min(time_distance))) > 1, which(time_distance == min(time_distance))[1], which(time_distance == min(time_distance)))
-    
-    config$gen3sis$general$end_time <- zero_base_ts[which(data$inputs$timesteps == data$inputs$timesteps[eq_index])]
-    message("Simulation will end at timestep ",config$gen3sis$general$end_time,", ", data$inputs$timesteps[eq_index])
+    eq_index <- ifelse(
+      length(which(time_distance == min(time_distance))) > 1,
+      which(time_distance == min(time_distance))[1],
+      which(time_distance == min(time_distance))
+    )
+
+    config$gen3sis$general$end_time <- zero_base_ts[which(
+      data$inputs$timesteps == data$inputs$timesteps[eq_index]
+    )]
+    message(
+      "Simulation will end at timestep ",
+      config$gen3sis$general$end_time,
+      ", ",
+      data$inputs$timesteps[eq_index]
+    )
   }
 
   # put in start time for create_space
@@ -151,8 +197,11 @@ setup_variables <- function(config, data, vars) {
 init_attribute_ancestor_distribution <- function(config, data, vars) {
   #oldpar <- par(no.readonly = TRUE)
   #on.exit(par(oldpar))
-  all_species <- config$gen3sis$initialization$create_ancestor_species(data$space, config)
-  for (i in seq_along(all_species)){
+  all_species <- config$gen3sis$initialization$create_ancestor_species(
+    data$space,
+    config
+  )
+  for (i in 1:length(all_species)) {
     force(i)
     all_species[[i]][["id"]] <- as.character(i)
   }
@@ -164,19 +213,17 @@ init_attribute_ancestor_distribution <- function(config, data, vars) {
   # par(mfrow=c(1,1))
   # plot_richness(all_species, data$space)
   # grDevices::dev.off()
-  # 
+  #
   # #plot starting_ranges
   # grDevices::pdf(file=file.path(config$directories$output, "starting_ranges.pdf"), width=10, height=6)
   # par(mfrow=c(1,1))
   # plot_ranges(all_species, data$space)
   # grDevices::dev.off()
-  
-  
-  
- # par(mfrow=c(1,2))
- # plot_richness(all_species, data$space)
- # plot_ranges(all_species, data$space)
-  
+
+  # par(mfrow=c(1,2))
+  # plot_richness(all_species, data$space)
+  # plot_ranges(all_species, data$space)
+
   # n_sp <- ncol(geo_sp_ti)
   n_sp <- length(data$all_species)
   vars$n_sp <- n_sp
@@ -187,10 +234,9 @@ init_attribute_ancestor_distribution <- function(config, data, vars) {
     "Descendent" = c(1:n_sp),
     "Speciation.Time" = config$gen3sis$general$start_time,
     "Extinction.Time" = rep(config$gen3sis$general$start_time, n_sp),
-    "Speciation.Type" = c("ROOT", rep("GENETIC", n_sp -1)) # "ROOT"
+    "Speciation.Type" = c("ROOT", rep("GENETIC", n_sp - 1)) # "ROOT"
   )
   return(list(config = config, data = data, vars = vars))
-  
 }
 
 
@@ -207,18 +253,33 @@ init_simulation <- function(config, data, vars) {
   steps <- (config$gen3sis$general$start_time:config$gen3sis$general$end_time)
 
   # create matrix for turnover
-  data$turnover <- matrix(NA, ncol=3, nrow=length(steps), dimnames=list(steps,c("n_new_sp_ti", "n_ext_sp_ti", "n_sp_alive")) )
+  data$turnover <- matrix(
+    NA,
+    ncol = 3,
+    nrow = length(steps),
+    dimnames = list(steps, c("n_new_sp_ti", "n_ext_sp_ti", "n_sp_alive"))
+  )
 
   #..... add the first turnover at t0 (t_start)....
-  data$turnover[1,] <- c(vars$n_sp,0,vars$n_sp)
+  data$turnover[1, ] <- c(vars$n_sp, 0, vars$n_sp)
 
   # create matrix for geographic total species richness geo_richness
-  geo_richness <- matrix(NA, nrow=nrow(data[["inputs"]][["coordinates"]]), ncol=length(steps) + 2)
-  geo_richness[,1:2] <- data[["inputs"]][["coordinates"]]
-  colnames(geo_richness) <- c(colnames(data[["inputs"]][["coordinates"]]), steps)
+  geo_richness <- matrix(
+    NA,
+    nrow = nrow(data[["inputs"]][["coordinates"]]),
+    ncol = length(steps) + 2
+  )
+  geo_richness[, 1:2] <- data[["inputs"]][["coordinates"]]
+  colnames(geo_richness) <- c(
+    colnames(data[["inputs"]][["coordinates"]]),
+    steps
+  )
   rownames(geo_richness) <- rownames(data[["inputs"]][["coordinates"]])
   #..... add the first species distribution at t0 (t_start)....
-  geo_richness[rownames(data[["space"]][["coordinates"]]), as.character(config$gen3sis$general$start_time)] <- get_geo_richness(data$all_species, data[["space"]])
+  geo_richness[
+    rownames(data[["space"]][["coordinates"]]),
+    as.character(config$gen3sis$general$start_time)
+  ] <- get_geo_richness(data$all_species, data[["space"]])
 
   data$geo_richness <- geo_richness
 
@@ -229,11 +290,9 @@ init_simulation <- function(config, data, vars) {
 ######## END OF INITIALIZATION ########
 #---------------------------------------#
 
-
 #----------------------------------#
 ######## START OF LOOP BODY ########
 #----------------------------------#
-
 
 #-------------------------#
 ######## -> LOOP SETUP #######
@@ -249,22 +308,31 @@ init_simulation <- function(config, data, vars) {
 #' @noRd
 setup_space <- function(config, data, vars) {
   n_total_steps <- length(data[["inputs"]][["timesteps"]])
-  total_steps_zerobase <- (n_total_steps-1):0
-  index <- which(total_steps_zerobase==vars$ti) #gen3sis v1 : vars$ti + 1
-  habitable_cells <- data$inputs$environments[[1]][, index, drop=FALSE]
-  habitable_cells <- habitable_cells[which(!is.na(habitable_cells)), , drop=FALSE]
+  total_steps_zerobase <- (n_total_steps - 1):0
+  index <- which(total_steps_zerobase == vars$ti) #gen3sis v1 : vars$ti + 1
+  habitable_cells <- data$inputs$environments[[1]][, index, drop = FALSE]
+  habitable_cells <- habitable_cells[
+    which(!is.na(habitable_cells)),
+    ,
+    drop = FALSE
+  ]
   habitable_cells <- rownames(habitable_cells)
-  envir <- do.call(cbind, lapply(data$inputs$environments, "[", habitable_cells, index, drop=FALSE))
+  envir <- do.call(
+    cbind,
+    lapply(data$inputs$environments, "[", habitable_cells, index, drop = FALSE)
+  )
   colnames(envir) <- names(data[["inputs"]][["environments"]])
-  space <- create_space(id = vars$ti,
-                                environment = envir,
-                                coordinates = data[["inputs"]][["coordinates"]][habitable_cells, ],
-                                timestep = data[["inputs"]][["timesteps"]][index],
-                                extent = data[["inputs"]][["extent"]],
-                                duration = data[["inputs"]][["duration"]],
-                                geodynamic = data[["inputs"]][["geodynamic"]],
-                                type = data[["inputs"]][["type"]],
-                                type_spec_res=data[["inputs"]][["type_spec_res"]])
+  space <- create_space(
+    id = vars$ti,
+    environment = envir,
+    coordinates = data[["inputs"]][["coordinates"]][habitable_cells, ],
+    timestep = data[["inputs"]][["timesteps"]][index],
+    extent = data[["inputs"]][["extent"]],
+    duration = data[["inputs"]][["duration"]],
+    geodynamic = data[["inputs"]][["geodynamic"]],
+    type = data[["inputs"]][["type"]],
+    type_spec_res = data[["inputs"]][["type_spec_res"]]
+  )
 
   data[["space"]] <- space
 
@@ -282,13 +350,17 @@ setup_space <- function(config, data, vars) {
 #' @return the general vals(config, data, vars) list
 #' @noRd
 restrict_species <- function(config, data, vars) {
-  points_coordinates <- data[["space"]][["coordinates"]] 
-  if(is.vector(points_coordinates)){
-    points_coordinates <- matrix(points_coordinates, nrow=1)
+  points_coordinates <- data[["space"]][["coordinates"]]
+  if (is.vector(points_coordinates)) {
+    points_coordinates <- matrix(points_coordinates, nrow = 1)
     colnames(points_coordinates) <- names(data[["space"]][["coordinates"]])
     rownames(points_coordinates) <- "1"
   }
-  data$all_species <- lapply(data$all_species, limit_species_to_cells, rownames(points_coordinates))
+  data$all_species <- lapply(
+    data$all_species,
+    limit_species_to_cells,
+    rownames(points_coordinates)
+  )
   return(list(config = config, data = data, vars = vars))
 }
 
@@ -304,9 +376,13 @@ restrict_species <- function(config, data, vars) {
 loop_setup_geo_dist_m_ti <- function(config, data, vars) {
   # loading geo_dist_m_ti that is the internal distance matrices
   #load(paste0(config$directories$input,"/geo_dist_m/geo_dist_m_ti/geo_dist_m_ti_t_", vars$ti, ".RData"))
-  geo_dist_m_ti <- readRDS(file = file.path(config$directories$input,
-                                            "distance_matrices",
-                                            paste0("geo_dist_m_ti_t_", vars$ti, ".rds")))
+  geo_dist_m_ti <- readRDS(
+    file = file.path(
+      config$directories$input,
+      "distance_matrices",
+      paste0("geo_dist_m_ti_t_", vars$ti, ".rds")
+    )
+  )
 
   cell_names <- rownames(data$space[["coordinates"]])
   rownames(geo_dist_m_ti) <- cell_names
@@ -329,31 +405,37 @@ loop_setup_geo_dist_m_ti <- function(config, data, vars) {
 #' @return the general vals(config, data, vars) list
 #' @noRd
 setup_distance_matrix <- function(config, data, vars) {
-  if (data$space$geodynamic){
+  if (data$space$geodynamic) {
     tiis <- vars$ti
   } else {
     # in case of static spaces, the distance matrix is always the same
     tiis <- 0
   }
-  matrix_file <- file.path(config$directories$input,
-                          "distances_full",
-                          paste0("distances_full_", tiis, ".rds"))
-  if(base::file.exists(matrix_file)) {
+  matrix_file <- file.path(
+    config$directories$input,
+    "distances_full",
+    paste0("distances_full_", tiis, ".rds")
+  )
+  if (base::file.exists(matrix_file)) {
     distance_matrix <- readRDS(file = matrix_file)
   } else {
-    neighbour_file <- file.path(config$directories$input,
-                            "distances_local",
-                            paste0("distances_local_", tiis, ".rds"))
+    neighbour_file <- file.path(
+      config$directories$input,
+      "distances_local",
+      paste0("distances_local_", tiis, ".rds")
+    )
     distance_neighbours <- readRDS(neighbour_file)
 
     habitable_cells <- as.integer(rownames(data$space$coordinates))
     num_cells <- nrow(distance_neighbours)
-    distance_matrix <- get_distance_matrix(habitable_cells,
-                                           num_cells,
-                                           distance_neighbours@p,
-                                           distance_neighbours@i,
-                                           distance_neighbours@x,
-                                           config$gen3sis$dispersal$max_dispersal)
+    distance_matrix <- get_distance_matrix(
+      habitable_cells,
+      num_cells,
+      distance_neighbours@p,
+      distance_neighbours@i,
+      distance_neighbours@x,
+      config$gen3sis$dispersal$max_dispersal
+    )
   }
 
   data$distance_matrix <- distance_matrix
@@ -364,7 +446,7 @@ setup_distance_matrix <- function(config, data, vars) {
 #-------------------------------------------#
 ######## -> UPDATE Extinction Times  #######
 #-------------------------------------------#
-#' Updates the extinction times 
+#' Updates the extinction times
 #'
 #' @param config the current config
 #' @param data the current data
@@ -374,7 +456,7 @@ setup_distance_matrix <- function(config, data, vars) {
 #' @noRd
 update_extinction_times <- function(config, data, vars) {
   for (sp in data$all_species) {
-    if(length(sp[["abundance"]])) {
+    if (length(sp[["abundance"]])) {
       data$phy$"Extinction.Time"[as.integer(sp[["id"]])] <- vars$ti - 1
     }
   }
@@ -392,7 +474,6 @@ update_extinction_times <- function(config, data, vars) {
 ######## END OF LOOP BODY ########
 #--------------------------------#
 
-
 #' Updates the phylogeny with the survival and extinctions from the current time step
 #'
 #' @param config the current config
@@ -401,7 +482,7 @@ update_extinction_times <- function(config, data, vars) {
 #'
 #' @return the general vals(config, data, vars) list
 #' @noRd
-update.phylo<- function(config, data, vars) {
+update.phylo <- function(config, data, vars) {
   # update  phylo with the survive info
   # add MRCA to the levels of Speciation.Type
   levels(data$phy$Speciation.Type) <- c(levels(data$phy$Speciation.Type))

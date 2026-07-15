@@ -12,22 +12,27 @@ NULL
 ## Declare non-standard-evaluation variables used across plotting helpers
 ## to avoid 'no visible binding for global variable' notes during R CMD check.
 utils::globalVariables(c(
-	"value", "title", "x", "y", "shape", "space"
+  "value",
+  "title",
+  "x",
+  "y",
+  "shape",
+  "space"
 ))
 
 .onLoad <- function(libname, pkgname) {
-	# Intentionally minimal. Do not perform heavy work here.
-	# Use .onAttach only for user-facing messages (kept empty for CRAN friendliness).
-	invisible()
+  # Intentionally minimal. Do not perform heavy work here.
+  # Use .onAttach only for user-facing messages (kept empty for CRAN friendliness).
+  invisible()
 }
 
 .onAttach <- function(libname, pkgname) {
-	if (interactive()) {
-		packageStartupMessage(
-			"gen3sis2: General Engine for Eco-Evolutionary SimulationS2.\n",
-			"Copyright (c) 2020, ETH Zurich.\n",
-			"This program comes with ABSOLUTELY NO WARRANTY; it is free software and",
-			" you are welcome to contribute and redistribute it under certain conditions.\n"
-		)
-	}
+  if (interactive()) {
+    packageStartupMessage(
+      "gen3sis2: General Engine for Eco-Evolutionary SimulationS2.\n",
+      "Copyright (c) 2020, ETH Zurich.\n",
+      "This program comes with ABSOLUTELY NO WARRANTY; it is free software and",
+      " you are welcome to contribute and redistribute it under certain conditions.\n"
+    )
+  }
 }

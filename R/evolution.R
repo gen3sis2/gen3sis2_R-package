@@ -1,6 +1,5 @@
 # Copyright (c) 2020, ETH Zurich
 
-
 #' Allows defining the function that changes the values of traits of a given
 #' species at each time-step and in each site. If no operations are provided, traits are not changing
 #'
@@ -15,46 +14,73 @@
 #' @return the mutated species traits matrix
 #' @keywords user
 #' @export
-apply_trait_evolution <- function(species, cluster_indices, space, config){
-  stop("this function documents the user function interface only, do not use it")
+apply_trait_evolution <- function(species, cluster_indices, space, config) {
+  stop(
+    "this function documents the user function interface only, do not use it"
+  )
 }
 
 
-loop_evolution <- function(config, data, vars){
-  if(config$gen3sis$general$verbose>=3){
+loop_evolution <- function(config, data, vars) {
+  if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering trait evolution module \n"))
   }
 
-  data$all_species <- lapply(data$all_species, evolve, data$space, data$distance, config)
+  data$all_species <- lapply(
+    data$all_species,
+    evolve,
+    data$space,
+    data$distance,
+    config
+  )
 
-  if(config$gen3sis$general$verbose>=3){
+  if (config$gen3sis$general$verbose >= 3) {
     cat(paste("exiting trait evolution module \n"))
   }
   return(list(config = config, data = data, vars = vars))
 }
 
 
-evolve <- function(species, space, distance_matrix, config){
+evolve <- function(species, space, distance_matrix, config) {
   if (!length(species[["abundance"]])) {
     return(species)
   }
   species_presence <- names(species[["abundance"]])
 
-  distances <- config$gen3sis$dispersal$get_dispersal_values(length(species_presence), species, space, config)
+  distances <- config$gen3sis$dispersal$get_dispersal_values(
+    length(species_presence),
+    species,
+    space,
+    config
+  )
 
-  permutation <- sample(seq_along(species_presence), length(species_presence))
-  cluster_indices <- Tdbscan_variable(distance_matrix[species_presence[permutation],species_presence[permutation],
-                                                         drop=FALSE], distances, 1)
+  permutation <- sample(1:length(species_presence), length(species_presence))
+  cluster_indices <- Tdbscan_variable(
+    distance_matrix[
+      species_presence[permutation],
+      species_presence[permutation],
+      drop = FALSE
+    ],
+    distances,
+    1
+  )
   cluster_indices <- cluster_indices[order(permutation)]
 
-  new_traits <- config$gen3sis$trait_evolution$apply_trait_evolution(species, cluster_indices, space, config)
+  new_traits <- config$gen3sis$trait_evolution$apply_trait_evolution(
+    species,
+    cluster_indices,
+    space,
+    config
+  )
 
   species_traits <- colnames(species[["traits"]])
-  species[["traits"]][ , species_traits] <- new_traits[, species_traits, drop=FALSE]
+  species[["traits"]][, species_traits] <- new_traits[,
+    species_traits,
+    drop = FALSE
+  ]
 
   return(species)
 }
-
 
 
 #' No evolution considered
@@ -67,7 +93,6 @@ evolve <- function(species, space, distance_matrix, config){
 #' @keywords simulation
 #'
 #' @export
-evolution_mode_none <- function(species, cluster_indices, space, config){
+evolution_mode_none <- function(species, cluster_indices, space, config) {
   return(invisible(species[["traits"]]))
 }
-

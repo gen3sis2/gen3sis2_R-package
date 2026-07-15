@@ -2,7 +2,7 @@
 % Please edit documentation in R/dispersal.R
 \name{get_dispersal_values}
 \alias{get_dispersal_values}
-\title{Allows the user to generate dispersal value(s) for a given species. The simulation request the user 
+\title{Allows the user to generate dispersal value(s) for a given species. The simulation request the user
 to return a vector of dispersal values with length specified by the num_draws parameter}
 \usage{
 get_dispersal_values(num_draws, species, space, config)
@@ -20,19 +20,19 @@ get_dispersal_values(num_draws, species, space, config)
 a numerical vector of length num_draws with dispersal values
 }
 \description{
-Allows the user to generate dispersal value(s) for a given species. The simulation request the user 
+Allows the user to generate dispersal value(s) for a given species. The simulation request the user
 to return a vector of dispersal values with length specified by the num_draws parameter
 }
 \details{
-Dispersal values are used for two different operations. 
+Dispersal values are used for two different operations.
 First, for colonization, dispersal values are used to evaluate pairwise dispersal
-events between colonized and uninhabited sites. 
+events between colonized and uninhabited sites.
 Second, for geographic clustering, dispersal values are used during the clustering of
-species populations when determining which sites 
+species populations when determining which sites
 are in range of each other and belong to the same geographic cluster.
 
-num_draws tells the user how many dispersal values are requested by the simulation when this function is called and must 
-be returned. It can be of varying length depending on the operation calling it, i.e. colonization or geographic clustering. 
+num_draws tells the user how many dispersal values are requested by the simulation when this function is called and must
+be returned. It can be of varying length depending on the operation calling it, i.e. colonization or geographic clustering.
 If the dispersal is considered as fixed the function should return a vector of length num_draws with repeated identical
 values, or varying values in case of more complex dispersal kernels.
 

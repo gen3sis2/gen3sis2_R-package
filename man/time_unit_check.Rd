@@ -23,7 +23,7 @@ Check if the used time unit is accepted
   time_unit_check("Myr")
   time_unit_check("Gyr")
   time_unit_check("timestep")
-  
+
   # return FALSE
   time_unit_check("eons")
 }

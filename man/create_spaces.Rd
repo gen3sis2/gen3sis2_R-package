@@ -35,9 +35,9 @@ e.g. list(-20, 0, 1, "Myr") has a space that covers the last 20 Ma until the pre
 
 \item{area}{list containing information on the 2D spacial dimension: list(extent, total_area, n_sites, unit)
 *extent* is a named vector with (xmin, xmax, ymin, ymax) \code{terra::ext},
-*total_area* is the covered area by the points, raster or h3 grid, 
-*n_sites* is the number of sites and 
-*unit* is theunit  of the area, accepted units are square meter (m2) and square kilometer (km2) 
+*total_area* is the covered area by the points, raster or h3 grid,
+*n_sites* is the number of sites and
+*unit* is theunit  of the area, accepted units are square meter (m2) and square kilometer (km2)
 \code{check_spaces()$area}}
 
 \item{crs}{Coordinate Reference Systems, as string and PROJ.4 format. Default is,

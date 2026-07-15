@@ -22,26 +22,26 @@ run_simulation(
 
 \item{output_directory}{directory for the simulation output}
 
-\item{timestep_restart}{set the start time time-step. 
-If timestep_restart=NA (default), start at the oldest available space. 
-If timestep_restart="ti", start from the last available time-step. 
+\item{timestep_restart}{set the start time time-step.
+If timestep_restart=NA (default), start at the oldest available space.
+If timestep_restart="ti", start from the last available time-step.
 If a number "x", start at time-step x (e.g. timestep_restartstart=6)}
 
 \item{save_state}{save the internal state of the simulation for restarts.
 If save_state=NA (default), do not save any internal state of the simulation.
-If save_state="all", save all time-step. 
+If save_state="all", save all time-step.
 If save_state="last", saves only last time-step.
 If a vector, saves the desired time-steps (e.g. save_state=c(1,3,5))}
 
 \item{call_observer}{call observer functions.
 If call_observer="all" (default), call all time-steps.
 If call_observer=NA, calls the start and end times.
-If a number "X", call call_observer at x time-steps equally spaced between start and end steps. 
+If a number "X", call call_observer at x time-steps equally spaced between start and end steps.
 For example, on a simulation with start time of 1 and end time of 20, call_observer=1 calls the observer function at time-steps 1, 11 and 20.}
 
 \item{enable_gc}{enable gc in case of memory shortages}
 
-\item{verbose}{integer value (i.e. 0, 1 ,2 or 3). 
+\item{verbose}{integer value (i.e. 0, 1 ,2 or 3).
 If verbose=0, no printed statement.
 If verbose=1 (default), print time-step progress.
 If verbose=2, enable additional progress outputs regarding current time-step.
@@ -54,7 +54,7 @@ a summary object containing a minimal summary on simulation and dynamics progres
 Run a simulation in gen3sis and return a summary object possibly saving outputs and plots to the output folder
 }
 \details{
-This function runs a simulation with defined space and config objects. 
+This function runs a simulation with defined space and config objects.
 Possibly plot and save specified outputs as defined in the end_of_timestep_observer function inside the config object
 }
 \examples{

@@ -117,7 +117,7 @@ get_divergence_matrix <- function(species) {
 disperse_species <- function(species, source, destination, config){
   # expand species to cover destianation cells
   # for every cell in destination, source indicates the origin cell
-  index <- 1:length(species[["abundance"]])
+  index <- seq_along(species[["abundance"]])
   names(index) <- names(species[["abundance"]])
   index[destination] <- index[source]
 

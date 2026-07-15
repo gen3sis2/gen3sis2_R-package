@@ -8,4 +8,4 @@ plot(1:5, vals, col=set_color(vals, color_richness_CVDCBP, "navajowhite3"), pch=
 #This only happens as scalling starts with zero as "navajowhite3" and 1 as the first value of colfun
 vals <- c(0,2,2,3,4,5,5,5)*10
 rc <- set_color(vals, color_richness, "navajowhite3")
-plot(1:length(vals), vals, col=rc, pch=15, cex=2)
+plot(seq_along(vals), vals, col=rc, pch=15, cex=2)

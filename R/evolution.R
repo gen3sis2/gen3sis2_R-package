@@ -42,7 +42,7 @@ evolve <- function(species, space, distance_matrix, config){
 
   distances <- config$gen3sis$dispersal$get_dispersal_values(length(species_presence), species, space, config)
 
-  permutation <- sample(1:length(species_presence), length(species_presence))
+  permutation <- sample(seq_along(species_presence), length(species_presence))
   cluster_indices <- Tdbscan_variable(distance_matrix[species_presence[permutation],species_presence[permutation],
                                                          drop=FALSE], distances, 1)
   cluster_indices <- cluster_indices[order(permutation)]

@@ -288,7 +288,7 @@ test_that("create_directories works", {
 
   create_directories("test", overwrite = FALSE, full_matrices = FALSE)
   expect_true("test" %in% new_dirs)
-  expect_true(!("test/distances_full" %in% new_dirs))
+  expect_false("test/distances_full" %in% new_dirs)
 
   # create directory for full matrices
   new_dirs <- list()

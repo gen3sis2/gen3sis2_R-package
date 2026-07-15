@@ -180,7 +180,7 @@ populate_config <- function(config, config_file) {
     presence <- presence | (user_settings %in% names(config[["gen3sis"]][[category]]))
   }
   
-  if(any(!presence)){
+  if(!all(presence)){
     for( i in user_settings[which(!presence)] ) {
       config[["user"]][[i]] <- user_config_env[[i]]
     }

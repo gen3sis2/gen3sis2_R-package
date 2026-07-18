@@ -2,21 +2,22 @@
 
 [![Contributors](https://img.shields.io/github/contributors/gen3sis2/gen3sis2_R-package)](https://github.com/gen3sis2/gen3sis2_R-package/graphs/contributors)
 
-# General Engine for Eco-Evolutionary Simulations
+# General Engine for Eco-Evolutionary Simulations 2
 
-This is the repository for the R-package of the gen3sis engine [project-gen3sis git](https://github.com/project-gen3sis/R-package).
+This is the repository for the R-package of the gen3sis engine [gen3sis2 git](https://github.com/gen3sis2/gen3sis2_R-package).
 
-gen3sis is a spatially-explicit eco-evolutionary mechanistic model with a modular implementation. It allows exploring the consequences of ecological and macroevolutionary processes across realistic or theoretical spatio-temporal spaces.
+gen3sis is a spatially-explicit eco-evolutionary mechanistic model with a modular implementation. It allows exploring the consequences of abiotic and biotic (ecological and macroevolutionary) processes across realistic or theoretical spatio-temporal spaces.
 
-gen3sis is licensed under a [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.html) deriving from ETHZ 2020 <doi.org/10.5905/ethz-1007-251> and has package authorship according to: http://epub.wu.ac.at/3269/1/Report114.pdf
+gen3sis2 is licensed under a [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.html) deriving from ETHZ 2020 <doi.org/10.5905/ethz-1007-251> and has package authorship according to: http://epub.wu.ac.at/3269/1/Report114.pdf
 
 ### How to cite
-* O Hagen, B Flueck, F Fopp, JS Cabral, F Hartig, M Pontarp, TF Rangel, L Pellissier (2021) gen3sis: A general engine for eco-evolutionary simulations of the processes that shape Earth’s biodiversity. PLOS Biology. [doi:10.1371/journal.pbio.3001340](https://doi.org/10.1371/journal.pbio.3001340)
+* Publication comming soon! For now:
+O Hagen, B Flueck, F Fopp, JS Cabral, F Hartig, M Pontarp, TF Rangel, L Pellissier (2021) gen3sis: A general engine for eco-evolutionary simulations of the processes that shape Earth’s biodiversity. PLOS Biology. [doi:10.1371/journal.pbio.3001340](https://doi.org/10.1371/journal.pbio.3001340)
 
 
 ### How to install
 
-<!---gen3sis is avabaile on [CRAN](https://CRAN.R-project.org/package=gen3sis). You can install the latest CRAN release via
+<!---gen3sis2 is not yet avabaile on CRAN, only [gen3sis](https://CRAN.R-project.org/package=gen3sis). You can install the latest CRAN release via
 
 ```{r}
 install.packages("gen3sis")
@@ -25,14 +26,14 @@ install.packages("gen3sis")
 you can install the latest development release from GitHub via 
 
 ```
-devtools::install_github(repo = "ohagen/gen3sis_rf", dependencies = TRUE, build_vignettes = TRUE)
+devtools::install_github(repo = "gen3sis2/gen3sis2_R-package", dependencies = TRUE, build_vignettes = TRUE)
 ```
 
 Below the status of the automatic CI R-CMD-check tests for the main branches:
 
-- DEVELOPMENT [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelopment)
+- DEVELOPMENT [![R-CMD-check](https://github.com/gen3sis2/gen3sis2_R-package/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelopment)
 
-- MASTER [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml)
+- MASTER [![R-CMD-check](https://github.com/gen3sis2/gen3sis2_R-package/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml)
 
 ### How to use
 

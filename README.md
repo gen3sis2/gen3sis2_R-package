@@ -122,6 +122,7 @@ We thank the developers of the following methods and dependencies:
 
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -156,26 +157,26 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=florianhartig">florianhartig</a>
 </td>
 <td align="center">
-<a href="https://github.com/loic-pellissier">
-<img src="https://avatars.githubusercontent.com/u/62331405?v=4" width="100px;" alt=""/>
+<a href="https://github.com/LewisAJones">
+<img src="https://avatars.githubusercontent.com/u/41071747?v=4" width="100px;" alt=""/>
 </a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=loic-pellissier">loic-pellissier</a>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=LewisAJones">LewisAJones</a>
 </td>
 </tr>
 
 
 <tr>
 <td align="center">
+<a href="https://github.com/loic-pellissier">
+<img src="https://avatars.githubusercontent.com/u/62331405?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=loic-pellissier">loic-pellissier</a>
+</td>
+<td align="center">
 <a href="https://github.com/bouwerutger">
 <img src="https://avatars.githubusercontent.com/u/44290366?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bouwerutger">bouwerutger</a>
-</td>
-<td align="center">
-<a href="https://github.com/gen3sis2">
-<img src="https://avatars.githubusercontent.com/u/41071747?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=LewisAJones">LewisAJones</a>
 </td>
 <td align="center">
 <a href="https://github.com/yihui">
@@ -217,6 +218,18 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=cndesantana">cndesantana</a>
 </td>
+<td align="center">
+<a href="https://github.com/castroinsua">
+<img src="https://avatars.githubusercontent.com/u/150914214?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=castroinsua">castroinsua</a>
+</td>
+<td align="center">
+<a href="https://github.com/bethany-j-allen">
+<img src="https://avatars.githubusercontent.com/u/39991015?u=174109d940f7a5292b435965308a8a7c6032f71d&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bethany-j-allen">bethany-j-allen</a>
+</td>
 </tr>
 
 </table>
@@ -224,5 +237,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
 
 

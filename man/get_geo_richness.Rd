@@ -9,7 +9,7 @@ get_geo_richness(species_list, space)
 \arguments{
 \item{species_list}{a list of species to include in the richness calculations}
 
-\item{space}{the space to calculate the richnness over}
+\item{space}{the space to calculate the richness over}
 }
 \value{
 a vector with the richness for every cell in the input space

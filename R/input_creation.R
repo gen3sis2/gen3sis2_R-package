@@ -15,8 +15,8 @@
 #' where: **src** is a vector of environmental conditions for the origin sites,
 #' **src_habitable** (TRUE or FALSE) for habitable condition of the origin sites,
 #' **dest** is a vector of environmental conditions for the destination site, dest_habitable  (TRUE or FALSE) for habitable condition of the destination cell
-#' @param directions 4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see gistance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16.
-#' @param output_directory path for storing the gen3sis ready space (i.e. space.rds, metadata.txt and full- and/or local_distance folders)
+#' @param directions 4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see distance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16. 
+#' @param output_directory path for storing the gen3sis ready space (i.e. space.rds, metadata.txt and full- and/or local_distance folders) 
 #' @param full_dists should a full distance matrix be calculated? TRUE or FALSE? Default is FALSE.
 #' If TRUE calculates the entire distance matrix for every time-step and between all habitable cells
 #' (faster CPU time, higher storage required).

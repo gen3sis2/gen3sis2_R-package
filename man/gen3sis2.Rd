@@ -51,7 +51,6 @@ O. Hagen, B. Flück, F. Fopp, J.S. Cabral, F. Hartig, M. Pontarp, T.F. Rangel, L
 
 Authors:
 \itemize{
-  \item Oskar Hagen \email{oskar@hagen.bio} (space Ecology, WSL and ETH Zürich, Switzerland)
   \item Admir C. de O. Junior \email{admircjunior@gmail.com}
   \item Bouwe Reijenga \email{bouwe.reijenga@earth.ox.ac.uk}
   \item Benjamin Flück \email{benjamin.flueck@alumni.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland)
@@ -67,7 +66,7 @@ Other contributors:
 \itemize{
   \item ETH Zürich [copyright holder]
   \item Charles Novaes de Santana \email{charles.novaes@usys.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland) [contributor]
-  \item Theo Gaboriau \email{theo.gaboriau@unil.ch} (Depatment of Computational Biology, Lausanne University, Switzerland) [contributor]
+  \item Theo Gaboriau \email{theo.gaboriau@unil.ch} (Department of Computational Biology, Lausanne University, Switzerland) [contributor]
 }
 
 }

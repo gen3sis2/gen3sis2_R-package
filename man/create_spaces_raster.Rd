@@ -31,7 +31,7 @@ where: **src** is a vector of environmental conditions for the origin sites,
 **src_habitable** (TRUE or FALSE) for habitable condition of the origin sites,
 **dest** is a vector of environmental conditions for the destination site, dest_habitable  (TRUE or FALSE) for habitable condition of the destination cell}
 
-\item{directions}{4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see gistance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16.}
+\item{directions}{4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see distance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16.}
 
 \item{output_directory}{path for storing the gen3sis ready space (i.e. space.rds, metadata.txt and full- and/or local_distance folders)}
 
@@ -48,7 +48,7 @@ If FALSE (default), only local distances are calculated (slower CPU time when si
 E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
    \code{duration = list(from = -10, to = 10, by = 5, unit = "Myr")}}
 
-\item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL,
+\item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 i.e. deciding final value based on the input data using \code{?is_geodynamic}.}
 
 \item{...}{additional arguments to be passed to the \code{\link{create_spaces}} function. Possible arguments include:

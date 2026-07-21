@@ -28,11 +28,11 @@ This function determines the increase in divergence between separated clusters o
 should return either (i) a single value if there is an homogeneous divergence, or (ii) a matrix indicating the divergence that
 should be accumulated between specific pairwise geographic clusters.
 
-The function can either return a single value or a full cluster by cluster matrix. If only one value is returned it will be used 
+The function can either return a single value or a full cluster by cluster matrix. If only one value is returned it will be used
 to increment divergence between any given distinct cluster pairs. If a matrix is returned it has to be in the dimension of
 cluster x cluster, in which case the divergence values will be increased according to the cluster membership of any cell pairs.
 
-For every time step, the divergence between geographic clusters can increase by a defined number. The divergence values can be 
+For every time step, the divergence between geographic clusters can increase by a defined number. The divergence values can be
 scaled optionally using the species or space information. For instance, the divergence between clusters could be higher under
 warmer temperature, or difference in ecological traits could promote faster divergence between clusters.
 

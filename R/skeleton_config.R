@@ -10,7 +10,7 @@
 #' @return a string containing the skeleton config
 #' @noRd
 skeleton_config <- function(){
- paste0(c('
+ paste0(c("
 #--------------------------------------#
 ####            METADATA            ####
 #--------------------------------------#
@@ -19,7 +19,7 @@ skeleton_config <- function(){
 # Version: 1.0
 #
 # Author:
-# ', paste0("# Date: ", format(Sys.Date(), format="%d.%m.%Y")),                          
+# ", paste0("# Date: ", format(Sys.Date(), format="%d.%m.%Y")),                          
 '#
 # space:
 #
@@ -39,10 +39,10 @@ random_seed = NA
 
 # set the time unit
 # Currently available units are:
-# "a": annum (1 year)
-# "ka": kilo annum (1,000 years)
-# "Ma": mega annum (1,000,000 years)
-# "Ga": giga annum (1,000,000,000 years)
+# "yr": year (1 year)
+# "Kyr": kilo year (1,000 years)
+# "Myr": mega year (1,000,000 years)
+# "Gyr": giga year (1,000,000,000 years)
 # "timestep": bypass the entire time-conversion and assumes the config in the same unit as the space 
 step_time <- list(x = NA, unit = "timestep")
 
@@ -188,5 +188,6 @@ apply_modifiers <- function(space, modifiers){
   return(space$environment)
 }
 
-')) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
+'
+  )) # DO NOT REMOVE THIS ->'<-. IT IS IMPORTANT
 }

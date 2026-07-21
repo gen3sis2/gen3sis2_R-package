@@ -356,7 +356,8 @@ create_empty_config <- function() {
     "speciation" = list(
       "divergence_threshold" = NULL,
       "get_divergence_factor" = NULL,
-      "get_within_cluster_divergence_factor" = NULL
+      "get_within_cluster_divergence_factor" = NULL,
+      "apply_within_site_speciation" = NA
     ),
     "trait_evolution" = list("apply_trait_evolution" = NULL),
     "ecology" = list("apply_ecology" = NULL),

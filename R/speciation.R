@@ -299,6 +299,124 @@ update_within_cluster_divergence <- function(
   return(divergence)
 }
 
+#' Orchestrates within-site speciation
+#'
+#' Only species that existed at the start of the current time step are
+#' evaluated. Species created by spatial or within-site speciation during
+#' this time step are not evaluated again.
+#'
+#' @param config current config object
+#' @param data current data object
+#' @param vars current vars object
+#'
+#' @return updated config, data and vars
+#' @noRd
+loop_within_site_speciation <- function(config, data, vars) {
+  if (!is.function(config$gen3sis$speciation$apply_within_site_speciation)) {
+    return(list(config = config, data = data, vars = vars))
+  }
+  
+  if (config$gen3sis$general$verbose >= 3) {
+    cat("entering within-site speciation module\n")
+  }
+  
+  # vars$n_sp has not yet been updated with species created during this
+  # timestep. It therefore represents the species present at its start.
+  # this means that within site speciation doesn't depend on loop order and avoids 
+  # multiple lineages splitting of at the same time (which would cause zero-duration 
+  # phylogenetic branches. To note is that species get evaluated in a post spatial
+  # cluster split state, which does establish a certain priority of processes.
+  n_species_at_timestep_start <- vars$n_sp
+  
+  for (spi in seq_len(n_species_at_timestep_start)) {
+    parent_before <- data$all_species[[spi]]
+    
+    if (!length(parent_before[["abundance"]])) {
+      next
+    }
+    
+    result <-
+      config$gen3sis$speciation$apply_within_site_speciation(
+        species = parent_before,
+        space = data[["space"]],
+        config = config
+      )
+    
+    parent_after <- result[["species"]]
+    events <- result[["events"]]
+    
+    # if no events have occurred, skip to the next species
+    if (is.null(events) | !length(events)) {
+      next
+    }
+    
+    for (event in events) {
+      site <- as.character(event[["site"]])
+      daughter_abundance <- event[["daughter_abundance"]]
+      daughter_traits <- event[["daughter_traits"]]
+      
+      if (
+        is.null(names(daughter_traits)) ||
+        !all(
+          colnames(parent_after[["traits"]]) %in%
+          names(daughter_traits)
+        )
+      ) {
+        stop(
+          "daughter_traits must be a named vector containing every ",
+          "trait present in the parent species."
+        )
+      }
+      
+      new_id <-
+        vars$n_sp +
+        vars$n_sp_added_ti +
+        1L
+      
+      daughter <- create_species_within_site(
+        parent_species = parent_after,
+        new_id = new_id,
+        site = site,
+        daughter_abundance = daughter_abundance,
+        daughter_traits = daughter_traits,
+        config = config
+      )
+      
+      data$all_species <- append(
+        data$all_species,
+        list(daughter)
+      )
+      
+      data$phy <- rbind(
+        data$phy,
+        data.frame(
+          Ancestor = spi,
+          Descendent = new_id,
+          Speciation.Time = vars$ti,
+          Extinction.Time = vars$ti,
+          Speciation.Type = "Sympatric"
+        )
+      )
+      
+      vars$n_new_sp_ti <-
+        vars$n_new_sp_ti + 1L
+      
+      vars$n_sp_added_ti <-
+        vars$n_sp_added_ti + 1L
+    }
+  }
+  
+  if (config$gen3sis$general$verbose >= 3) {
+    cat("exiting within-site speciation module\n")
+  }
+  
+  return(list(
+    config = config,
+    data = data,
+    vars = vars
+  ))
+}
+
 #' Updates the total number of species
 #'
 #' @param config the current config object

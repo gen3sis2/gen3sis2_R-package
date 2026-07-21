@@ -246,9 +246,14 @@ run_simulation <- function(
     if (verbose >= 2) {
       cat("speciation \n")
     }
-
+    # the base speciation loop for between and within cluster speciation
     val <- loop_speciation(val$config, val$data, val$vars)
-
+    # the additional within-site speciation loop
+    val <- loop_within_site_speciation(val$config, val$data, val$vars)
+    
+    # loop_within_site_speciation relies on un-updated counts.
+    # Do not update sp all and sp alive before.
+    
     # updates to take into account new species
     val <- update1.n_sp.all_geo_sp_ti(val$config, val$data, val$vars)
     val <- update2.n_sp_alive.geo_sp_ti(val$config, val$data, val$vars)

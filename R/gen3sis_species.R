@@ -97,6 +97,44 @@ create_species_from_existing <- function(
   return(invisible(new_species))
 }
 
+#' Creates a daughter species at a site still occupied by its parent
+#'
+#' Unlike create_species_from_existing(), this function does not transfer
+#' the focal site away from the parent species.
+#'
+#' @param parent_species parent species
+#' @param new_id ID assigned to the daughter species
+#' @param site focal site where within-site speciation occurs
+#' @param daughter_abundance initial abundance of the daughter population
+#' @param daughter_traits named vector of daughter trait values
+#' @param config simulation configuration
+#'
+#' @return a one-site daughter species
+#' @noRd
+create_species_within_site <- function(
+    parent_species,
+    new_id,
+    site,
+    daughter_abundance,
+    daughter_traits,
+    config
+) {
+  new_species <- create_species(
+    initial_cells = site,
+    config = config
+  )
+  
+  new_species[["id"]] <- new_id
+  new_species[["abundance"]][site] <- daughter_abundance
+  
+  trait_names <- colnames(new_species[["traits"]])
+  
+  new_species[["traits"]][site, ] <-
+    daughter_traits[trait_names]
+  
+  return(invisible(new_species))
+}
+
 summary.gen3sis_species <- function(species) {
   return(invisible(species))
 }

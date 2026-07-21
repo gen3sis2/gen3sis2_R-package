@@ -100,7 +100,7 @@ sim <- run_simulation(
   output_directory = tempdir()
 )
 #> config found:  /home/runner/work/_temp/Library/gen3sis2/extdata/TestConfigs/TestConfig.Rspace found: /home/runner/work/_temp/Library/gen3sis2/extdata/TestSpaces/geostatic_spaces/raster 
-#> Output directory is: /tmp/RtmpdBwEIC/TestConfig 
+#> Output directory is: /tmp/RtmpTdg80u/TestConfig 
 #> 
 #> Using config: TestConfig 
 #> --- Initializing --- 
@@ -126,7 +126,7 @@ sim <- run_simulation(
 
 
 #> Simulation finished. All OK 
-#> Simulation runtime:  0.002029834  hours
+#> Simulation runtime:  0.002228942  hours
 
 # plot summary object
 plot_summary(sim)

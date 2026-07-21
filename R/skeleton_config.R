@@ -129,8 +129,6 @@ get_dispersal_values <- function(n, species, space, config) {
 
 # threshold for genetic distance after which a speciation event takes place.
 divergence_threshold = NULL
-# factor by which the divergence is decreased between geographically isolated clusters.
-divergence_decay = NULL
 
 # factor by which the divergence is increased between geographically isolated population.
 # can also be a matrix between the different population clusters.
@@ -138,6 +136,11 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
   stop("calculate divergence factor here")
 }
 
+# factor by which the divergence within geographically isolated clusters is either increased or decreased.
+# can return a scalar (e.g. -1 as the default) or a matrix.
+get_within_cluster_divergence_factor <- function(species, species_presence, cluster_indices, divergence, space, config){
+  stop("calculate within-cluster divergence here")
+}
 
 #-----------------------#
 #### Trait Evolution ####

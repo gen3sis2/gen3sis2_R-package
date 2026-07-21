@@ -264,7 +264,7 @@ equal probability of being inhabited by a species in the beginning of
 the simulation. However since the sites vary in their size, the
 habitation probability per area is not the same for all regions. If you
 want to correct for that you can consider using an equal area
-transformation of your coordinates or tweeking sampling functions to
+transformation of your coordinates or tweaking sampling functions to
 account for area correction. We set the optimum temperature trait
 **temp** of each population of the initial species to the environmental
 temperature. This means, that each population is adapted to the local
@@ -408,11 +408,11 @@ total abundance is smaller or equal to the carrying capacity.
 > apply_ecology <- function(abundance, traits, space, config) {
 >  abundance_scale = 10
 >  abundance_threshold = 1
->  #abundance treashold
+>  #abundance threshold
 >  survive <- abundance>=abundance_threshold
 >  abundance[!survive] <- 0
 >  abundance <- (( 1-abs( traits[, "temp"] - space[, "temp"]))*abundance_scale)*as.numeric(survive)
->  #abundance thhreashold
+>  #abundance threshold
 >  abundance[abundance<abundance_threshold] <- 0
 >  k <- ((space[,"area"]*(space[,"arid"]+0.1)*(space[,"temp"]+0.1))*abundance_scale^2)
 >  total_ab <- sum(abundance)

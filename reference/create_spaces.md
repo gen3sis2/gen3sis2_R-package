@@ -8,7 +8,7 @@ create empty gen3sis_spaces
 create_spaces(
   env = list(NA),
   type = "raster",
-  duration = list(from = NA, to = NA, by = NA, unit = "Myr"),
+  duration = list(from = NA, to = NA, by = NA, unit = "Ma"),
   area = list(extent = NA, total_area = NA, n_sites = NA, unit = "km2"),
   crs = "EPSG:4326",
   cost_function = list(NA),
@@ -41,8 +41,8 @@ create_spaces(
   interval increment. Note that this is constant and can only be
   positive; \*unit\* is the time unit used. Accepted units are
   `check_spaces()$duration` e.g. list(-20, 0, 1, "Myr") has a space that
-  covers the last 20 Ma until the present, every 1 Ma. list(-800, 300,
-  10, "mil") has a space that covers the last 800 kyra or mil for
+  covers the last 20 Myr until the present, every 1 Myr list(-800, 300,
+  10, "mil") has a space that covers the last 800 kyr or mil for
   millions of years and goes until the future 300 kya at every 100 mil
   years.
 
@@ -53,7 +53,7 @@ create_spaces(
   xmax, ymin, ymax)
   [`terra::ext`](https://rspatial.github.io/terra/reference/ext.html),
   \*total_area\* is the covered area by the points, raster or h3 grid,
-  \*n_sites\* is the number of sites and \*unit\* is theunit of the
+  \*n_sites\* is the number of sites and \*unit\* is the unit of the
   area, accepted units are square meter (m2) and square kilometer (km2)
   `check_spaces()$area`
 
@@ -73,7 +73,7 @@ create_spaces(
 
   boolean for if sites change location or disappear over time ,default
   is NULL and deduces from NA over time. If false, only one
-  cost_distance is calculated and used i.e. whencost_distances are the
+  cost_distance is calculated and used i.e. when cost_distances are the
   same, i.e. no geodynamic changes in the space
 
 - type_spec:

@@ -19,7 +19,7 @@ create_input_config(config_file = NA, config_name = NULL)
 - config_name:
 
   the name of the configuration. if NULL it will be set to a random
-  name, if a empty config is creasted, or use the file name
+  name, if a empty config is created, or use the file name
 
 ## Value
 
@@ -49,7 +49,7 @@ config_object$gen3sis$general$random_seed <- 2025
                         output_directory = tempdir())
 #> Config found: using config object 
 #> space found: /home/runner/work/_temp/Library/gen3sis2/extdata/TestSpaces/geodynamic_spaces/raster 
-#> Output directory is: /tmp/RtmppoUJGE/your_config 
+#> Output directory is: /tmp/RtmpwcUMbt/your_config 
 #> 
 #> Using config: your_config 
 #> --- Initializing --- 
@@ -75,6 +75,6 @@ config_object$gen3sis$general$random_seed <- 2025
 
 
 #> Simulation finished. All OK 
-#> Simulation runtime:  0.002355965  hours
+#> Simulation runtime:  0.002186508  hours
 # }
 ```

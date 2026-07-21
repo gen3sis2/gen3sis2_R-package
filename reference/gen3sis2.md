@@ -37,9 +37,6 @@ ETH Zürich, Switzerland)
 
 Authors:
 
-- Oskar Hagen <oskar@hagen.bio> (space Ecology, WSL and ETH Zürich,
-  Switzerland)
-
 - Admir C. de O. Junior <admircjunior@gmail.com>
 
 - Bouwe Reijenga <bouwe.reijenga@earth.ox.ac.uk>
@@ -73,7 +70,7 @@ Other contributors:
 - Charles Novaes de Santana <charles.novaes@usys.ethz.ch> (space
   Ecology, WSL and ETH Zürich, Switzerland) \[contributor\]
 
-- Theo Gaboriau <theo.gaboriau@unil.ch> (Depatment of Computational
+- Theo Gaboriau <theo.gaboriau@unil.ch> (Department of Computational
   Biology, Lausanne University, Switzerland) \[contributor\]
 
 ## Examples

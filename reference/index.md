@@ -108,7 +108,7 @@ Functions that can be used to save, get and handle sumation information
 
 - [`distance_subset()`](distance_subset.md) : Subset distance matrix
 - [`diversification_summary()`](diversification_summary.md) :
-  Diverisification summary
+  Diversification summary
 - [`get_abundance_matrix()`](get_abundance_matrix.md) : Get abundance
   matrix
 - [`get_divergence_matrix()`](get_divergence_matrix.md) : Returns the

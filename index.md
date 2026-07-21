@@ -19,7 +19,7 @@ according to: <http://epub.wu.ac.at/3269/1/Report114.pdf>
 
 ### How to cite
 
-- Publication comming soon! For now: O Hagen, B Flueck, F Fopp, JS
+- Publication coming soon! For now: O Hagen, B Flueck, F Fopp, JS
   Cabral, F Hartig, M Pontarp, TF Rangel, L Pellissier (2021) gen3sis: A
   general engine for eco-evolutionary simulations of the processes that
   shape Earth’s biodiversity. PLOS Biology.

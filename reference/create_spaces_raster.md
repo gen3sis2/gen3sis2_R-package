@@ -42,7 +42,7 @@ create_spaces_raster(
 - directions:
 
   4, 8 or 16 neighbors, dictates the connection of cell neighbors on
-  adjacency matrix (see gistance package). This does not control the
+  adjacency matrix (see distance package). This does not control the
   dispersal processes directly in the simulation, it only makes diagonal
   distances less biased. E.g., when using directions = 4, diagonals are
   not directly computed, thus inflating distances for diagonal movement.

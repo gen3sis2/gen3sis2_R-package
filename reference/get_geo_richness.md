@@ -16,7 +16,7 @@ get_geo_richness(species_list, space)
 
 - space:
 
-  the space to calculate the richnness over
+  the space to calculate the richness over
 
 ## Value
 

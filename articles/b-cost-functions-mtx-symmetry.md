@@ -5,7 +5,7 @@
 In nature, species dispersal are often not symmetrical, i.e., it could
 be harder to follow some paths than others. For example, the topography
 of a region can be quite rugged, featuring areas of steep slopes. In
-this case, animal and plant dispersal may face resistence in directions
+this case, animal and plant dispersal may face resistance in directions
 of higher elevations, while descending is clearly less costly. Another
 example is river flow. Aquatic organisms may disperse more easily in the
 direction of the river flow instead against it. In these cases, when
@@ -186,10 +186,10 @@ package to save it in temporary directory, because we are only
 interested in the distance matrix.
 
 The cost function we’ll use is simple: the cost will be defined by the
-Euclidian distance between source and destination cells, multiplied by a
-predefined coeficient. Note how this imply symmetry, because the
+Euclidean distance between source and destination cells, multiplied by a
+predefined coefficient. Note how this imply symmetry, because the
 distance $`d`$ between cell $`A`$ and cell $`B`$ is equal the other way
-around; i.e., $`d(AB)=d(BA)`$. For the record, the Euclidian distance is
+around; i.e., $`d(AB)=d(BA)`$. For the record, the Euclidean distance is
 defined as
 ``` math
 d = \sqrt{(x_A-x_B)²+(y_A-y_B)²}

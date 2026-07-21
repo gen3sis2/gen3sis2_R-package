@@ -93,7 +93,7 @@ added to the geographical distances, meaning that connections costs
 equal distance in grid cell units multiplied by the raster resolution.
 For spaces with a coordinate system (*crs*) the cost is defined in
 meters, as defined by the coordinate system. By dividing the cost
-function by 1000 we get the cost of traveling for 1 km. We can define a
+function by 1000 we get the cost of travelling for 1 km. We can define a
 simple cost function in which the dispersal is not penalized:
 
 ``` r
@@ -155,7 +155,7 @@ to consider the four, eighth or 16 neighboring sites.
 
 The argument ‘duration’ requires a named list with information about the
 start (“from”), end (“to”), step size (“by”) and time unit (“unit”) of
-the enviromental series. Negative values represent the past, and
+the environmental series. Negative values represent the past, and
 positive values the future. From example, a duration starting 10 million
 years ago and ending 10 millions years in the future should look like:
 `duration = list(from=-10, to=10, by=1, unit="Ma")`. Is also used to

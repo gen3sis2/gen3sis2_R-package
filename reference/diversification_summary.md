@@ -1,4 +1,4 @@
-# Diverisification summary
+# Diversification summary
 
 This function constructs a matrix with speciation, extinction and
 diversification rate over timesteps

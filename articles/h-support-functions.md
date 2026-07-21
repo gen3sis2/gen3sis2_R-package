@@ -7,12 +7,12 @@ library(gen3sis2)
 
 ## Introduction
 
-During or after thet simulation, users may need to retrieve some
-specific information that are not directly disponible. This usually
-includes rates, matrices or subsets based on the simulation state. To
-get this, most times users must define functions that manipulate
-`gen3sis2` objects. Altought this should be considerably easy, sometimes
-it can be quite inconvenient.
+During or after the simulation, users may need to retrieve some specific
+information that are not directly available. This usually includes
+rates, matrices or subsets based on the simulation state. To get this,
+most times users must define functions that manipulate `gen3sis2`
+objects. Although this should be considerably easy, sometimes it can be
+quite inconvenient.
 
 To facilitate this processes and wide the functionalities range of
 `gen3sis2`, the package features several generic support functions that
@@ -57,7 +57,7 @@ values*.
 This function constructs a presence-absence matrix based on the space
 sites. In this matrix, rows are site indexes and columns are species
 indexes. Optionally, users can get the xy coordinates for each site as
-the first two columns (`xy=TRUE`) or include all sites that don’t havy
+the first two columns (`xy=TRUE`) or include all sites that don’t have
 any species (`empty_sites=TRUE`).
 
 Inside the observer function:
@@ -667,7 +667,7 @@ get_space_subset(space, site_vector = c("841","948"))
 
 ## Miscellaneous functions
 
-These functions are design to be used not necessarly inside the
+These functions are design to be used not necessarily inside the
 simulation, and serve as multiple purposes.
 
 - `distance_subset`
@@ -713,4 +713,4 @@ Anyone can contribute to the project. If you have written a function
 with a functionality not yet covered by the current support functions,
 we encourage you share it with us. Support functions are written in the
 R/observations.R file. To know how to contribute to the project, read
-the CONTIBUTING.md file.
+the CONTRIBUTING.md file.

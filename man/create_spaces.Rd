@@ -29,15 +29,15 @@ the most recent of future time-step}
 *to* CAN ONLY BE smaller than *from*, since *to* is the latest time
 *by* is the time interval increment. Note that this is constant and can only be positive;
 *unit* is the time unit used. Accepted units are \code{check_spaces()$duration}
-e.g. list(-20, 0, 1, "Ma") has a space that covers the last 20 Ma until the present, every 1 Ma.
-     list(-800, 300, 10, "mil") has a space that covers the last 800 kyra or mil for millions of years
+e.g. list(-20, 0, 1, "Myr") has a space that covers the last 20 Myr until the present, every 1 Myr
+     list(-800, 300, 10, "mil") has a space that covers the last 800 kyr or mil for millions of years
      and goes until the future 300 kya at every 100 mil years.}
 
 \item{area}{list containing information on the 2D spacial dimension: list(extent, total_area, n_sites, unit)
 *extent* is a named vector with (xmin, xmax, ymin, ymax) \code{terra::ext},
 *total_area* is the covered area by the points, raster or h3 grid, 
 *n_sites* is the number of sites and 
-*unit* is theunit  of the area, accepted units are square meter (m2) and square kilometer (km2) 
+*unit* is the unit  of the area, accepted units are square meter (m2) and square kilometer (km2) 
 \code{check_spaces()$area}}
 
 \item{crs}{Coordinate Reference Systems, as string and PROJ.4 format. Default is,
@@ -48,7 +48,7 @@ Depends on type and other methods used to calculate the cost distances.}
 
 \item{geodynamic}{boolean for if sites change location or disappear over time
 ,default is NULL and deduces from NA over time. If false, only one cost_distance is calculated and used
-i.e. whencost_distances are the same, i.e. no geodynamic changes in the space}
+i.e. when cost_distances are the same, i.e. no geodynamic changes in the space}
 
 \item{type_spec}{list containing type specific information, e.g. res (resolution) for raster and h3 spaces}
 

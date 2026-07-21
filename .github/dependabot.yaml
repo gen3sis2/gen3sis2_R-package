@@ -1,0 +1,14 @@
+version: 2
+permissions:
+  contents: write
+updates:
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    groups:
+      ci:
+        patterns:
+          - '*'

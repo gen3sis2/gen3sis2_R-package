@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-In nature, species dispersal are often not symmetrical, i.e., it could be harder to follow some paths than others. For example, the topography of a region can be quite rugged, featuring areas of steep slopes. In this case, animal and plant dispersal may face resistence in directions of higher elevations, while descending is clearly less costly. Another example is river flow. Aquatic organisms may disperse more easily in the direction of the river flow instead against it. In these cases, when constructing distance matrices to simulate species dispersal, a *asymmetrical* matrix is necessary. This matrix will tell us (and *gen3sis2*) that moving from site A to site B ($A \rightarrow B$) could have different cost than moving $B \rightarrow A$.
+In nature, species dispersal are often not symmetrical, i.e., it could be harder to follow some paths than others. For example, the topography of a region can be quite rugged, featuring areas of steep slopes. In this case, animal and plant dispersal may face resistance in directions of higher elevations, while descending is clearly less costly. Another example is river flow. Aquatic organisms may disperse more easily in the direction of the river flow instead against it. In these cases, when constructing distance matrices to simulate species dispersal, a *asymmetrical* matrix is necessary. This matrix will tell us (and *gen3sis2*) that moving from site A to site B ($A \rightarrow B$) could have different cost than moving $B \rightarrow A$.
 
 In *gen3sis2* the symmetry of the distance matrices are straightforward controlled by the *cost_function* itself, which is highly customizable. In this vignette, we will see how to write many different forms of cost functions and how they impact the distance matrices.
 
@@ -168,7 +168,7 @@ knitr::include_graphics("../man/figures/v2varplot.png")
 
 Nice. Now, we can create a input space using the *create_spaces_raster* function, just like in the previous vignette. We will use the *withr* package to save it in temporary directory, because we are only interested in the distance matrix.
 
-The cost function we'll use is simple: the cost will be defined by the Euclidian distance between source and destination cells, multiplied by a predefined coeficient. Note how this imply symmetry, because the distance $d$ between cell $A$ and cell $B$ is equal the other way around; i.e., $d(AB)=d(BA)$. For the record, the Euclidian distance is defined as $$
+The cost function we'll use is simple: the cost will be defined by the Euclidean distance between source and destination cells, multiplied by a predefined coefficient. Note how this imply symmetry, because the distance $d$ between cell $A$ and cell $B$ is equal the other way around; i.e., $d(AB)=d(BA)$. For the record, the Euclidean distance is defined as $$
 d = \sqrt{(x_A-x_B)²+(y_A-y_B)²}
 $$ where $x$ is the longitude (x coordinate) and $y$ is the latitude (y coordinate).
 

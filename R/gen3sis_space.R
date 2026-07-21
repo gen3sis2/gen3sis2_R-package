@@ -8,14 +8,14 @@
 #' *to* CAN ONLY BE smaller than *from*, since *to* is the latest time
 #' *by* is the time interval increment. Note that this is constant and can only be positive;
 #' *unit* is the time unit used. Accepted units are \code{check_spaces()$duration}
-#' e.g. list(-20, 0, 1, "Ma") has a space that covers the last 20 Ma until the present, every 1 Ma.
-#'      list(-800, 300, 10, "mil") has a space that covers the last 800 kyra or mil for millions of years
+#' e.g. list(-20, 0, 1, "Myr") has a space that covers the last 20 Myr until the present, every 1 Myr
+#'      list(-800, 300, 10, "mil") has a space that covers the last 800 kyr or mil for millions of years
 #'      and goes until the future 300 kya at every 100 mil years.
 #' @param area list containing information on the 2D spacial dimension: list(extent, total_area, n_sites, unit)
 #' *extent* is a named vector with (xmin, xmax, ymin, ymax) \code{terra::ext},
 #' *total_area* is the covered area by the points, raster or h3 grid, 
 #' *n_sites* is the number of sites and 
-#' *unit* is theunit  of the area, accepted units are square meter (m2) and square kilometer (km2) 
+#' *unit* is the unit  of the area, accepted units are square meter (m2) and square kilometer (km2) 
 #' \code{check_spaces()$area}
 #' @param crs Coordinate Reference Systems, as string and PROJ.4 format. Default is,
 #' WGS 84 -- WGS84 - World Geodetic System 1984 crs="+proj=longlat +datum=WGS84 +no_defs"
@@ -23,7 +23,7 @@
 #' Depends on type and other methods used to calculate the cost distances.
 #' @param geodynamic boolean for if sites change location or disappear over time
 #' ,default is NULL and deduces from NA over time. If false, only one cost_distance is calculated and used
-#' i.e. whencost_distances are the same, i.e. no geodynamic changes in the space
+#' i.e. when cost_distances are the same, i.e. no geodynamic changes in the space
 #' @param type_spec list containing type specific information, e.g. res (resolution) for raster and h3 spaces
 #' @param author string with the name of the author. Default is NULL which gives the system user name obtained from \code{Sys.info()["user"]}
 #' This is far from ideal, but it is better than nothing. Please fill this up and even consider leaving a contact information
@@ -38,19 +38,20 @@
 #' @export
 #'
 #' @example inst/examples/create_spaces_help.R
-create_spaces <- function(env=list(NA),
-                         type="raster",
-                         duration=list(from=NA, to=NA, by=NA, unit="Ma"),
-                         area=list(extent=NA, total_area=NA, n_sites=NA, unit="km2"),
-                         #crs="+proj=longlat +datum=WGS84 +no_defs",
-                         crs = "EPSG:4326",
-                         cost_function=list(NA),
-                         geodynamic=NULL,
-                         type_spec=list("res"=NA),
-                         author="missing",
-                         source="missing",
-                         description=list(environment="missing", methods="missing")
-                         ){
+create_spaces <- function(
+  env = list(NA),
+  type = "raster",
+  duration = list(from = NA, to = NA, by = NA, unit = "Ma"),
+  area = list(extent = NA, total_area = NA, n_sites = NA, unit = "km2"),
+  #crs="+proj=longlat +datum=WGS84 +no_defs",
+  crs = "EPSG:4326",
+  cost_function = list(NA),
+  geodynamic = NULL,
+  type_spec = list("res" = NA),
+  author = "missing",
+  source = "missing",
+  description = list(environment = "missing", methods = "missing")
+) {
   spaces <- list()
   spaces$"env" <- env
   spaces$meta$"type" <- type
@@ -60,7 +61,7 @@ create_spaces <- function(env=list(NA),
   spaces$meta$"crs" <- crs
   # attributes(cost_function) <- NULL
   spaces$meta$"cost_function" <- cost_function
-  if(is.null(geodynamic)&!is.null(dim(env[[1]]))){
+  if (is.null(geodynamic) & !is.null(dim(env[[1]]))) {
     geodynamic <- is_geodynamic(env)
   }
   spaces$meta$"geodynamic" <- geodynamic
@@ -70,7 +71,6 @@ create_spaces <- function(env=list(NA),
   # spaces <- structure(spaces, class=c("gen3sis_spaces", "list"))
   return(invisible(spaces))
 }
-
 
 
 #' Check gen3sis_spaces
@@ -84,47 +84,50 @@ create_spaces <- function(env=list(NA),
 #' @keywords spaces
 #' @export
 #'
-#' @examples 
+#' @examples
 #' \dontrun{
 #' # checks the structure of the gen3sis_space
 #' check_spaces(your_spaces)
-#' 
+#'
 #' # return a list with accepted types and time units
 #' check_spaces(NULL)
 #' }
-check_spaces <- function(spaces=NULL){
+check_spaces <- function(spaces = NULL) {
   accepted <- list()
-  
   accepted[["type"]] <- c("raster", "points", "h3")
-  
-  #dur_units <- c("day", "wk", "mon", "yr", "dec", "cen", "mil", "Ma")
   accepted[["duration_unit"]] <- time_unit_check()
-  
   # area_units <- c("m2", "km2", "ha")
   # accepted[["area_unit"]]<- area_units[area_units%in%measurements::conv_unit_options$area]
 
-  if (is.null(spaces)){
+  if (is.null(spaces)) {
     return(accepted)
   }
 
   error_report <- NULL
   sp_ref <- create_spaces()
 
-
-  error_report <- check_names(reference="env", datags=spaces, error_report)
-  for (n_i in names(sp_ref$meta)){
+  error_report <- check_names(reference = "env", datags = spaces, error_report)
+  for (n_i in names(sp_ref$meta)) {
     # n_i <- names(sp_ref$meta)[3]
-    error_report <- check_names(reference=n_i, datags=spaces$meta, error_report)
+    error_report <- check_names(
+      reference = n_i,
+      datags = spaces$meta,
+      error_report
+    )
     n_sub_e <- names(sp_ref$meta[[n_i]])
-    if (length(n_sub_e)>1){
-      for (s_i in n_sub_e){
+    if (length(n_sub_e) > 1) {
+      for (s_i in n_sub_e) {
         # s_i <- n_sub_e[1]
-        error_report <- check_names(reference=s_i, datags=spaces$meta[[n_i]][s_i], error_report)
+        error_report <- check_names(
+          reference = s_i,
+          datags = spaces$meta[[n_i]][s_i],
+          error_report
+        )
       }
     }
   }
   # stop in case of errors reported
-  if (!is.null(error_report)){
+  if (!is.null(error_report)) {
     stop(error_report)
   }
   return("gen3sis_spaces [OK]")
@@ -134,49 +137,62 @@ check_spaces <- function(spaces=NULL){
 #'
 #' @param reference string with the variable name to be tested, e.g. type, env
 #' @param datags list of which \code{names(datags) is contrastet for reference}
-#' @param error_report an error report that increases in case mismatches are 
+#' @param error_report an error report that increases in case mismatches are
 #' found for each sub-list.
 #' default is NULL
 #'
 #' @return an error report with the mismatches found
 #' @keywords spaces
 #' @export
-check_names <- function(reference, datags, error_report=NULL){
-  target=names(datags)
-  if (!reference%in%target) { # if variables is missing
+check_names <- function(reference, datags, error_report = NULL) {
+  target <- names(datags)
+  if (!reference %in% target) {
+    # if variables is missing
     error_report <- paste(
       error_report,
       (paste("The following spaces data is missing:", reference)),
-      "\n")
+      "\n"
+    )
   } # end if var name is missing
 
-  if (reference=="env"){ # check env
-    if (!is.list(datags[[reference]])){ # if env is not a list
+  if (reference == "env") {
+    # check env
+    if (!is.list(datags[[reference]])) {
+      # if env is not a list
       error_report <- paste(
         error_report,
-        (paste0("! >", reference, "< has to be a list of environmental variable(s)")),
-        "\n")
+        (paste0(
+          "! >",
+          reference,
+          "< has to be a list of environmental variable(s)"
+        )),
+        "\n"
+      )
     }
     # check if NAs are the same
-    mask_NAs <- lapply(datags$env, function(x){
-      is.na(x[,!colnames(x)%in%c("x","y"), drop=FALSE])
+    mask_NAs <- lapply(datags$env, function(x) {
+      is.na(x[, !colnames(x) %in% c("x", "y"), drop = FALSE])
     })
-    for (env_i in names(mask_NAs)){
+    for (env_i in names(mask_NAs)) {
       # env_i <- names(mask_NAs)[2]
-      if (!identical(mask_NAs[[1]], mask_NAs[[env_i]])){
-
+      if (!identical(mask_NAs[[1]], mask_NAs[[env_i]])) {
         error_report <- paste(
           error_report,
-          (paste0("! >please check your env data. NAs must match for all env's: \n
-         i.e. environmental variables stored in env as a list.")),
-          "\n")
+          (paste0(
+            "! >please check your env data. NAs must match for all env's: \n
+         i.e. environmental variables stored in env as a list."
+          )),
+          "\n"
+        )
       }
     } # end NA comparison loop
-  } else if (any(is.na(datags[[reference]]))){ # if there is NA
+  } else if (any(is.na(datags[[reference]]))) {
+    # if there is NA
     error_report <- paste(
       error_report,
       (paste0("! >", reference, "< can not be NA! please specify")),
-      "\n")
+      "\n"
+    )
   } # end if NA# end if env
 
   return(error_report)
@@ -189,8 +205,8 @@ check_names <- function(reference, datags, error_report=NULL){
 #' @param dir_output "path to dir_output"
 #' @return no value is returned
 #' @noRd
-prepare_dirs <- function(dir_input, dir_output){
-  if(!dir.exists(dir_input)){
+prepare_dirs <- function(dir_input, dir_output) {
+  if (!dir.exists(dir_input)) {
     stop(paste("Input directory does not exist:", dir_input))
   }
   cat(paste0("Input directory found: \n [", dir_input, "] \n"))
@@ -218,17 +234,17 @@ prepare_dirs <- function(dir_input, dir_output){
 #' If such a row is found, the dataset is considered geodynamic, and the function returns `TRUE`. Otherwise, it returns `FALSE`.
 #'
 #' @example inst/examples/is_geodynamic_help.R
-is_geodynamic <- function(env){
-  geodynamic <- any(unlist(lapply(env, function(x){
+is_geodynamic <- function(env) {
+  geodynamic <- any(unlist(lapply(env, function(x) {
     # remove the first two columns (x and y)
-    data <- x[,-c(1,2)]
+    data <- x[, -c(1, 2)]
     # identify rows that are all NA
     all_na <- apply(data, 1, function(row) all(is.na(row)))
     # identify rows that have no NA values (i.e., all non-NA)
-    all_non_na <- apply(data, 1, function(row) all(!is.na(row)))
+    all_non_na <- apply(data, 1, function(row) !anyNA(row))
     # determine if the matrix is geodynamic
     # r=TRUE, aka it is geodynamic  if there is at least one row that is neither all NA nor all non-NA
-    r <- any(!(all_na | all_non_na))
+    r <- !all((all_na | all_non_na))
     return(r)
   })))
   return(geodynamic)
@@ -242,8 +258,10 @@ is_geodynamic <- function(env){
 #' @returns a modifier object. It can by of any class.
 #' @keywords user
 #' @export
-get_modifiers <- function(space, all_species){
-  stop("this function documents the user function interface only, do not use it.")
+get_modifiers <- function(space, all_species) {
+  stop(
+    "this function documents the user function interface only, do not use it."
+  )
 }
 
 #' Allows the user to populate the world at the beginning of a simulation
@@ -254,6 +272,8 @@ get_modifiers <- function(space, all_species){
 #' @returns must return the modified "space$environment".
 #' @keywords user
 #' @export
-apply_modifiers <- function(space, modifiers){
-  stop("this function documents the user function interface only, do not use it.")
+apply_modifiers <- function(space, modifiers) {
+  stop(
+    "this function documents the user function interface only, do not use it."
+  )
 }

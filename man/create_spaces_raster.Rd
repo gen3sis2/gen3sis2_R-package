@@ -48,7 +48,7 @@ If FALSE (default), only local distances are calculated (slower CPU time when si
 E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
    \code{duration = list(from = -10, to = 10, by = 5, unit = "Myr")}}
 
-\item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL,
+\item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 i.e. deciding final value based on the input data using \code{?is_geodynamic}.}
 
 \item{...}{additional arguments to be passed to the \code{\link{create_spaces}} function. Possible arguments include:

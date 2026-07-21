@@ -12,7 +12,7 @@ create_input_config(config_file = NA, config_name = NULL)
 \item{config_name}{the name of the configuration. if NULL it will be set to a random name, if a empty config is created, or use the file name}
 }
 \value{
-list of configuration elements, similar generated from reading a config_file.R. The internal elements
+list of configuration elements, similar generated from reading a config_file.R. The internal elements 
 of this list are: "general", "initialization", "dispersal", "speciation", "mutation" and "ecology"
 }
 \description{

@@ -86,7 +86,7 @@ For guidelines on contributing to this project, please refer to the [CONTRIBUTIN
 ### Credits
 We thank the developers of the following methods and dependencies:
 
-- **Rcpp** Dirk Eddelbuettel and James Joseph Balamuta (2018). Extending R with C++: A Brief Introduction to Rcpp. The American Statistician. 72(1). URL https://doi.org/10.1080/00031305.2017.1375990.
+- **Rcpp** Dirk Eddelbuettel and James Joseph Balamuta (2018). Extending R with C++: A Brief Introduction to Rcpp. The American Statistician. 72(1). URL https://doi.org/10.1080/00031305.2017.1375990
 
 - **BH** Dirk Eddelbuettel, John W. Emerson and Michael J. Kane (2021). BH: Boost C++ Header Files. R package. https://CRAN.R-project.org/package=BH
 
@@ -112,7 +112,7 @@ We thank the developers of the following methods and dependencies:
 
 - **patchwork** Pedersen T. (2025). patchwork: The Composer of Plots. https://CRAN.R-project.org/package=patchwork
 
-- **testthat** Wickham H. (2011). testthat: Get Started with Testing. The R Journal, vol. 3, no. 1, pp. 5--10, https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf
+- **testthat** Wickham H. (2011). testthat: Get Started with Testing. The R Journal, vol. 3, no. 1, pp. 5--10, https://doi.org/10.32614/RJ-2011-002
 
 - **formatR** Yihui Xie (2021). formatR: Format R Code Automatically. R package. https://CRAN.R-project.org/package=formatR
 

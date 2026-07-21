@@ -34,5 +34,6 @@ file to be edited by the user.
 config_file_path <- file.path(tempdir(), "config_empty.R")
 #writes out a config skeleton
 write_config_skeleton(config_file_path)
-#> [1] TRUE
+#> Warning: /var/folders/85/wlm9sk6j32q_hg2dpxl1k7_40000gn/T//Rtmpu30hDj/config_empty.R exists, file not written.
+#> [1] FALSE
 ```

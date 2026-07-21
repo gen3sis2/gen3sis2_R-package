@@ -29,6 +29,7 @@ defined time-steps.
 Let’s see an example:
 
 ``` r
+
 library(gen3sis2)
 # Load some spaces.rds create with create_spaces_raster...
 space <- readRDS(system.file("extdata/SouthAmerica/space/spaces.rds", package = "gen3sis2"))
@@ -53,6 +54,7 @@ function that will allow us to simulate how your space looks like inside
 the simulation:
 
 ``` r
+
 simulate_space_format <- function(config,space,output_directory) {
   directories <- prepare_directories(config_file = config,
                                      input_directory = space,
@@ -81,10 +83,11 @@ data <- simulate_space_format(
 )
 ```
 
-    ## config found:  /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/SouthAmerica/space 
-    ## Output directory is: /tmp/Rtmpl22iSg/config_southamerica
+    ## config found:  /Library/Frameworks/R.framework/Versions/4.6/Resources/library/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /Library/Frameworks/R.framework/Versions/4.6/Resources/library/gen3sis2/extdata/SouthAmerica/space 
+    ## Output directory is: /var/folders/85/wlm9sk6j32q_hg2dpxl1k7_40000gn/T//RtmptUvI9n/config_southamerica
 
 ``` r
+
 names(data)
 ```
 
@@ -96,6 +99,7 @@ example.
 Now, we can call the plot function in a very easy way:
 
 ``` r
+
 plot_space(data$space)
 ```
 
@@ -113,6 +117,7 @@ The `plot_species_presence` is a useful function that users can use to
 plot the species’ presence across the space.
 
 ``` r
+
 # Simulate species in random places
 set.seed(13)
 random_places <- sample(row.names(data$space$coordinates), 12)
@@ -127,6 +132,7 @@ plot_species_presence(sp, data$space)
 ### Abundance
 
 ``` r
+
 # Simulate species in random places...
 sp <- gen3sis2::create_species(random_places, config)
 
@@ -144,6 +150,7 @@ has few unique values, it creates a discrete scale. However, if the
 vector has a lot of unique values, it creates a continuous scale:
 
 ``` r
+
 # Simulate species in random places...
 sp <- gen3sis2::create_species(random_places, config)
 
@@ -165,6 +172,7 @@ the other functions, this one will receive a species list, not a single
 species. But, besides that, it works in the very same way:
 
 ``` r
+
 # Simulating a species list
 ## inside the simulation this will be called "all_species"
 species_list <- list(
@@ -192,6 +200,7 @@ to read functions’ documentation to be aware of the proper usage.
 However, let’s go over one simple example:
 
 ``` r
+
 # Simulate species in random places
 set.seed(13)
 random_places <- sample(row.names(data$space$coordinates), 12)
@@ -210,6 +219,7 @@ functions return ggplot2 objects. As a result, it’s natively possible to
 apply `ggplot2` syntax `gen3sis2` plots:
 
 ``` r
+
 # storing plot in an object 
 p <- plot_species_presence(sp, data$space, col = c("black","#1B8200"))
 ```
@@ -217,6 +227,7 @@ p <- plot_species_presence(sp, data$space, col = c("black","#1B8200"))
 ![](d-custom-plot-aesthetics_files/figure-html/unnamed-chunk-9-1.png)
 
 ``` r
+
 # applying ggplot2 syntax
 p +
   ggplot2::theme_dark() +
@@ -238,24 +249,47 @@ by overriding package’s options:
 First, let’s see how the default raster aesthetics look:
 
 ``` r
+
 gen3sis2:::.default_raster_plot_aesthetics
 ```
 
-    ## function (space, col, x_breaks, y_breaks, title) 
-    ## {
-    ##     list(ggplot2::scale_x_continuous(expand = c(0, 0), breaks = x_breaks), 
-    ##         ggplot2::scale_y_continuous(expand = c(0, 0), breaks = y_breaks), 
-    ##         ggplot2::theme_bw(), ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5), 
-    ##             panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), 
-    ##             axis.text = element_blank(), axis.ticks = element_blank()), 
-    ##         ggplot2::labs(title = title), ggplot2::coord_fixed(ratio = 1))
+    ## function(
+    ##   space,
+    ##   col,
+    ##   x_breaks,
+    ##   y_breaks,
+    ##   title
+    ## ) {
+    ##   list(
+    ##     ggplot2::scale_x_continuous(
+    ##       expand = c(0, 0),
+    ##       breaks = x_breaks
+    ##     ),
+    ##     ggplot2::scale_y_continuous(
+    ##       expand = c(0, 0),
+    ##       breaks = y_breaks
+    ##     ),
+    ##     ggplot2::theme_bw(),
+    ##     ggplot2::theme(
+    ##       plot.title = ggplot2::element_text(hjust = 0.5),
+    ##       panel.grid.major = ggplot2::element_blank(),
+    ##       panel.grid.minor = ggplot2::element_blank(),
+    ##       axis.text = element_blank(),
+    ##       axis.ticks = element_blank()
+    ##     ),
+    ##     ggplot2::labs(
+    ##       title = title
+    ##     ),
+    ##     ggplot2::coord_fixed(ratio = 1)
+    ##   )
     ## }
-    ## <bytecode: 0x6540f0d3de30>
+    ## <bytecode: 0x12a11b140>
     ## <environment: namespace:gen3sis2>
 
 Now, let’s override it, defining our own aesthetics:
 
 ``` r
+
 library(scales)
 options(gen3sis2.raster_plot_aesthetics = function(space, col, x_breaks, y_breaks, title) {
   list(
@@ -285,6 +319,7 @@ options(gen3sis2.raster_plot_aesthetics = function(space, col, x_breaks, y_break
 Now the plots should have this new aesthetics:
 
 ``` r
+
 plot_species_presence(sp, data$space)
 ```
 

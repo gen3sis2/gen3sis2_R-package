@@ -46,12 +46,13 @@ see later.
 In the previous vignette, we defined the following cost function:
 
 ``` r
-cf <- function(source, dest) {
-    if (!all(source$habitable, dest$habitable)) {
-        return(2/1000)
-    } else {
-        return(1/1000)
-    }
+
+cf <- function(source, dest){
+  if(!all(source$habitable, dest$habitable)) {
+    return(2 / 1000)
+  } else {
+    return(1 / 1000)
+  }
 }
 ```
 
@@ -67,11 +68,20 @@ temperature and air humidity information, that are in the same row and
 consecutive columns:
 
 ``` r
-source <- list(index = 1, coordinates = c(x = 0, y = 0), value = c(temperature = 30,
-    air_humidity = 40), habitable = TRUE)
 
-dest <- list(index = 2, coordinates = c(x = 0, y = 1), value = c(temperature = 35,
-    air_humidity = 25), habitable = TRUE)
+source <- list(
+  index = 1,
+  coordinates = c("x"=0,"y"=0),
+  value = c("temperature"=30, "air_humidity"=40),
+  habitable = TRUE
+)
+
+dest <- list(
+  index = 2,
+  coordinates = c("x"=0,"y"=1),
+  value = c("temperature"=35, "air_humidity"=25),
+  habitable = TRUE
+)
 ```
 
 Inside the cost function, all information can be accessed using simple
@@ -80,12 +90,13 @@ defined by the temperature difference between the cells divided by the
 mean air humidity. In that case, we will write the cost function as:
 
 ``` r
-cf <- function(source, dest) {
-    temp_difference <- (source$value[["temperature"]] - dest$value[["temperature"]])
-    mean_humidity <- (source$value[["air_humidity"]] + dest$value[["air_humidity"]])/2
-    cost <- temp_difference/mean_humidity
 
-    return(cost)
+cf <- function(source, dest){
+  temp_difference <- (source$value[["temperature"]] - dest$value[["temperature"]])
+  mean_humidity <- (source$value[["air_humidity"]] + dest$value[["air_humidity"]])/2
+  cost <- temp_difference/mean_humidity
+  
+  return(cost)
 }
 
 cf(source, dest)
@@ -99,12 +110,13 @@ additional information or variables in it. To illustrate this, let’s add
 a “base_cost = 1”, to control cost values:
 
 ``` r
-cf <- function(source, dest, base_cost = 1) {
-    temp_difference <- (source$value[["temperature"]] - dest$value[["temperature"]])
-    mean_humidity <- (source$value[["air_humidity"]] + dest$value[["air_humidity"]])/2
-    cost <- temp_difference/mean_humidity
 
-    return(base_cost + cost)
+cf <- function(source, dest, base_cost = 1){
+  temp_difference <- (source$value[["temperature"]] - dest$value[["temperature"]])
+  mean_humidity <- (source$value[["air_humidity"]] + dest$value[["air_humidity"]])/2
+  cost <- temp_difference/mean_humidity
+  
+  return(base_cost+cost)
 }
 
 cf(source, dest)
@@ -115,14 +127,15 @@ Note that this can also be constructed in the working environment, what
 can be useful in many cases:
 
 ``` r
+
 base_cost <- 2
 
-cf <- function(source, dest, base = base_cost) {
-    temp_difference <- (source$value[["temperature"]] - dest$value[["temperature"]])
-    mean_humidity <- (source$value[["air_humidity"]] + dest$value[["air_humidity"]])/2
-    cost <- temp_difference/mean_humidity
-
-    return(base + cost)
+cf <- function(source, dest, base = base_cost){
+  temp_difference <- (source$value[["temperature"]] - dest$value[["temperature"]])
+  mean_humidity <- (source$value[["air_humidity"]] + dest$value[["air_humidity"]])/2
+  cost <- temp_difference/mean_humidity
+  
+  return(base+cost)
 }
 
 
@@ -152,22 +165,30 @@ can be downloaded at the [simulation
 repository](https://github.com/project-gen3sis/Simulations).
 
 ``` r
+
 library(terra)
 
 download_dir <- file.path("Simulations/input_rasters/SouthAmerica")
-temperature <- terra::rast(file.path(download_dir, "temperature_rasters.tiff"))
-aridity <- terra::rast(file.path(download_dir, "aridity_rasters.tiff"))
-area_r <- terra::rast(file.path(download_dir, "area_rasters.tiff"))
-elevation <- terra::rast(file.path(download_dir, "elevation_rasters.tiff"))
+temperature <- terra::rast(file.path(download_dir,"temperature_rasters.tiff"))
+aridity <- terra::rast(file.path(download_dir,"aridity_rasters.tiff"))
+area_r <- terra::rast(file.path(download_dir,"area_rasters.tiff"))
+elevation <- terra::rast(file.path(download_dir,"elevation_rasters.tiff"))
 ```
 
 This data goes from 65Ma to current time, in a time-resolution of 5Ma.
 Let’s visualize how the South America was 65 million years ago:
 
 ``` r
-# old_par <- par() par(mfrow = c(2,2)) { plot(temperature[[1]], main =
-# 'Temperature') plot(aridity[[1]], main = 'Aridity') plot(area_r[[1]], main =
-# 'Area') plot(elevation[[1]], main = 'Elevation') } par(old_par)
+
+# old_par <- par()
+# par(mfrow = c(2,2))
+# {
+#   plot(temperature[[1]], main = "Temperature")
+#   plot(aridity[[1]], main = "Aridity")
+#   plot(area_r[[1]], main = "Area")
+#   plot(elevation[[1]], main = "Elevation")
+# }
+# par(old_par)
 knitr::include_graphics("../man/figures/v2varplot.png")
 ```
 
@@ -185,7 +206,6 @@ distance $`d`$ between cell $`A`$ and cell $`B`$ is equal the other way
 around; i.e., $`d(AB)=d(BA)`$. For the record, the Euclidian distance is
 defined as
 ``` math
-
 d = \sqrt{(x_A-x_B)²+(y_A-y_B)²}
 ```
 where $`x`$ is the longitude (x coordinate) and $`y`$ is the latitude (y
@@ -194,27 +214,38 @@ coordinate).
 Let’s get this going:
 
 ``` r
+
 library(gen3sis2)
 
-cf <- function(source, dest, cost_coef = 0.01) {
-    euc_dist <- sqrt(((source$coordinates["x"] - dest$coordinates["x"])^2) + ((source$coordinates["y"] -
-        dest$coordinates["y"])^2))
-    cost = cost_coef * euc_dist
-
-    return(cost)
+cf <- function(source, dest, cost_coef = 0.01){
+  euc_dist <- sqrt(((source$coordinates["x"]-dest$coordinates["x"])**2)+((source$coordinates["y"]-dest$coordinates["y"])**2))
+  cost = cost_coef*euc_dist
+  
+  return(cost)
 }
 
-raster_list <- list(temperature = temperature, aridity = aridity, area = area_r,
-    elevation = elevation)
+raster_list <- list(
+  temperature = temperature,
+  aridity = aridity,
+  area = area_r,
+  elevation = elevation
+)
 
 withr::with_tempdir({
-    create_spaces_raster(raster_list = raster_list, cost_function = cf, directions = 8,
-        output_directory = file.path(getwd(), "output"), full_dists = TRUE, overwrite_output = TRUE,
-        verbose = FALSE, duration = list(from = 50, to = 0, by = -50, unit = "Ma"),
-        geodynamic = TRUE, )
-    files_created <- list.files(file.path(getwd(), "output"), recursive = T)
-
-    distances_local <- readRDS(file.path(getwd(), "output", "distances_local", "distances_local_0.rds"))
+  create_spaces_raster(
+    raster_list = raster_list,
+    cost_function = cf,
+    directions = 8,
+    output_directory = file.path(getwd(),"output"),
+    full_dists = TRUE,
+    overwrite_output = TRUE,
+    verbose = FALSE,
+    duration = list(from = 50, to = 0, by = -50, unit = "Ma"),
+    geodynamic = TRUE,
+  )
+  files_created <- list.files(file.path(getwd(), "output"), recursive = T)
+  
+  distances_local <- readRDS(file.path(getwd(), "output", "distances_local", "distances_local_0.rds"))
 })
 
 distances_local
@@ -243,16 +274,16 @@ of the cells. If the y coordinate of the destination cell is higher than
 the y coordinate of the source cell, it is going north:
 
 ``` r
-cf <- function(source, dest, cost_coef = 0.01) {
-    if (source$coordinates["y"] < dest$coordinates["y"]) {
-        cost_coef <- 3 * cost_coef
-    }
 
-    euc_dist <- sqrt(((source$coordinates["x"] - dest$coordinates["x"])^2) + ((source$coordinates["y"] -
-        dest$coordinates["y"])^2))
-    cost = cost_coef * euc_dist
-
-    return(cost)
+cf <- function(source, dest, cost_coef = 0.01){
+  if (source$coordinates["y"] < dest$coordinates["y"]) {
+    cost_coef <- 3*cost_coef
+  }
+  
+  euc_dist <- sqrt(((source$coordinates["x"]-dest$coordinates["x"])**2)+((source$coordinates["y"]-dest$coordinates["y"])**2))
+  cost = cost_coef*euc_dist
+  
+  return(cost)
 }
 ```
 
@@ -261,14 +292,22 @@ destination is up north. Let’s see the impact of this in the distance
 matix:
 
 ``` r
-withr::with_tempdir({
-    create_spaces_raster(raster_list = raster_list, cost_function = cf, directions = 8,
-        output_directory = file.path(getwd(), "output"), full_dists = TRUE, overwrite_output = TRUE,
-        verbose = FALSE, duration = list(from = 50, to = 0, by = -50, unit = "Ma"),
-        geodynamic = TRUE, )
-    files_created <- list.files(file.path(getwd(), "output"), recursive = T)
 
-    distances_local <- readRDS(file.path(getwd(), "output", "distances_local", "distances_local_0.rds"))
+withr::with_tempdir({
+  create_spaces_raster(
+    raster_list = raster_list,
+    cost_function = cf,
+    directions = 8,
+    output_directory = file.path(getwd(),"output"),
+    full_dists = TRUE,
+    overwrite_output = TRUE,
+    verbose = FALSE,
+    duration = list(from = 50, to = 0, by = -50, unit = "Ma"),
+    geodynamic = TRUE,
+  )
+  files_created <- list.files(file.path(getwd(), "output"), recursive = T)
+  
+  distances_local <- readRDS(file.path(getwd(), "output", "distances_local", "distances_local_0.rds"))
 })
 
 distances_local
@@ -297,24 +336,31 @@ this the Euclidean distance will be multiplied by the elevation, and the
 final cost will be divided by $`10⁶`$:
 
 ``` r
-cf <- function(source, dest) {
 
-    euc_dist <- sqrt(((source$coordinates["x"] - dest$coordinates["x"])^2) + ((source$coordinates["y"] -
-        dest$coordinates["y"])^2))
+cf <- function(source, dest){
+  
+  euc_dist <- sqrt(((source$coordinates["x"]-dest$coordinates["x"])**2)+((source$coordinates["y"]-dest$coordinates["y"])**2))
 
-    cost <- abs(dest$value[["elevation"]]) * euc_dist
-
-    return(cost/1e+06)
+  cost <- abs(dest$value[["elevation"]])*euc_dist
+  
+  return(cost/1e6)
 }
 
 withr::with_tempdir({
-    create_spaces_raster(raster_list = raster_list, cost_function = cf, directions = 8,
-        output_directory = file.path(getwd(), "output"), full_dists = TRUE, overwrite_output = TRUE,
-        verbose = FALSE, duration = list(from = 50, to = 0, by = -50, unit = "Ma"),
-        geodynamic = TRUE, )
-    files_created <- list.files(file.path(getwd(), "output"), recursive = T)
-
-    distances_local <- readRDS(file.path(getwd(), "output", "distances_local", "distances_local_0.rds"))
+  create_spaces_raster(
+    raster_list = raster_list,
+    cost_function = cf,
+    directions = 8,
+    output_directory = file.path(getwd(),"output"),
+    full_dists = TRUE,
+    overwrite_output = TRUE,
+    verbose = FALSE,
+    duration = list(from = 50, to = 0, by = -50, unit = "Ma"),
+    geodynamic = TRUE,
+  )
+  files_created <- list.files(file.path(getwd(), "output"), recursive = T)
+  
+  distances_local <- readRDS(file.path(getwd(), "output", "distances_local", "distances_local_0.rds"))
 })
 
 distances_local
@@ -329,26 +375,37 @@ simulation itself. In this case, elevation could be added as an external
 argument in the cost function, as we saw before:
 
 ``` r
-raster_list <- list(temperature = temperature, aridity = aridity, area = area_r)
 
-cf <- function(source, dest, elev = elevation) {
+raster_list <- list(
+  temperature = temperature,
+  aridity = aridity,
+  area = area_r
+)
 
-    euc_dist <- sqrt(((source$coordinates["x"] - dest$coordinates["x"])^2) + ((source$coordinates["y"] -
-        dest$coordinates["y"])^2))
+cf <- function(source, dest, elev = elevation){
+  
+  euc_dist <- sqrt(((source$coordinates["x"]-dest$coordinates["x"])**2)+((source$coordinates["y"]-dest$coordinates["y"])**2))
 
-    cost <- abs(terra::values(elev)[dest$index]) * euc_dist
-
-    return(cost/1e+06)
+  cost <- abs(terra::values(elev)[dest$index])*euc_dist
+  
+  return(cost/1e6)
 }
 
 withr::with_tempdir({
-    create_spaces_raster(raster_list = raster_list, cost_function = cf, directions = 8,
-        output_directory = file.path(getwd(), "output"), full_dists = TRUE, overwrite_output = TRUE,
-        verbose = FALSE, duration = list(from = 50, to = 0, by = -50, unit = "Ma"),
-        geodynamic = TRUE, )
-    files_created <- list.files(file.path(getwd(), "output"), recursive = T)
-
-    distances_local <- readRDS(file.path(getwd(), "output", "distances_local", "distances_local_0.rds"))
+  create_spaces_raster(
+    raster_list = raster_list,
+    cost_function = cf,
+    directions = 8,
+    output_directory = file.path(getwd(),"output"),
+    full_dists = TRUE,
+    overwrite_output = TRUE,
+    verbose = FALSE,
+    duration = list(from = 50, to = 0, by = -50, unit = "Ma"),
+    geodynamic = TRUE,
+  )
+  files_created <- list.files(file.path(getwd(), "output"), recursive = T)
+  
+  distances_local <- readRDS(file.path(getwd(), "output", "distances_local", "distances_local_0.rds"))
 })
 
 distances_local

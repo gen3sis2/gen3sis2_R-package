@@ -99,8 +99,8 @@ sim <- run_simulation(
   space = spaces,
   output_directory = tempdir()
 )
-#> config found:  /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/TestConfigs/TestConfig.Rspace found: /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/TestSpaces/geostatic_spaces/raster 
-#> Output directory is: /tmp/RtmpOiAvPM/TestConfig 
+#> config found:  /Library/Frameworks/R.framework/Versions/4.6/Resources/library/gen3sis2/extdata/TestConfigs/TestConfig.Rspace found: /Library/Frameworks/R.framework/Versions/4.6/Resources/library/gen3sis2/extdata/TestSpaces/geostatic_spaces/raster 
+#> Output directory is: /var/folders/85/wlm9sk6j32q_hg2dpxl1k7_40000gn/T//Rtmpu30hDj/TestConfig 
 #> 
 #> Using config: TestConfig 
 #> --- Initializing --- 
@@ -126,7 +126,7 @@ sim <- run_simulation(
 
 
 #> Simulation finished. All OK 
-#> Simulation runtime:  0.001826332  hours
+#> Simulation runtime:  0.0009466994  hours
 
 # plot summary object
 plot_summary(sim)

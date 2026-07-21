@@ -9,5 +9,4 @@
 - [3. Creating configurations (gen3sis input)](c-create-config.md):
 - [4. Plotting stuff](d-custom-plot-aesthetics.md):
 - [5. Daisy world](e-daisy-world.md):
-- [6. Time in gen3sis2](f-gen3sis-time.md):
 - [7. Support functions](h-support-functions.md):

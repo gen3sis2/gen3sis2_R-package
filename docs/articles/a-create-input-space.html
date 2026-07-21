@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>2. Creating spaces: the basics (gen3sis2 input) • gen3sis2</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="2. Creating spaces: the basics (gen3sis2 input)">
 </head>
@@ -38,7 +38,6 @@
     <li><a class="dropdown-item" href="../articles/c-create-config.html">3. Creating configurations (gen3sis input)</a></li>
     <li><a class="dropdown-item" href="../articles/d-custom-plot-aesthetics.html">4. Plotting stuff</a></li>
     <li><a class="dropdown-item" href="../articles/e-daisy-world.html">5. Daisy world</a></li>
-    <li><a class="dropdown-item" href="../articles/f-gen3sis-time.html">6. Time in gen3sis2</a></li>
     <li><a class="dropdown-item" href="../articles/h-support-functions.html">7. Support functions</a></li>
   </ul>
 </li>
@@ -65,7 +64,7 @@
 
       <h1>2. Creating spaces: the basics (gen3sis2 input)</h1>
             
-            <h4 data-toc-skip class="date">14.04.2026</h4>
+            <h4 data-toc-skip class="date">21.07.2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/project-Gen3sis/R-package/blob/HEAD/vignettes/a-create-input-space.Rmd" class="external-link"><code>vignettes/a-create-input-space.Rmd</code></a></small>
       <div class="d-none name"><code>a-create-input-space.Rmd</code></div>
@@ -113,11 +112,11 @@ repository</a>. Download these and define the correct path to it in
 order to continue.</p>
 <p>First, load the necessary packages and set the working directory:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># first we load the required packages</span></span>
+<code class="sourceCode R"><span><span class="co">#first we load the required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/project-Gen3sis/R-package" class="external-link">gen3sis2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># next we set the working directory to the downloaded data</span></span>
+<span><span class="co">#next we set the working directory to the downloaded data  </span></span>
 <span><span class="va">datapath</span> <span class="op">&lt;-</span> <span class="st">"data_from_project_gen3sis_simulations"</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="creating-the-environmental-rasters">Creating the environmental rasters<a class="anchor" aria-label="anchor" href="#creating-the-environmental-rasters"></a>
@@ -129,9 +128,9 @@ America that has been used in the <a href="introduction.html"><strong>introducti
 first load the three corresponding rasters from the hard drive.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="va">datapath</span><span class="op">)</span></span>
-<span><span class="va">temperature_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"input_rasters/SouthAmerica/temperature_rasters.grd"</span><span class="op">)</span></span>
-<span><span class="va">aridity_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"input_rasters/SouthAmerica/aridity_rasters.grd"</span><span class="op">)</span></span>
-<span><span class="va">area_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"input_rasters/SouthAmerica/area_rasters.grd"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">temperature_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">'input_rasters/SouthAmerica/temperature_rasters.grd'</span><span class="op">)</span></span>
+<span><span class="va">aridity_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">'input_rasters/SouthAmerica/aridity_rasters.grd'</span><span class="op">)</span></span>
+<span><span class="va">area_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">'input_rasters/SouthAmerica/area_rasters.grd'</span><span class="op">)</span></span></code></pre></div>
 <p>If you want to see an example on how you can create a virtual dynamic
 space from scratch, please refer to the <a href="design_space.html"><strong>design_space vignette</strong></a>.</p>
 </div>
@@ -147,7 +146,11 @@ raster file paths on your hard drive.</p>
 <p>We will now create a list that contains all of the layers of our
 rasters for temperature, aridity and area.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">spaces_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temp <span class="op">=</span> <span class="va">temperature_raster</span>, arid <span class="op">=</span> <span class="va">aridity_raster</span>, area <span class="op">=</span> <span class="va">area_raster</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">spaces_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  temp <span class="op">=</span> <span class="va">temperature_raster</span>,</span>
+<span>  arid <span class="op">=</span> <span class="va">aridity_raster</span>,</span>
+<span>  area <span class="op">=</span> <span class="va">area_raster</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="defining-a-cost-function">Defining a cost function<a class="anchor" aria-label="anchor" href="#defining-a-cost-function"></a>
@@ -165,7 +168,7 @@ function by 1000 we get the cost of traveling for 1 km. We can define a
 simple cost function in which the dispersal is not penalized:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cost_function_null</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">source</span>, <span class="va">dest</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span> </span>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="../reference/figures/const_cost.png" class="r-plt" alt="This figure shows the connection costs from one site in the middle of South America to all other sites. To travel to the site of Antarctica that is indicated with the arrow, the travelling cost is 3790. The distance matrix was computed using the very simple cost function that has been introduced before and is not adding any penalty." width="192"><p class="caption">
@@ -182,11 +185,11 @@ suitable terrestrial sites should have a cost penalty of one (x1), but
 dispersal over water sites should double (x2) the cost of dispersal.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cost_function_water</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">source</span>, <span class="va">dest</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">source</span><span class="op">$</span><span class="va">habitable</span>, <span class="va">dest</span><span class="op">$</span><span class="va">habitable</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fl">2</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span></span>
-<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span></span>
-<span>    <span class="op">}</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">source</span><span class="op">$</span><span class="va">habitable</span>, <span class="va">dest</span><span class="op">$</span><span class="va">habitable</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fl">2</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="../reference/figures//var_cost.png" class="r-plt" alt="By using a cost function which penalises the crossing of water, the cost of travelling from our cell in the middle of South America to Antarctica increases to 5204." width="192"><p class="caption">
@@ -248,9 +251,14 @@ files that will be used as input for <em>gen3sis2</em>. The file path
 where the spaces and the distance matrices of all time steps should be
 stored can be specified within the function.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/create_spaces_raster.html">create_spaces_raster</a></span><span class="op">(</span>raster_list <span class="op">=</span> <span class="va">spaces_list</span>, cost_function <span class="op">=</span> <span class="va">cost_function_water</span>,</span>
-<span>    directions <span class="op">=</span> <span class="fl">8</span>, output_directory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"SouthAmerica"</span><span class="op">)</span>, duration <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>from <span class="op">=</span> <span class="op">-</span><span class="fl">65</span>,</span>
-<span>        to <span class="op">=</span> <span class="fl">0</span>, by <span class="op">=</span> <span class="fl">1</span>, unit <span class="op">=</span> <span class="st">"Ma"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="st">"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/create_spaces_raster.html">create_spaces_raster</a></span><span class="op">(</span></span>
+<span>  raster_list <span class="op">=</span> <span class="va">spaces_list</span>,</span>
+<span>  cost_function <span class="op">=</span> <span class="va">cost_function_water</span>,</span>
+<span>  directions <span class="op">=</span> <span class="fl">8</span>,</span>
+<span>  output_directory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"SouthAmerica"</span><span class="op">)</span>,</span>
+<span>    duration <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>from <span class="op">=</span> <span class="op">-</span><span class="fl">65</span>, to <span class="op">=</span> <span class="fl">0</span>, by <span class="op">=</span> <span class="fl">1</span>, unit <span class="op">=</span> <span class="st">"Ma"</span><span class="op">)</span>,</span>
+<span>  crs <span class="op">=</span> <span class="st">"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Finally, do not forget to specify the space metadata you just
 created. We recommend storing it in form of a METADATA.txt file within
 the space folder. A template is automatically created by the functions
@@ -271,7 +279,7 @@ simulation using the path of the new space.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

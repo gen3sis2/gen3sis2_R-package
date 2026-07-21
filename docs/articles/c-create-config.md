@@ -31,6 +31,7 @@ Here we will:
 [3. **Modify a config**](#modify) from within R.
 
 ``` r
+
 library(gen3sis2)
 ```
 
@@ -41,6 +42,7 @@ In order to create an empty config, we use the function
 to define where the empty config will be stored.
 
 ``` r
+
 # get data path
 datapath <- system.file(file.path("extdata", "EmptyConfig"), package="gen3sis2")
 # set config_empty.R file path
@@ -50,6 +52,7 @@ config_file_path <- file.path(tempdir(), "config_empty.R")
 And then create an empty config.
 
 ``` r
+
 #writes out a config skeleton
 write_config_skeleton(config_file_path)
 ```
@@ -63,6 +66,7 @@ hand’s on example, see next session.
 > ***Metadata***
 >
 > ``` r
+>
 > # Version: 1.0
 > # Author:
 > # Date:
@@ -74,6 +78,7 @@ hand’s on example, see next session.
 > ***Settings***
 >
 > ``` r
+>
 > # set the random seed for the simulation.
 > random_seed = NA
 > # set the starting time step or leave NA to use the earliest/highest time-step.
@@ -97,6 +102,7 @@ hand’s on example, see next session.
 > ***Observer***
 >
 > ``` r
+>
 > end_of_timestep_observer = function(data, vars, config){
 >  # the list of all species can be found in data$all_species.
 >  # the current space can be found in data$space.
@@ -106,6 +112,7 @@ hand’s on example, see next session.
 > ***Initialization***
 >
 > ``` r
+>
 > # the initial abundance of a newly colonized cell, both during setup and later when 
 > # colonizing a cell during the dispersal.
 > initial_abundance = 1
@@ -118,6 +125,7 @@ hand’s on example, see next session.
 > ***Core Processes***
 >
 > ``` r
+>
 > ### Dispersal
 > # the maximum range to consider when calculating the distances from local distance inputs.
 > max_dispersal <- Inf
@@ -168,6 +176,7 @@ for and informs about associated publications and implemented processes
 or exploration intentions of the specific configuration.
 
 > ``` r
+>
 > # Version: 1.0
 > # Author: Oskar Hagen
 > # Date: 26.10.2020
@@ -194,6 +203,7 @@ the environmental values, according to the range informed at
 *environmental_ranges*.
 
 > ``` r
+>
 > random_seed = 6
 > start_time = 40
 > end_time = NA
@@ -215,6 +225,7 @@ simulation progresses and also saved inside the plot folder inside
 output.
 
 > ``` r
+>
 > end_of_timestep_observer = function(data, vars, config){
 >  save_species()
 >  plot_richness(data$all_species, data$space)
@@ -225,6 +236,7 @@ Combined plots can be generated inside the observer function as for
 example:
 
 > ``` r
+>
 > end_of_timestep_observer = function(data, vars, config){
 >    par(mfrow=c(2,3))
 >    plot_raster_single(data$space$environment[,"temp"], data$space, "temp", NA)
@@ -262,6 +274,7 @@ maximum value. The function *create_ancestor_species* is expected to
 return a list of new species, i.e. the ancestor(s) one(s).
 
 > ``` r
+>
 > initial_abundance = 1
 > create_ancestor_species <- function(space, config) {
 >  range <- c(-95, -24, -68, 13)
@@ -298,6 +311,7 @@ that dispersal can be made deterministic by making the function return a
 fix value.
 
 > ``` r
+>
 > get_dispersal_values <- function(n, species, space, config) {
 >  values <- rweibull(n, shape = 1.5, scale = 133)
 >  return(values) 
@@ -307,6 +321,7 @@ fix value.
 The histogram of 100 draws from the dispersal function used above.
 
 > ``` r
+>
 > n <- 100
 > hist(rweibull(n, shape = 1.5, scale = 133), col="black")
 > ```
@@ -333,6 +348,7 @@ indicated by *get_divergence_threshold*. Since our space consists of 1
 myr time-steps, these 2 time-steps correspond to a span of 2 myr.
 
 > ``` r
+>
 > divergence_threshold = 2 
 > get_divergence_factor <- function(species, cluster_indices, space, config) {
 >  return(1) 
@@ -350,6 +366,7 @@ deviation 0.001, possibly increasing or decreasing species optimum
 temperature.
 
 > ``` r
+>
 > # mutate the traits of a species and return the new traits matrix
 > apply_evolution <- function(species, cluster_indices, space, config) {
 >  trait_evolutionary_power <- 0.001
@@ -387,6 +404,7 @@ progressively and randomly distributed across the present species until
 total abundance is smaller or equal to the carrying capacity.
 
 > ``` r
+>
 > apply_ecology <- function(abundance, traits, space, config) {
 >  abundance_scale = 10
 >  abundance_threshold = 1
@@ -423,6 +441,7 @@ multiple species that occupy one site each, we will now initialize one
 species that occurs in all habitable sites and starts with abundance 10.
 
 ``` r
+
 # get data path
 datapath <- system.file(file.path("extdata", "SouthAmerica"), package="gen3sis2")
 # creates config object from config file
@@ -454,6 +473,7 @@ abundance_threshold parameter defines the niche width cutoff. The higher
 the value, the narrower is the temperature range of the niche.
 
 ``` r
+
 # modify the ecology function
 config_object$gen3sis$ecology$apply_ecology <- function(abundance, traits, space, config, abundance_scale = 10, abundance_threshold = 8) {
   #abundance threshold
@@ -475,6 +495,7 @@ set the old and the new config to run only for 3 time-steps and plot
 species ranges *plot_ranges*
 
 ``` r
+
 config_object_old <- create_input_config(file.path(datapath, "config/config_southamerica.R"))
 
 # define observer
@@ -493,6 +514,7 @@ Before using the modified configs, test if it is valid. If the function
 *verify_config* returns TRUE, you are good to go.
 
 ``` r
+
 verify_config(config_object_old)
 #> These settings must be set in the configuration:
 #> trait_evolution
@@ -514,6 +536,7 @@ verify_config(config_object)
 Run the modified old config
 
 ``` r
+
 sim_old <- run_simulation(config = config_object_old,
                space = file.path(datapath, "space"),
                output_directory=tempdir(),
@@ -524,6 +547,7 @@ sim_old <- run_simulation(config = config_object_old,
 And run the modified new config
 
 ``` r
+
 sim_new <- run_simulation(config = config_object,
                           space = file.path(datapath, "space"),
                           verbose=0, # no progress printed

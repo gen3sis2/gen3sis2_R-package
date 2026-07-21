@@ -8,7 +8,7 @@ The main branches of this repo are:
     development
 
 The master branch should always reflect the state of the current release
-of gen3sis on CRAN. The development branch contains the working
+of gen3sis2 on CRAN. The development branch contains the working
 additions/changes to the code that are to be included in the next
 release. You should not work on either of these branches directly.
 Rather, to make changes or work on a new feature, you should create a
@@ -30,7 +30,7 @@ For hotfixes, create a separate branch from master, make the fix and
 verify it, and then merge the hotfix branch into master and development.
 Similarly to above, the hotfix-master branch exists for small (one
 commit only) bugfixes to the current release. A pull request can then be
-created to merge those changes into master and development. The gen3sis
+created to merge those changes into master and development. The gen3sis2
 workflow is inspired by the RevBayes workflow:
 <https://revbayes.github.io/developer>
 

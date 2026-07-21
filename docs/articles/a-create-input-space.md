@@ -34,11 +34,12 @@ these and define the correct path to it in order to continue.
 First, load the necessary packages and set the working directory:
 
 ``` r
-# first we load the required packages
+
+#first we load the required packages
 library(gen3sis2)
 library(terra)
 
-# next we set the working directory to the downloaded data
+#next we set the working directory to the downloaded data  
 datapath <- "data_from_project_gen3sis_simulations"
 ```
 
@@ -52,10 +53,11 @@ vignette**](introduction.md). We first load the three corresponding
 rasters from the hard drive.
 
 ``` r
+
 setwd(datapath)
-temperature_raster <- rast("input_rasters/SouthAmerica/temperature_rasters.grd")
-aridity_raster <- rast("input_rasters/SouthAmerica/aridity_rasters.grd")
-area_raster <- rast("input_rasters/SouthAmerica/area_rasters.grd")
+temperature_raster <- rast('input_rasters/SouthAmerica/temperature_rasters.grd')
+aridity_raster <- rast('input_rasters/SouthAmerica/aridity_rasters.grd')
+area_raster <- rast('input_rasters/SouthAmerica/area_rasters.grd')
 ```
 
 If you want to see an example on how you can create a virtual dynamic
@@ -75,7 +77,12 @@ We will now create a list that contains all of the layers of our rasters
 for temperature, aridity and area.
 
 ``` r
-spaces_list <- list(temp = temperature_raster, arid = aridity_raster, area = area_raster)
+
+spaces_list <- list(
+  temp = temperature_raster,
+  arid = aridity_raster,
+  area = area_raster
+)
 ```
 
 ### Defining a cost function
@@ -94,8 +101,9 @@ function by 1000 we get the cost of traveling for 1 km. We can define a
 simple cost function in which the dispersal is not penalized:
 
 ``` r
+
 cost_function_null <- function(source, dest) {
-    return(1/1000)
+    return(1/1000) 
 }
 ```
 
@@ -118,12 +126,13 @@ terrestrial sites should have a cost penalty of one (x1), but dispersal
 over water sites should double (x2) the cost of dispersal.
 
 ``` r
+
 cost_function_water <- function(source, dest) {
-    if (!all(source$habitable, dest$habitable)) {
-        return(2/1000)
-    } else {
-        return(1/1000)
-    }
+  if(!all(source$habitable, dest$habitable)) {
+    return(2/1000)
+  } else {
+    return(1/1000)
+  }
 }
 ```
 
@@ -189,9 +198,15 @@ distance matrices of all time steps should be stored can be specified
 within the function.
 
 ``` r
-create_spaces_raster(raster_list = spaces_list, cost_function = cost_function_water,
-    directions = 8, output_directory = file.path(tempdir(), "SouthAmerica"), duration = list(from = -65,
-        to = 0, by = 1, unit = "Ma"), crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+create_spaces_raster(
+  raster_list = spaces_list,
+  cost_function = cost_function_water,
+  directions = 8,
+  output_directory = file.path(tempdir(), "SouthAmerica"),
+    duration = list(from = -65, to = 0, by = 1, unit = "Ma"),
+  crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+)
 ```
 
 Finally, do not forget to specify the space metadata you just created.

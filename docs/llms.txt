@@ -1,42 +1,44 @@
-# General Engine for Eco-Evolutionary Simulations
+# General Engine for Eco-Evolutionary Simulations 2
 
 ![](./reference/figures/gen3sis_logo.png)
 
-This is the repository for the R-package of the gen3sis engine
-[project-gen3sis git](https://github.com/project-gen3sis/R-package).
+[![Contributors](https://img.shields.io/github/contributors/gen3sis2/gen3sis2_R-package)](https://github.com/gen3sis2/gen3sis2_R-package/graphs/contributors)
+
+This is the repository for the R-package of the gen3sis engine [gen3sis2
+git](https://github.com/gen3sis2/gen3sis2_R-package).
 
 gen3sis is a spatially-explicit eco-evolutionary mechanistic model with
 a modular implementation. It allows exploring the consequences of
-ecological and macroevolutionary processes across realistic or
-theoretical spatio-temporal spaces.
+abiotic and biotic (ecological and macroevolutionary) processes across
+realistic or theoretical spatio-temporal spaces.
 
-gen3sis is licensed under a [GPLv3
+gen3sis2 is licensed under a [GPLv3
 License](https://www.gnu.org/licenses/gpl-3.0.html) deriving from ETHZ
 2020 \<doi.org/10.5905/ethz-1007-251\> and has package authorship
 according to: <http://epub.wu.ac.at/3269/1/Report114.pdf>
 
 ### How to cite
 
-- O Hagen, B Flueck, F Fopp, JS Cabral, F Hartig, M Pontarp, TF Rangel,
-  L Pellissier (2021) gen3sis: A general engine for eco-evolutionary
-  simulations of the processes that shape Earth’s biodiversity. PLOS
-  Biology.
+- Publication comming soon! For now: O Hagen, B Flueck, F Fopp, JS
+  Cabral, F Hartig, M Pontarp, TF Rangel, L Pellissier (2021) gen3sis: A
+  general engine for eco-evolutionary simulations of the processes that
+  shape Earth’s biodiversity. PLOS Biology.
   [doi:10.1371/journal.pbio.3001340](https://doi.org/10.1371/journal.pbio.3001340)
 
 ### How to install
 
 you can install the latest development release from GitHub via
 
-    devtools::install_github(repo = "ohagen/gen3sis_rf", dependencies = TRUE, build_vignettes = TRUE)
+    devtools::install_github(repo = "gen3sis2/gen3sis2_R-package", dependencies = TRUE, build_vignettes = TRUE)
 
 Below the status of the automatic CI R-CMD-check tests for the main
 branches:
 
 - DEVELOPMENT
-  [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelopment)
+  [![R-CMD-check](https://github.com/gen3sis2/gen3sis2_R-package/actions/workflows/R-CMD-check.yaml/badge.svg?branch=development)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelopment)
 
 - MASTER
-  [![R-CMD-check](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml)
+  [![R-CMD-check](https://github.com/gen3sis2/gen3sis2_R-package/actions/workflows/R-CMD-check.yaml/badge.svg?branch=master)](https://github.com/ohagen/gen3sis_rf/actions/workflows/R-CMD-check.yaml)
 
 ### How to use
 
@@ -47,12 +49,15 @@ data is provided with the package.
 
     library("gen3sis2")
 
-    datapath <- system.file(file.path("extdata", "WorldCenter"), package = "gen3sis")
+    spaces <- system.file(file.path("extdata", "TestSpaces","geostatic_spaces","raster"), package="gen3sis2")
+    config_file <- system.file(file.path("extdata", "TestConfigs","TestConfig.R"), package="gen3sis2")
 
-    sim <- run_simulation(config = file.path(datapath, "config/config_worldcenter.R"),
-                   space = file.path(datapath, "space"),
-                   output_directory = tempdir(),
-                   verbose=0)
+    sim <- run_simulation(
+      config = config_file,
+      space = spaces,
+      output_directory = tempdir(),
+      verbose = 0
+    )
 
 A summary statistics is stored at ‘sim’ more data can be save using the
 observer function
@@ -145,6 +150,15 @@ We thank the developers of the following methods and dependencies:
   <http://doi.org/10.5281/zenodo.1243862> & Crameri, F., G.E. Shephard,
   and P.J. Heron (2020). The misuse of colour in science communication,
   Nature Communications, 11, 5444. <doi:10.1038/s41467-020-19160-7>
+
+## Contributors
+
+All contributions to this project are gratefully acknowledged using the
+[`allcontributors` package](https://github.com/ropensci/allcontributors)
+following the [allcontributors](https://allcontributors.org)
+specification. Contributions of any kind are welcome!
+
+[TABLE]
 
 # Package index
 
@@ -315,5 +329,4 @@ Functions that can be used to save, get and handle sumation information
 - [3. Creating configurations (gen3sis input)](c-create-config.md):
 - [4. Plotting stuff](d-custom-plot-aesthetics.md):
 - [5. Daisy world](e-daisy-world.md):
-- [6. Time in gen3sis2](f-gen3sis-time.md):
 - [7. Support functions](h-support-functions.md):

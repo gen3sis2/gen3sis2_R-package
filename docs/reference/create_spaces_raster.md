@@ -14,7 +14,7 @@ create_spaces_raster(
   full_dists = FALSE,
   overwrite_output = FALSE,
   verbose = FALSE,
-  duration = list(from = NA, to = NA, by = NA, unit = "Ma"),
+  duration = list(from = NA, to = NA, by = NA, unit = "Myr"),
   geodynamic = NULL,
   ...
 )
@@ -76,7 +76,7 @@ create_spaces_raster(
   0 to represent present and positive values to represent future. E.g.,
   a spaces from 10 Ma in the past to 10 Ma into the future, each
   timestep comprising 5 Ma:
-  `duration = list(from = -10, to = 10, by = 5, unit = "Ma")`
+  `duration = list(from = -10, to = 10, by = 5, unit = "Myr")`
 
 - geodynamic:
 
@@ -151,7 +151,7 @@ create_spaces_raster(
   full_dists = TRUE, # save full distance matrices
   overwrite_output = TRUE,
   verbose = TRUE,
-  duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
+  duration = list(from = 65, to = 0, by = -1, unit = "Myr"),
   geodynamic = TRUE
 )
 } # }

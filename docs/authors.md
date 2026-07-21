@@ -4,8 +4,10 @@
 
 - **ETH Zürich**. Copyright holder.
 
-- **Oskar Hagen**. Author, maintainer.  
-  space Ecology, WSL and ETH Zürich, Switzerland
+- **Oskar Hagen**. Author, maintainer.
+  [](https://orcid.org/https://orcid.org/0000-0002-7931-6571)  
+  Goethe University Frankfurt; Senckenberg Biodiversity and Climate
+  Research Centre
 
 - **Admir C. de O. Junior**. Author.
 

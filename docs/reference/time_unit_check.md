@@ -25,12 +25,12 @@ returns a vector of accepted time units.
 ``` r
 if (FALSE) { # \dontrun{
   # return TRUE
-  time_unit_check("a")
-  time_unit_check("ka")
-  time_unit_check("Ma")
-  time_unit_check("Ga")
+  time_unit_check("yr")
+  time_unit_check("Kyr")
+  time_unit_check("Myr")
+  time_unit_check("Gyr")
   time_unit_check("timestep")
-  
+
   # return FALSE
   time_unit_check("eons")
 } # }

@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>4. Plotting stuff • gen3sis2</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="4. Plotting stuff">
 </head>
@@ -38,7 +38,6 @@
     <li><a class="dropdown-item" href="../articles/c-create-config.html">3. Creating configurations (gen3sis input)</a></li>
     <li><a class="dropdown-item" href="../articles/d-custom-plot-aesthetics.html">4. Plotting stuff</a></li>
     <li><a class="dropdown-item" href="../articles/e-daisy-world.html">5. Daisy world</a></li>
-    <li><a class="dropdown-item" href="../articles/f-gen3sis-time.html">6. Time in gen3sis2</a></li>
     <li><a class="dropdown-item" href="../articles/h-support-functions.html">7. Support functions</a></li>
   </ul>
 </li>
@@ -65,7 +64,7 @@
 
       <h1>4. Plotting stuff</h1>
             
-            <h4 data-toc-skip class="date">14.04.2026</h4>
+            <h4 data-toc-skip class="date">21.07.2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/project-Gen3sis/R-package/blob/HEAD/vignettes/d-custom-plot-aesthetics.Rmd" class="external-link"><code>vignettes/d-custom-plot-aesthetics.Rmd</code></a></small>
       <div class="d-none name"><code>d-custom-plot-aesthetics.Rmd</code></div>
@@ -151,8 +150,8 @@ the simulation:</p>
 <span>  space <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/SouthAmerica/space"</span>, package <span class="op">=</span> <span class="st">"gen3sis2"</span><span class="op">)</span>,</span>
 <span>  output_directory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## config found:  /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /tmp/RtmpLdHDTk/temp_libpath3aa51f7235bc/gen3sis2/extdata/SouthAmerica/space </span></span>
-<span><span class="co">## Output directory is: /tmp/Rtmpl22iSg/config_southamerica</span></span></code></pre>
+<pre><code><span><span class="co">## config found:  /Library/Frameworks/R.framework/Versions/4.6/Resources/library/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /Library/Frameworks/R.framework/Versions/4.6/Resources/library/gen3sis2/extdata/SouthAmerica/space </span></span>
+<span><span class="co">## Output directory is: /var/folders/85/wlm9sk6j32q_hg2dpxl1k7_40000gn/T//RtmptUvI9n/config_southamerica</span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "inputs" "space"</span></span></code></pre>
@@ -290,16 +289,37 @@ from all plots in the session, by overriding package’s options:</p>
 <p>First, let’s see how the default raster aesthetics look:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">gen3sis2</span><span class="fu">:::</span><span class="va">.default_raster_plot_aesthetics</span></span></code></pre></div>
-<pre><code><span><span class="co">## function (space, col, x_breaks, y_breaks, title) </span></span>
-<span><span class="co">## {</span></span>
-<span><span class="co">##     list(ggplot2::scale_x_continuous(expand = c(0, 0), breaks = x_breaks), </span></span>
-<span><span class="co">##         ggplot2::scale_y_continuous(expand = c(0, 0), breaks = y_breaks), </span></span>
-<span><span class="co">##         ggplot2::theme_bw(), ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5), </span></span>
-<span><span class="co">##             panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), </span></span>
-<span><span class="co">##             axis.text = element_blank(), axis.ticks = element_blank()), </span></span>
-<span><span class="co">##         ggplot2::labs(title = title), ggplot2::coord_fixed(ratio = 1))</span></span>
+<pre><code><span><span class="co">## function(</span></span>
+<span><span class="co">##   space,</span></span>
+<span><span class="co">##   col,</span></span>
+<span><span class="co">##   x_breaks,</span></span>
+<span><span class="co">##   y_breaks,</span></span>
+<span><span class="co">##   title</span></span>
+<span><span class="co">## ) {</span></span>
+<span><span class="co">##   list(</span></span>
+<span><span class="co">##     ggplot2::scale_x_continuous(</span></span>
+<span><span class="co">##       expand = c(0, 0),</span></span>
+<span><span class="co">##       breaks = x_breaks</span></span>
+<span><span class="co">##     ),</span></span>
+<span><span class="co">##     ggplot2::scale_y_continuous(</span></span>
+<span><span class="co">##       expand = c(0, 0),</span></span>
+<span><span class="co">##       breaks = y_breaks</span></span>
+<span><span class="co">##     ),</span></span>
+<span><span class="co">##     ggplot2::theme_bw(),</span></span>
+<span><span class="co">##     ggplot2::theme(</span></span>
+<span><span class="co">##       plot.title = ggplot2::element_text(hjust = 0.5),</span></span>
+<span><span class="co">##       panel.grid.major = ggplot2::element_blank(),</span></span>
+<span><span class="co">##       panel.grid.minor = ggplot2::element_blank(),</span></span>
+<span><span class="co">##       axis.text = element_blank(),</span></span>
+<span><span class="co">##       axis.ticks = element_blank()</span></span>
+<span><span class="co">##     ),</span></span>
+<span><span class="co">##     ggplot2::labs(</span></span>
+<span><span class="co">##       title = title</span></span>
+<span><span class="co">##     ),</span></span>
+<span><span class="co">##     ggplot2::coord_fixed(ratio = 1)</span></span>
+<span><span class="co">##   )</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;bytecode: 0x6540f0d3de30&gt;</span></span>
+<span><span class="co">## &lt;bytecode: 0x12a11b140&gt;</span></span>
 <span><span class="co">## &lt;environment: namespace:gen3sis2&gt;</span></span></code></pre>
 <p>Now, let’s override it, defining our own aesthetics:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -344,7 +364,7 @@ from all plots in the session, by overriding package’s options:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

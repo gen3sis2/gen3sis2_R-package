@@ -27,6 +27,7 @@ by the species. The input is a species object for any time step.
 ## Examples
 
 ``` r
+
 if (FALSE) { # \dontrun{
   # get path containing example rasters
   datapath <- system.file(file.path("extdata", "TestReferences","Outputs"), package="gen3sis2")

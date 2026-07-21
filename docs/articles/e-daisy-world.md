@@ -1,10 +1,11 @@
 # 5. Daisy world
 
 ``` r
+
 library(gen3sis2)
 library(ggplot2)
 library(terra)
-#> terra 1.9.11
+#> terra 1.9.34
 library(patchwork)
 #> 
 #> Attaching package: 'patchwork'
@@ -16,6 +17,7 @@ library(patchwork)
 ## Creating environmental variables
 
 ``` r
+
 envar <- terra::rast(
   xmin = -180,
   xmax = 180,
@@ -50,6 +52,7 @@ plot(envar)
 
 ``` r
 
+
 tempr <- envar[["temperature"]]
 irrar <- envar[["irradiation"]]
 
@@ -82,6 +85,7 @@ create_spaces_raster(
 
 ``` r
 
+
 configuration <- create_input_config(
   config_file = system.file("extdata/TestConfigs/daisy_world.R", package="gen3sis2"), 
   config_name = "DaisyWorld"
@@ -97,6 +101,7 @@ sim <- run_simulation(
 ## Plot
 
 ``` r
+
 
 # df<-read.csv("/home/yogh/Documentos/projects/testing_gen3sis/daisy_world/DaisyWorld/global_temperature.txt")
 df$time_step <- 1:nrow(df)

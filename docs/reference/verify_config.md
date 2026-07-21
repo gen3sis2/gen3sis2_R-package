@@ -29,7 +29,10 @@ of missing parameters will be printed out as well
 ``` r
 library(gen3sis2)
 # get path to input config
-datapath <- system.file(file.path("extdata", "TestConfigs"), package="gen3sis2")
+datapath <- system.file(
+  file.path("extdata", "TestConfigs"),
+  package = "gen3sis2"
+)
 path_config <- file.path(datapath, "TestConfig.R")
 # create config object
 config_object <- create_input_config(path_config)

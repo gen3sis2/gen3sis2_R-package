@@ -33,7 +33,7 @@ empty_config <- create_empty_config()
 names(empty_config)
 #> [1] "gen3sis"     "user"        "directories"
 
-# "gen3sis" include the main functions categories 
+# "gen3sis" include the main functions categories
 names(empty_config$gen3sis)
 #> [1] "general"         "initialization"  "dispersal"       "speciation"     
 #> [5] "trait_evolution" "ecology"         "space_modifier" 

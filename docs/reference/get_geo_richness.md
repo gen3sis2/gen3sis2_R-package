@@ -29,6 +29,7 @@ a vector with the richness for every cell in the input space
 ## Examples
 
 ``` r
+
 if (FALSE) { # \dontrun{
   # get path containing example rasters
   datapath <- system.file(file.path("extdata", "WorldCenter"), package="gen3sis")

@@ -1,6 +1,7 @@
 # 7. Support functions
 
 ``` r
+
 library(gen3sis2)
 ```
 
@@ -30,6 +31,7 @@ simulation state in `gen3sis2` and is available inside the observer
 function. In this version we will only have the species list and space.
 
 ``` r
+
 space <- system.file("extdata/SouthAmerica/species_and_spaces/space_t_2.rds", package = "gen3sis2") |> readRDS()
 
 all_species <- system.file("extdata/SouthAmerica/species_and_spaces/species_t_2.rds", package = "gen3sis2") |> readRDS()
@@ -61,6 +63,7 @@ any species (`empty_sites=TRUE`).
 Inside the observer function:
 
 ``` r
+
 get_presence_matrix(data$all_species)[1:5,] # showing just the five first sites
 #>     1 2 3 4 5 6 7 8 9 10 11 12
 #> 841 1 0 0 0 0 0 0 0 0  0  0  0
@@ -73,6 +76,7 @@ get_presence_matrix(data$all_species)[1:5,] # showing just the five first sites
 To include the site coordinates, space must be provided:
 
 ``` r
+
 get_presence_matrix(data$all_species, data$space, xy=T)[1:5,]
 #>       x   y 1 2 3 4 5 6 7 8 9 10 11 12
 #> 841 -70 -34 1 0 0 0 0 0 0 0 0  0  0  0
@@ -85,6 +89,7 @@ get_presence_matrix(data$all_species, data$space, xy=T)[1:5,]
 With saved files:
 
 ``` r
+
 get_presence_matrix(all_species, space)[1:5,]
 #>     1 2 3 4 5 6 7 8 9 10 11 12
 #> 841 1 0 0 0 0 0 0 0 0  0  0  0
@@ -104,6 +109,7 @@ species’ prevalence.
 In the observer function:
 
 ``` r
+
 get_species_prevalence(data$all_species, data$space)
 #>           1           2           3           4           5           6 
 #> 0.037900875 0.005830904 0.005830904 0.017492711 0.008746356 0.011661808 
@@ -114,6 +120,7 @@ get_species_prevalence(data$all_species, data$space)
 With loaded files:
 
 ``` r
+
 get_species_prevalence(all_species, space)
 #>           1           2           3           4           5           6 
 #> 0.037900875 0.005830904 0.005830904 0.017492711 0.008746356 0.011661808 
@@ -130,6 +137,7 @@ site.
 In the observer function:
 
 ``` r
+
 get_extant_species(data$all_species)
 #>  [1] "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
 ```
@@ -137,6 +145,7 @@ get_extant_species(data$all_species)
 From loaded files:
 
 ``` r
+
 get_extant_species(all_species)
 #>  [1] "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"
 ```
@@ -150,6 +159,7 @@ matrix. Rows are sites indexes, columns are species indexes. `xy` and
 In the observer function:
 
 ``` r
+
 get_abundance_matrix(data$all_species)[1:5,]
 #>            1 2 3 4 5 6 7 8 9 10 11 12
 #> 841 9.697987 0 0 0 0 0 0 0 0  0  0  0
@@ -162,6 +172,7 @@ get_abundance_matrix(data$all_species)[1:5,]
 From loaded files:
 
 ``` r
+
 get_abundance_matrix(all_species)[1:5,]
 #>            1 2 3 4 5 6 7 8 9 10 11 12
 #> 841 9.697987 0 0 0 0 0 0 0 0  0  0  0
@@ -179,6 +190,7 @@ present in each site. `xy` and `empty_sites` arguments are also present.
 In the observer function:
 
 ``` r
+
 get_site_abundance(data$all_species)[1:5,,drop=F]
 #>      abundance
 #> 1022  9.836517
@@ -191,6 +203,7 @@ get_site_abundance(data$all_species)[1:5,,drop=F]
 From loaded files:
 
 ``` r
+
 get_site_abundance(all_species)[1:5,,drop=F]
 #>      abundance
 #> 1022  9.836517
@@ -208,6 +221,7 @@ site. Names are site indexes, and values are site richness.
 In the observer function:
 
 ``` r
+
 get_geo_richness(data$all_species, data$space)[1:50]
 #>  48  49  84  85  86  87  88  89 119 120 121 122 123 124 125 126 154 155 156 157 
 #>   0   0   0   0   0   0   0   0   0   0   0   0   1   1   0   0   0   0   0   0 
@@ -220,6 +234,7 @@ get_geo_richness(data$all_species, data$space)[1:50]
 From loaded files:
 
 ``` r
+
 get_geo_richness(all_species, space)[1:50]
 #>  48  49  84  85  86  87  88  89 119 120 121 122 123 124 125 126 154 155 156 157 
 #>   0   0   0   0   0   0   0   0   0   0   0   0   1   1   0   0   0   0   0   0 
@@ -236,6 +251,7 @@ This function simply calculates the global mean richness.
 In the observer function:
 
 ``` r
+
 get_mean_richness(data$all_species, data$space)
 #> [1] 0.1516035
 ```
@@ -243,6 +259,7 @@ get_mean_richness(data$all_species, data$space)
 From loaded files:
 
 ``` r
+
 get_mean_richness(all_species, space)
 #> [1] 0.1516035
 ```
@@ -256,6 +273,7 @@ indexes, values are species range.
 In the observer function:
 
 ``` r
+
 get_species_range(data$all_species, data$space)
 #>  1  2  3  4  5  6  7  8  9 10 11 12 
 #> 13  2  2  6  3  4  1  2  2  3  8  6
@@ -264,6 +282,7 @@ get_species_range(data$all_species, data$space)
 From loaded files:
 
 ``` r
+
 get_species_range(all_species, space)
 #>  1  2  3  4  5  6  7  8  9 10 11 12 
 #> 13  2  2  6  3  4  1  2  2  3  8  6
@@ -274,7 +293,6 @@ get_species_range(all_species, space)
 This function calculate the weighted endemism $`WE`$ of each site. The
 function calculate this following the equation
 ``` math
-
 \text{Weighted Endemism} = \frac{\text{Site richness}}{\sum_{j \in \text{site}} \text{Species range}_j}
 ```
 
@@ -283,6 +301,7 @@ Higher values indicate that the site contains more rare species.
 In the observer function:
 
 ``` r
+
 get_weighted_endemism(data$all_species, data$space)[255:259] # only five sites
 #> 628 629 630 631 632 
 #>   0   0   0   0   0
@@ -291,6 +310,7 @@ get_weighted_endemism(data$all_species, data$space)[255:259] # only five sites
 From loaded files:
 
 ``` r
+
 get_weighted_endemism(all_species, space)[255:259] # only five sites
 #> 628 629 630 631 632 
 #>   0   0   0   0   0
@@ -303,6 +323,7 @@ each site it occupies. In the matrix, rows names indicate the species’
 index, and col names indicate the trait or site.
 
 ``` r
+
 get_traits_matrix(data$all_species)[1:5,] # only the first five
 #>   site  temp                dispersal
 #> 1 "841" "0.602343893955346" "1"      
@@ -320,6 +341,7 @@ placeholder “summary” to indicate the function name.
 In the observer function:
 
 ``` r
+
 get_traits_matrix(data$all_species, summarize_fun = c(
   "mean" = mean, 
   "var_coef" = function(x){
@@ -345,6 +367,7 @@ get_traits_matrix(data$all_species, summarize_fun = c(
 From loaded files
 
 ``` r
+
 get_traits_matrix(all_species, summarize_fun = c(
   "mean" = mean, 
   "var_coef" = function(x){
@@ -376,6 +399,7 @@ for other purposes, but can also be useful in some cases.
 In the observer function:
 
 ``` r
+
 get_trait_abundance(data$all_species)[1:5,]
 #>   site      temp dispersal abundance species
 #> 1  841 0.6023439         1  9.697987       1
@@ -388,6 +412,7 @@ get_trait_abundance(data$all_species)[1:5,]
 From loaded files:
 
 ``` r
+
 get_trait_abundance(all_species)[1:5,]
 #>   site      temp dispersal abundance species
 #> 1  841 0.6023439         1  9.697987       1
@@ -402,7 +427,6 @@ get_trait_abundance(all_species)[1:5,]
 Trait diversity is calculated as follows:
 
 ``` math
-
 FD_{s,t} = \sum_{i=1}^{n_s} \left( \frac{A_{i,s}}{\sum_{j=1}^{n_s} A_{j,s}} \right) (T_{i,s,t} - \bar{T}_{s,t})^2
 ```
 where - $`A_{i,s}`$ is species $`i`$ abundance in site $`s`$;  
@@ -419,6 +443,7 @@ each site.
 In the observer function:
 
 ``` r
+
 get_trait_diversity(data$all_species)[1:5,]
 #>     temp dispersal
 #> 841    0         0
@@ -431,6 +456,7 @@ get_trait_diversity(data$all_species)[1:5,]
 From loaded files:
 
 ``` r
+
 get_trait_diversity(all_species)[1:5,]
 #>     temp dispersal
 #> 841    0         0
@@ -451,6 +477,7 @@ object.
 In the observer function:
 
 ``` r
+
 get_species_subset(data$all_species, site_vector = c("841"), trim_sites = T)
 #> [[1]]
 #> $id
@@ -490,6 +517,7 @@ get_species_subset(data$all_species, site_vector = c("841"), trim_sites = T)
 From loaded files:
 
 ``` r
+
 get_species_subset(all_species, site_vector = c("841"), trim_sites = T)
 #> [[1]]
 #> $id
@@ -536,6 +564,7 @@ space inputed, but with information only for the sites “1606” and
 In the observer function:
 
 ``` r
+
 get_space_subset(data$space, site_vector = c("841","948"))
 #> $id
 #> [1] 2
@@ -587,6 +616,7 @@ get_space_subset(data$space, site_vector = c("841","948"))
 From loaded files:
 
 ``` r
+
 get_space_subset(space, site_vector = c("841","948"))
 #> $id
 #> [1] 2
@@ -647,6 +677,7 @@ indexes. For example, if `site_vector=c("7","15")`, it will return a
 distance matrix with information only for sites “7” and “15”.
 
 ``` r
+
 distance_matrix <- readRDS(system.file("extdata/TestSpaces/geodynamic_spaces/raster/distances_full/distances_full_4.rds", package = "gen3sis2"))
 
 distance_subset(distance_matrix, site_vector = c("7","15"))
@@ -662,6 +693,7 @@ This function takes a simulation output object and returns a
 Speciation (SR) and Extinction (ER) rates.
 
 ``` r
+
 s <- readRDS(system.file("extdata/SouthAmerica/output/sgen3sis.rds",package = "gen3sis2"))
 
 diversification_summary(s)

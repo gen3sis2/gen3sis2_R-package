@@ -350,6 +350,8 @@ loop_within_site_speciation <- function(config, data, vars) {
       next
     }
     
+    data$all_species[[spi]] <- parent_after
+    
     for (event in events) {
       site <- as.character(event[["site"]])
       daughter_abundance <- event[["daughter_abundance"]]

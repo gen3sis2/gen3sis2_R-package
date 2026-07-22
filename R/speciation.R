@@ -345,12 +345,14 @@ loop_within_site_speciation <- function(config, data, vars) {
     parent_after <- result[["species"]]
     events <- result[["events"]]
     
+    # changes in the divergence within a site may need to be updated regardless
+    # of successful speciation.
+    data$all_species[[spi]] <- parent_after
+    
     # if no events have occurred, skip to the next species
     if (is.null(events) | !length(events)) {
       next
     }
-    
-    data$all_species[[spi]] <- parent_after
     
     for (event in events) {
       site <- as.character(event[["site"]])

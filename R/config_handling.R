@@ -352,7 +352,11 @@ create_empty_config <- function() {
       "initial_abundance" = NULL,
       "create_ancestor_species" = NULL
     ),
-    "dispersal" = list("max_dispersal" = Inf, "get_dispersal_values" = NULL),
+    "dispersal" = list(
+      "max_dispersal" = Inf, 
+      "get_dispersal_values" = NULL,
+      "apply_dispersal_trait_inheritance" = NA
+      ),
     "speciation" = list(
       "divergence_threshold" = NULL,
       "get_divergence_factor" = NULL,

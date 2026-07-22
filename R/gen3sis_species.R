@@ -187,6 +187,23 @@ disperse_species <- function(species, source, destination, config) {
 
   traits <- species[["traits"]][source, , drop = FALSE]
   rownames(traits) <- destination
+  
+  if (is.function(
+    config$gen3sis$dispersal$apply_dispersal_trait_inheritance
+  )) {
+    traits <-
+      config$gen3sis$dispersal$
+      apply_dispersal_trait_inheritance(
+        source_traits = traits,
+        source = source,
+        destination = destination,
+        species = species,
+        config = config
+      )
+    
+    rownames(traits) <- destination
+  }
+  
   species[["traits"]] <- rbind(species[["traits"]], traits)[
     sorted,
     ,

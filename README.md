@@ -1,6 +1,10 @@
 ![](./man/figures/gen3sis_logo.png)
 
+
+<!-- badges: start -->
+[![Codecov test coverage](https://codecov.io/gh/gen3sis2/gen3sis2_R-package/graph/badge.svg)](https://app.codecov.io/gh/gen3sis2/gen3sis2_R-package)
 [![Contributors](https://img.shields.io/github/contributors/gen3sis2/gen3sis2_R-package)](https://github.com/gen3sis2/gen3sis2_R-package/graphs/contributors)
+<!-- badges: end -->
 
 # General Engine for Eco-Evolutionary Simulations 2
 

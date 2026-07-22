@@ -49,7 +49,7 @@ config_object$gen3sis$general$random_seed <- 2025
                         output_directory = tempdir())
 #> Config found: using config object 
 #> space found: /home/runner/work/_temp/Library/gen3sis2/extdata/TestSpaces/geodynamic_spaces/raster 
-#> Output directory is: /tmp/RtmpTdg80u/your_config 
+#> Output directory is: /tmp/RtmpiPIgxz/your_config 
 #> 
 #> Using config: your_config 
 #> --- Initializing --- 
@@ -75,6 +75,6 @@ config_object$gen3sis$general$random_seed <- 2025
 
 
 #> Simulation finished. All OK 
-#> Simulation runtime:  0.002297825  hours
+#> Simulation runtime:  0.00213072  hours
 # }
 ```

@@ -2,8 +2,6 @@
 
 ![](./reference/figures/gen3sis_logo.png)
 
-[![Contributors](https://img.shields.io/github/contributors/gen3sis2/gen3sis2_R-package)](https://github.com/gen3sis2/gen3sis2_R-package/graphs/contributors)
-
 This is the repository for the R-package of the gen3sis engine [gen3sis2
 git](https://github.com/gen3sis2/gen3sis2_R-package).
 

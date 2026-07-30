@@ -84,7 +84,7 @@ data <- simulate_space_format(
 ```
 
     ## config found:  /home/runner/work/_temp/Library/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /home/runner/work/_temp/Library/gen3sis2/extdata/SouthAmerica/space 
-    ## Output directory is: /tmp/Rtmp04kgWG/config_southamerica
+    ## Output directory is: /tmp/RtmpSaop48/config_southamerica
 
 ``` r
 
@@ -262,7 +262,7 @@ gen3sis2:::.default_raster_plot_aesthetics
     ##             axis.text = element_blank(), axis.ticks = element_blank()), 
     ##         ggplot2::labs(title = title), ggplot2::coord_fixed(ratio = 1))
     ## }
-    ## <bytecode: 0x5622fbc29dd8>
+    ## <bytecode: 0x5601c13850d0>
     ## <environment: namespace:gen3sis2>
 
 Now, let’s override it, defining our own aesthetics:

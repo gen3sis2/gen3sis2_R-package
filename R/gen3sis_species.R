@@ -53,9 +53,12 @@ create_species <- function(initial_cells, config) {
   names(index) <- initial_cells
   compressed_matrix <- matrix(0, nrow = 1, ncol = 1)
   dimnames(compressed_matrix) <- list(1, 1)
+  within_site <- numeric(num_cells)
+  names(within_site) <- initial_cells
   species[["divergence"]] <- list(
     "index" = index,
-    "compressed_matrix" = compressed_matrix
+    "compressed_matrix" = compressed_matrix,
+    "within_site" = within_site
   )
   class(species) <- "gen3sis_species"
   return(invisible(species))
@@ -213,7 +216,10 @@ disperse_species <- function(species, source, destination, config) {
   index <- species[["divergence"]][["index"]]
   index[destination] <- index[source]
   species[["divergence"]][["index"]] <- index[sorted]
-
+  
+  within_site <- species[["divergence"]][["within_site"]]
+  species[["divergence"]][["within_site"]] <- within_site[sorted]
+  
   return(invisible(species))
 }
 

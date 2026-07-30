@@ -123,7 +123,11 @@ loop_speciation <- function(config, data, vars) {
     }
 
     gen_dist_spi <- compress_divergence(gen_dist_spi)
-
+    # Add the within_site divergence back, which was removed in the decompression step
+    # Probably do not have to subset, as the order and cells hasn't changed?
+    gen_dist_spi[["within_site"]] <- species[["divergence"]][["within_site"]][
+      names(gen_dist_spi[["index"]])]
+    
     species[["divergence"]] <- gen_dist_spi
     # scan if any cluster exceeds the threshold
     clu_gen_spi_ti_c <- Tdbscan(
@@ -342,6 +346,8 @@ loop_within_site_speciation <- function(config, data, vars) {
         config = config
       )
     
+    # updating the parent, e.g. within-site and abundance, is the responsibility 
+    # of the user. Because we might otherwise limit user-freedom.
     parent_after <- result[["species"]]
     events <- result[["events"]]
     

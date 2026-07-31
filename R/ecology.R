@@ -18,7 +18,7 @@
 #'
 #' @keywords user
 #' @export
-apply_ecology <- function(abundance, traits, local_environment, config) {
+apply_ecology <- function(abundance, traits, within_site_divergence, local_environment, config) {
   stop(
     "this function documents the user function interface only, do not use it."
   )
@@ -46,8 +46,8 @@ loop_ecology <- function(config, data, vars) {
   all_cells <- rownames(data$space$environment)
   all_species_presence <- do.call(
     cbind,
-    lapply(data$all_species, FUN = function(sp) {
-      all_cells %in% names(sp$abundance)
+    lapply(data$all_species, FUN = function(species) {
+      all_cells %in% names(species[["abundance"]])
     })
   )
   rownames(all_species_presence) <- all_cells
@@ -59,89 +59,102 @@ loop_ecology <- function(config, data, vars) {
   ]
 
   for (cell in occupied_cells) {
-    # strat loop over ids with at least one species...
-    local_environment <- data$space[["environment"]][cell, , drop = FALSE]
-
     coo_sp <- which(all_species_presence[cell, ])
-    #create coocuring species traits for idi
-    traits <- matrix(
-      nrow = length(coo_sp),
-      ncol = length(config$gen3sis$general$trait_names)
-    )
-    abundance <- numeric(length(coo_sp))
-
-    #colnames(tr_sp) <- colnames(data$eco[[1]])[1:(length(config$exp$eco$trait_names)+1)]
-    colnames(traits) <- config$gen3sis$general$trait_names
-
-    i <- 1
-    for (spi in coo_sp) {
-      #loop over co-ocurring species @ idi
-      # tr_sp_ti_idi[i,] <- data$eco[[spi]][idi,-(length(config$exp$eco$trait_names)+2)]
-      traits[i, ] <- data$all_species[[spi]][["traits"]][
-        cell,
-        config$gen3sis$general$trait_names
-      ]
-      abundance[i] <- data$all_species[[spi]][["abundance"]][cell]
-      i <- i + 1
-    }
-    max_n_sp_idi <- config$gen3sis$general$max_number_of_coexisting_species
-    if (length(coo_sp) > max_n_sp_idi) {
+    
+    if (length(coo_sp) > config$gen3sis$general$max_number_of_coexisting_species) {
       vars$flag <- "max_number_coexisting_species"
-      paste0(
-        "Maximum number of species per cell (i.e. max_n_sp_idi) reached. Specifically ",
-        length(coo_sp),
-        "(>",
-        max_n_sp_idi,
-        ") species @ t",
-        vars$ti,
-        " idi",
-        cell
-      )
       return(list(config = config, data = data, vars = vars))
     }
+    
+    local_environment <- data$space[["environment"]][cell, , drop = FALSE]
 
-    rownames(traits) <- coo_sp
-    names(abundance) <- coo_sp
-
-    #species <- traits[, c("abd", config$gen3sis$general$trait_names), drop = FALSE]
-
-    NEW_abd <- config$gen3sis$ecology$apply_ecology(
-      abundance,
-      traits,
-      local_environment,
-      config
+    # create trait matrix for co-occurring species
+    traits <- matrix(
+      NA,
+      nrow = length(coo_sp),
+      ncol = length(config$gen3sis$general$trait_names),
+      dimnames = list(
+        as.character(coo_sp),
+        config$gen3sis$general$trait_names
+      )
     )
+    
+    abundance <- numeric(length(coo_sp))
+    within_site_divergence <- numeric(length(coo_sp))
+    
+    names(abundance) <- as.character(coo_sp)
+    names(within_site_divergence) <- as.character(coo_sp)
 
-    # colnames(NEW_abd) <- coo_sp_ti_idi
-    names(NEW_abd) <- coo_sp
-    #abd_threshold <- config$exp$abundance_threshold
-    shalldie <- NEW_abd == 0
-
-    for (spi in coo_sp) {
-      data$all_species[[spi]][["abundance"]][cell] <- NEW_abd[[toString(spi)]]
+    for (i in seq_along(coo_sp)) {
+      spi <- coo_sp[i]
+      species <- data$all_species[[spi]]
+      
+      traits[i, ] <-
+        species[["traits"]][
+          cell,
+          config$gen3sis$general$trait_names
+        ]
+      
+      abundance[i] <-
+        species[["abundance"]][cell]
+      
+      within_site_divergence[i] <-
+        species[["divergence"]][["within_site"]][cell]
     }
 
-    die_sure <- as.integer(names(NEW_abd)[NEW_abd == 0])
 
-    if (length(die_sure) > 0) {
-      #check if there are any species that should go extinct
-      chars <- as.character(die_sure)
-    } #end of check if any die_sure
+    ecological_result <-
+      config$gen3sis$ecology$apply_ecology(
+        abundance = abundance,
+        traits = traits,
+        within_site_divergence = within_site_divergence,
+        local_environment = local_environment,
+        config = config
+      )
+    if(is.list(ecological_result)){
+      new_abundance <-
+        ecological_result[["abundance"]]
+      
+      new_within_site_divergence <-
+        ecological_result[["within_site_divergence"]]
+    }else{
+      new_abundance <- ecological_result
+    }
+
+    
+    for (i in seq_along(coo_sp)) {
+      spi <- coo_sp[i]
+      
+      data$all_species[[spi]][["abundance"]][cell] <-
+        new_abundance[i]
+      
+      if(is.list(ecological_result)){
+        data$all_species[[spi]][["divergence"]][["within_site"]][cell] <-
+          new_within_site_divergence[i]
+      }
+    }
+
   } #end loop over ids with at least one species...
-
-  # loop over all species and keep only abundances above different than zero.
-  # bellow the for loop implemented now as lapply
-  ##  species_list <- list()
-  ##for (species in data$all_species) {
-  ##  cells <- names(species[["abundance"]])[species[["abundance"]] != 0]
-  ##  updated_species <- limit_species_to_cells(species, cells)
-  ##  species_list <- append(species_list, list(updated_species))
-  ##}
-  species_list <- lapply(data$all_species, function(i) {
-    limit_species_to_cells(i, names(i[["abundance"]])[i[["abundance"]] != 0])
-  })
-  data$all_species <- species_list
-
+  
+  # remove cells that have experienced local extinction
+  data$all_species <- lapply(
+    data$all_species,
+    function(species) {
+      retained_cells <- names(species[["abundance"]])[
+        species[["abundance"]] > 0
+      ]
+      
+      if (length(retained_cells) < length(species[["abundance"]])) {
+        species <- limit_species_to_cells(
+          species,
+          retained_cells
+        )
+      }
+      
+      return(species)
+    }
+  )
+  
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("exiting ecology module @ time", vars$ti, "\n"))
   }

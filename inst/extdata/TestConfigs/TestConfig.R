@@ -241,7 +241,8 @@ apply_trait_evolution <- function(species, cluster_indices, space, config) {
 apply_ecology <- function(
   abundance,
   traits,
-  space,
+  within_site_divergence,
+  local_environment,
   config,
   abundance_scale = 10,
   abundance_threshold = 8

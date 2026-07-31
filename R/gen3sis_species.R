@@ -134,6 +134,9 @@ create_species_within_site <- function(
   
   new_species[["traits"]][site, ] <-
     daughter_traits[trait_names]
+  # inherit within_state divergence from the parent (which can be set to zero in the config)
+  new_species[["divergence"]][["within_state"]][site] <- 
+    parent_species[["divergence"]][["within_state"]][site]
   
   return(invisible(new_species))
 }

@@ -218,6 +218,8 @@ disperse_species <- function(species, source, destination, config) {
   species[["divergence"]][["index"]] <- index[sorted]
   
   within_site <- species[["divergence"]][["within_site"]]
+  # inheritence of within-site divergence from the source population
+  within_site[destination] <- within_site[source]
   species[["divergence"]][["within_site"]] <- within_site[sorted]
   
   return(invisible(species))

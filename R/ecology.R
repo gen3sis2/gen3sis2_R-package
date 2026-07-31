@@ -102,7 +102,8 @@ loop_ecology <- function(config, data, vars) {
         species[["divergence"]][["within_site"]][cell]
     }
 
-
+    print(within_site_divergence)
+    
     ecological_result <-
       config$gen3sis$ecology$apply_ecology(
         abundance = abundance,

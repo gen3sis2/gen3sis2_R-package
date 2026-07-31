@@ -84,7 +84,7 @@ loop_ecology <- function(config, data, vars) {
     
     names(abundance) <- as.character(coo_sp)
     names(within_site_divergence) <- as.character(coo_sp)
-
+    
     for (i in seq_along(coo_sp)) {
       spi <- coo_sp[i]
       species <- data$all_species[[spi]]
@@ -102,7 +102,7 @@ loop_ecology <- function(config, data, vars) {
         species[["divergence"]][["within_site"]][cell]
     }
 
-    print(within_site_divergence)
+    
     
     ecological_result <-
       config$gen3sis$ecology$apply_ecology(

@@ -22,11 +22,12 @@
 # set the random seed for the simulation
 random_seed <- 6
 
-# set the starting time step or leave NA to use the earliest/highest time-step
-start_time <- 40
-
-# set the end time step or leave as NA to use the latest/lowest time-step (0)
-end_time <- NA
+duration <- list(
+  from = NA,
+  to = NA,
+  by = NA,
+  unit = "timestep"
+)
 
 # maximum total number of species in the simulation before it is aborted
 max_number_of_species <- 50000

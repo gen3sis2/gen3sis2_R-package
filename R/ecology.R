@@ -106,11 +106,11 @@ loop_ecology <- function(config, data, vars) {
     
     ecological_result <-
       config$gen3sis$ecology$apply_ecology(
-        abundance = abundance,
-        traits = traits,
-        within_site_divergence = within_site_divergence,
-        local_environment = local_environment,
-        config = config
+        abundance,
+        traits,
+        within_site_divergence,
+        local_environment,
+        config
       )
     if(is.list(ecological_result)){
       new_abundance <-

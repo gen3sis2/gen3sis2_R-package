@@ -79,7 +79,7 @@ write_nex <- function(phy, label = "sp", output_file) {
       "0",
       "0",
       phy$Speciation.Time[1],
-      val$config$gen3sis$general$end_time - 1,
+      val$config$gen3sis$general$duration$to - 1,
       "ROOT"
     )
     names(addroot) <- colnames(phy)
@@ -99,7 +99,7 @@ write_nex <- function(phy, label = "sp", output_file) {
 
   if (nrow(phy_no_root) == 0) {
     #following TreeSimGM and TreeSim convertion
-    if (phy[1, "Extinction.Time"] == val$config$gen3sis$general$end_time - 1) {
+    if (phy[1, "Extinction.Time"] == val$config$gen3sis$general$duration$to - 1) {
       String_final <- "1" # tree with only root
     } else {
       String_final <- "0" # tree with only root that got extinct
@@ -207,4 +207,45 @@ conv_unit <- function(x, from, to) {
   exponents <- c(a = 0, ka = 3, Ma = 6, Ga = 9)
   factor <- 10^(exponents[from] - exponents[to])
   return(x * factor[[1]])
+}
+
+#' Convert time units
+#'
+#' @param x numeric. The numerical value in "from" unit
+#' @param from character. The unit to convert from
+#' @param to character. The unit to convert to
+#'
+#' @returns The numerical values in "to" unit
+#' @noRd
+check_time_match <- function(config, data, vars){
+  if(config$gen3sis$general$duration$unit != data$inputs$duration$unit) {
+    text_warn <- paste0(
+      "--- TIME-STEP MISMATCH ---\n  ",
+        "Config's time-steps are set as ", 
+        config$gen3sis$general$duration$by, " ",
+        config$gen3sis$general$duration$unit, ", ",
+        "but space's time-steps are set as ",
+        data$inputs$duration$by, " ",
+        data$inputs$duration$unit, ".\n  ",
+        "Did you consider time-scaling in your config?\n  ",
+        "Read more about time-scaling in the respective vignette."
+      )
+    warning(text_warn)
+    message(text_warn)
+  }
+
+  time_proportion <- config$gen3sis$general$duration$by/data$space$duration$by
+
+  if(time_proportion != 1){
+    text_warn <- paste0(
+        "--- TIME-STEP MISMATCH ---\n  ",
+        "Config's time-steps are ",
+        time_proportion, " ",
+        "times space's time-steps.\n  ",
+        "Did you consider time-scaling in your config?\n  ",
+        "Read more about time-scaling in the respective vignette."
+      )
+    message(text_warn)
+    warning(text_warn)
+  }
 }

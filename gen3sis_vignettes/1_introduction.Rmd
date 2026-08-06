@@ -101,6 +101,8 @@ temp_0 <- rasterFromXYZ(spaces$env$temp[, c(1,2,8)])
 plot(temp_0); plot(temp_5)
 ``` 
 
+To see how to create a space object, refer to [**design_landscape vignette**](design_landscape.html) and [**create_input_landscape vignette**](create_input_landscape.html).
+
 The second landscape class defines the permeability of the landscape for species movement between cells via dispersal. The connection cost between sites is computed for each time step from the gridded landscape data based on haversine geographic distances modified by a user-defined cost function. Distance matrices containing the connection costs are provided at every time step, as either: (i) a pre-computed full distance matrix, containing all habitable cells in the landscape (faster simulations but more storage required); or (ii) a local distance matrix, computed from neighboring site distances up to a user-defined range limit (slower simulations but less storage required).
 
 We can see these already generated in our `space/distances_local` repository, with one matrix for each time step.
@@ -111,33 +113,30 @@ list.files(file.path(datapath, "space/distances_local"))
 ``` 
 
 ### 1b. Configuration {#configuration}
-The **configuration** are the rules of our virtual planet, it is where we define all the ecological and evolutionary equations and parameters.
+The **configuration** file is where we define all the ecological and evolutionary equations and parameters, describing the rules of our virtual planet.
+
+We already have a configuration file prepared, which we can view.
 
 ```{r eval=FALSE, echo=FALSE}
 # Open the config file to view
 file.edit(file.path(datapath, "config/config_southamerica.R"))
 ```
 
-The configuration object includes information on the model initialization, the observer function and the biological functions, namely speciation, dispersal, evolution, and ecology. The possibility of the user to customize these functions confers the flexibility and generality of *gen3sis*. The *initialization* function creates the ancestor species at the start of the simulation. Users can define the number of species, their distribution within the landscape and their trait values. The *observer* function allows recording any abiotic or biotic information of the virtual world as it changes by defining the outputs that are saved at specified time-steps. The configuration further allows to define the *speciation* function, the *dispersal* function, the *evolution* function and the *ecology* function, which are defined in the section on core processes below. Altogether, those six functions are specified in the configuration object and interact with a set of core objects defined in the simulation engine. The configuration object further lists the ecological traits considered in the simulation, sets a random seed allowing simulation reproducibility, start and end times of the simulation, as well as simulation aborting rules including the limits for a total or local number of species.
-
-In our example, we start our simulation with the 40$^{th}$ time-step and end it a the latest available time-step of the landscape, i.e. 40 to 0Ma. We set ten different ancestor species, each colonizing one random cell in the landscape, with initial optimum temperature equal to the local temperature of the site. The dispersal of all species is the same and stochastic, following a Weibull distribution with shape 1.5 and scale 133. Speciation takes place after every second time-step (2 Myr) of isolation. Clustered populations (exchanging genes) had their trait homogenized and weighted by abundance, meaning that a temperature optimum of populations that are doing well in a site will contribute more to the average trait of a cluster. Temperature optimum evolves based on a normal distribution with standard deviation 0.001, possibly increasing or decreasing species optimum temperature. Abundances in a site are based on how close the species population optimum temperature is to the site temperature. We scale the values to avoid small numbers and apply a carrying capacity based on aridity and temperature corrected by the area. If abundances are below 1, species are considered extinct, if total abundance in a site (sum of all species in a site) is above the carrying capacity, small abundances are removed progressively and randomly distributed across the present species until total abundance is smaller or equal to the carrying capacity. For more details regarding the configuration used here and how to modify it, please refer to [**create_config vignette**](create_config.html).
+To give a brief overview of the contents, the *initialization* function creates the ancestor species at the start of the simulation. Users can define the number of species, their distribution within the landscape, and their trait values. The *observer* function allows recording any abiotic or biotic information of the virtual world as it changes by defining the outputs that are saved at specified time-steps. The configuration further allows for the definition of eco-evolutionary rules, via inputs on the *speciation* function, the *dispersal* function, the *evolution* function, and the *ecology* function. For more details regarding the configuration file used here and how to modify it, please refer to [**create_config vignette**](create_config.html).
 
 ## 2. Run {#run}
 
-Now that we have set up the general folder structure, the input data and configuration file, we can run a simulation using the *run_simulation* function. This function will:
+Now that we have set up our input files, we can run a simulation using the *run_simulation* function. This function will:
 
-1) Read in the config and prepare the output directories, initial landscape and call *create_ancestor_species* from the user config to create the initial species for the simulation.
+1) Read in the config and initial landscape, and call *create_ancestor_species* from the user config to create the initial species distributions for the simulation.
 
-2) Start the main loop over the time-steps. For every time-step it loads the appropriate landscape, removes all sites that became uninhabitable in the new time-step, and calls the main steps of any iteration.
+2) Loop over the time-steps. For every time-step the appropriate landscape is loaded, and eco-evolutionary processes are implemented.
 
-3) At the end of every time-step, if desired, the simulation saves the species, landscapes, species richness patterns, etc... by calling the *end_of_timestep_observer* from the user config. In this function the user can implement customized observer functions, for example calculating summary statistics or creating species patterns plots.
+3) At the end of every time-step, the simulation saves the species, landscapes, species richness patterns, etc... by calling the *end_of_timestep_observer* from the user config.
 
-4) When the simulation reaches the end, a phylogeny, runtime_information, the world starting conditions and the used config are saved at the output folder. If the output folder is not specified, it is deduced from the location of the landscape object. The function will return a summary object. In this vignette we will save it as *sim*.
+4) When the simulation reaches the end, a summary of requested outputs is saved in the output folder.
 
-Additionally to the main functions, the package provides several convenience functions to generate input data, configuration files, and plots. Moreover, all functions are accessible to the observer functions, which requests the variables for calculation during the model runs. This allows to transform the output of the simulation model into a format that can be readily analyzed. 
-
-
-To launch a simulation you need to call the *run_simulation* function. We only store one intermediate step between the starting and end time-steps by setting "call_observer=1", this means one time-step equally distributed between the starting and ending time-steps. By doing so, we will have a look at our virtual world at 40, 20 and 0 Ma. 
+To launch a simulation you need to call the *run_simulation* function. For simplicity, here we will only store one intermediate step between the starting and end time-steps by setting `call_observer = 1`. We will also set `verbose = 0` to minimise printed outputs for such a simple simulation, but more information can be provided if desired.
 
 ```{r eval=FALSE, echo=TRUE}
 #Run the simulation
@@ -154,44 +153,38 @@ sim <- run_simulation(config = file.path(datapath, "config/config_southamerica.R
 sim <- readRDS(file.path(datapath, "output/sgen3sis.rds"))
 ```
 
-After the simulation is finished, a plot is created inside the SouthAmerica folder to show the state of the initial world. They are automatically stored in a sub folder called **output** inside our SouthAmerica folder and inside another folder named after our configuration file (i.e. config). It should look like this:
+Additionally to the main functions, *gen3sis* provides several convenience functions to generate input data, configuration files, and plots. Moreover, all functions are accessible to the observer functions, which requests the variables for logging and calculation during the model runs. This allows the output of the simulation to be stored in a format that can be readily analyzed. Here, our config set-up has produced plots of species richness at our starting (5Ma), single observer call (3Ma) and final (0Ma) time steps.
 
-|>EXPERIMENT_FOLDER     |
-|:-------------------------|
-|&nbsp;&nbsp;&nbsp;>landscape|
-|&nbsp;&nbsp;&nbsp;>config|
-|&nbsp;&nbsp;&nbsp;**>output**|
+After the simulation is finished, output files are automatically stored in a sub-folder called **output**.
 
 ## 3. Visualize {#visualize}
 
-After having run the simulation, *gen3sis* automatically produces plots of the species richness at different time-steps. Here, these are at 5, 3 and 0 Ma.
+*gen3sis* returns a summary object (of `gen3sis_output` class) at the end of the simulation, storing default summary statistics and important data over time. Here we stored the summary object as *sim*, as well as saving it to the **output** folder.
 
-*gen3sis* also returns a summary object at the end of the simulation storing default summary statistics and important data over time. One of the default observer summaries is the species richness over time. 
-**NOTE** You can also create your own observer function. 
-
-We can quickly visualize some main results using the *plot_summary function*.
-Here we stored the summary object (sgen3sis class) as *sim*.
+We can quickly visualize some main results using the `plot_summary()` function. 
 
 ```{r eval=TRUE, fig.width=7, fig.height=7}
+# Plot main summary statistics
 plot_summary(sim)
 ```
 
-
-There are a few visualization tools already included in the package, but you are free to explore and check the outputs with your favorite plotting functions and colors.
+There are a few visualization tools already included in the package, but you are free to explore and check the outputs with your favorite plotting functions and colors. REFER TO OTHER TUTORIALS
 
 ## 4. Analyze {#analyze}
 
-Now that we have run the simulation, we are ready to perform some analysis to investigate the model behavior. Because we set a limit to the total abundances lower in colder and in more arid environments, we expect that the number of species that can co-exist also decreases in those environments.
-We will perform a few statistical analyses to investigate those patterns based on the species richness pattern that emerged at the end of the simulation. To do so, we first load the landscape and combine it with the simulated species richness.
+We are now ready to perform analyses to investigate the model's behavior. Typically this will be the way in which we determine how our simulation related to the hypothesis we are trying to test. Here, we set a lower limit on total abundance in colder and more arid environments, so we expect that the number of species that can co-exist also decreases in those environments.
+
+We will perform a few statistical analyses to investigate species richness patterns that emerged over simulation. To do so, we first combine environmental data from our `spaces` object with the simulated species richness.
 
 ```{r eval=TRUE, fig.width=8, fig.height=5, fig.retina=2}
 # Bind together environmental variables at time step 0
 space_t0 <- as.data.frame(cbind(spaces$env$temp[, 1:2],
-                                temp=spaces$env$temp[, 3],
-                                arid=spaces$env$arid[,3],
-                                area=spaces$env$area[,3]))
+                                temp = spaces$env$temp[, 3],
+                                arid = spaces$env$arid[,3],
+                                area = spaces$env$area[,3]))
 # Add species richness to the dataframe
-space_t0 <- cbind(space_t0, rich=sim$summary$`richness-final`[,3]) 
+space_t0 <- cbind(space_t0,
+                  rich = sim$summary$`richness-final`[,3]) 
 # Remove NAs
 space_t0 <- na.omit(space_t0)
 ```

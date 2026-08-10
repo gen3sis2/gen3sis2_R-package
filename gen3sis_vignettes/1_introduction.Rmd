@@ -38,10 +38,7 @@ In particular, we will go through the following steps:
 
 We will do this using a highly simplified example. Here we will model the evolution of species in South America over the last five million years.
 
-## 1. Set-up {#setup}
-The first step for running a simulation consists of setting up the folder structure that should contain input data. 
-
-First of all, we load the packages we need, including the *gen3sis* package. 
+First of all, we will load the packages we need, including the *gen3sis* package. 
 ```{r setup, message=F}
 # Load packages
 library(gen3sis2)
@@ -58,10 +55,8 @@ Let's check the version of the *gen3sis* package we are using.
 packageVersion("gen3sis2")
 ```
 
-## 1a. Space {#space}
-All *gen3sis* simulations need a **space** object which defines the environment over which the simulation will take place. Here we will consider the continent of South America over the last five million years (from 5Ma to 0Ma), using a temporal resolution of 1My and a spatial resolution of 1&deg;.
-
-Both of the data files used here are available in the [simulation repository](https://github.com/project-gen3sis/Simulations). To access this dataset, we will define the path to the data contained inside the package.
+## 1. Set-up {#setup}
+The first step for running a *gen3sis* simulation consists of generating the files containing the input data and model settings. For this example, we have provided environmental data for South American over the Cenozoic. To access this dataset, we will define the path to the data contained inside the package.
 
 ```{r eval=TRUE, echo=FALSE}
 # Set the filepath to the location in gen3sis2 files with test data
@@ -72,7 +67,7 @@ datapath <- system.file(file.path("extdata", "SouthAmerica"),
 #list.files(datapath, recursive = TRUE)
 ```
 
-An experiment folder should look like this:
+Ultimately, our experiment folder should look like this:
 
 |>EXPERIMENT_FOLDER     |
 |:-------------------------|
@@ -83,9 +78,209 @@ An experiment folder should look like this:
 |&nbsp;&nbsp;&nbsp;**>config**|
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;>config.R|
 
+We will start by preparing the contents of the `space` folder, followed by the `config` file.
+
+## 1a. Space {#space}
+All *gen3sis* simulations need a **space** object which defines the environment over which the simulation will take place. This means our first task is to create spatial objects ready to input into *gen3sis*. These objects are:
+
+- a spaces.rds file containing a list of raster stacks containing environmental variables; 
+
+- a series of .rds files, one for each time-step, describing distance matrices between sites.
+
 Space objects used in *gen3sis* represent spatially discretized temporal sequences of landscapes, which are stored in the form of raster files. 
 
 The first space class contains: (i) the geographic coordinates of the landscape cells, (ii) corresponding information on which cells are occupiable by the organisms modeled (e.g. land or ocean), and (iii) the environmental conditions relevant to the species’ ecology.
+
+
+Below, we will generate the R objects required by the function *create_input_landscape* step by step.
+
+### Creating the environmental RasterBricks
+We need to create the RasterBricks containing the spatio-temporal distributions of the environmental variables of interest. Here, we will use temperature, aridity and area rasters for South America. Each raster comes in two components, a `.grd` file and a `.gri` file.
+
+```{r eval=TRUE, message=F}
+# View contents of input raster folder
+list.files(file.path(datapath, "input_rasters"))
+```
+
+We will now load the three data files from the package example data and convert them to RasterBricks.
+
+```{r eval=FALSE, message=F}
+# Create temperature RasterBrick
+temperature_brick <- brick(file.path(datapath, "input_rasters/temperature_rasters.grd"), package = "raster")
+
+# Create aridity RasterBrick
+aridity_brick <- brick(file.path(datapath, "input_rasters/aridity_rasters.grd"), package = "raster")
+
+# Create area RasterBrick
+area_brick <- brick(file.path(datapath, "input_rasters/area_rasters.grd"), package = "raster")
+```
+
+If you want to see an example on how you can create a virtual dynamic landscape from scratch, please refer to the [**design_landscape vignette**](design_landscape.html).
+
+## Creating a list with the environmental raster bricks
+To create the input landscape for *gen3sis*, all environmental variables have to be stored as raster files in a named list. It is important to add the name of the environmental variable you want to use in the list, which will be used when specifying the config file. Alternatively, you can also create a list which contains all of the raster file paths on your hard drive.
+
+We will now create a list that contains all of the layers of our raster bricks for temperature, aridity and area.
+
+```{r eval=FALSE}
+landscapes_list <- list(temp=NULL, arid=NULL, area=NULL)
+for(i in 1:nlayers(temperature_brick)){
+  landscapes_list$temp <- c(landscapes_list$temp, temperature_brick[[i]])
+  landscapes_list$arid <- c(landscapes_list$arid, aridity_brick[[i]])
+  landscapes_list$area <- c(landscapes_list$area, area_brick[[i]])
+}
+```
+
+
+## Defining a cost function 
+Additionally, we need to define a *cost function* which defines the connection cost between sites. The species dispersal ability will determine if sites are reachable (i.e. if the dispersal event is higher than the connection cost).
+
+First, we will look at a very simple case, where no additional cost is added to the geographical distances, meaning that connections costs equal distance in  grid cell units multiplied by the raster resolution. For landscapes with a coordinate system (*crs*) the cost is defined in meters, as defined by the coordinate system. By dividing the cost function by 1000 we get the cost of traveling for 1 km. We can define a simple cost function in which the dispersal is not penalized: 
+
+```{r eval=FALSE}
+cost_function_null <- function(source, habitable_src, dest, habitable_dest) {
+    return(1/1000) 
+}
+```
+
+```{r, echo=FALSE, eval=FALSE}
+landscapes_list_t0 <- list(temp=NULL)
+landscapes_list_t0$temp <- c(landscapes_list_t0$temp, temperature_brick[[1]])
+
+create_input_landscape(landscapes = landscapes_list_t0,
+                               cost_function = cost_function_null,
+                               output_directory =  tempdir(), # a directory name to save the files in
+                               directions = 8, # all surrounding sites from a focus site
+                               calculate_full_distance_matrices = TRUE,  # full distance matrix
+                               overwrite_output = T,
+                               crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs" 
+)
+
+```
+
+
+```{r, eval=T, echo=FALSE, fig.width=4, fig.height=7, fig.cap='This figure shows the connection costs from one site in the middle of South America to all other sites. To travel to the site of Antarctica that is indicated with the arrow, the travelling cost is 3790. The distance matrix was computed using the very simple cost function that has been introduced before and is not adding any penalty.', fig.align='center'}
+knitr::include_graphics("../inst/extdata/SouthAmerica/images/const_cost.png")
+
+#dist_matrix_null_t0 <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/distances_full/distances_full_0.rds'))
+#landscapes_null <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/landscapes.rds'))
+
+#landscapes_null <- readRDS('inst/extdata/SouthAmerica/landscape/landscapes.rds')
+#landscapes_null_t0 <- na.omit(landscapes_null$temp[, c('x', 'y', '0')])
+
+#dist_null_t0_mat <- cbind(landscapes_null_t0[,c('x', 'y')], cost=as.numeric(dist_matrix_null_t0[,1300]))
+#dist_null_t0 <- rasterFromXYZ(dist_null_t0_mat)
+
+#maxcost <- 6200
+#mincost <- 0
+#cost_breaks <- seq(mincost, maxcost, by=20)
+#cost_colors <- rev(gray(seq(0.03, 0.9, length.out=length(cost_breaks)-1)))
+
+#par(mar=c(1,2,1,2))
+#layout(matrix(c(1,1,1,1,2), ncol=1))
+
+#par(mar=c(1,1,1,2))
+#image(dist_null_t0, col=cost_colors, breaks=cost_breaks)
+#plot(dist_null_t0, col=cost_colors, breaks=cost_breaks, axes=F, box=F, legend.args = list(text = 'connection cost', side = 2, 
+#         font = 2, line = 0.5, cex = 0.8))
+#arrows(-61.5, -30.5, -61.5, -64.5, lwd=3, col='red')
+#text(-55, -40, labels=paste('connection cost =', round(dist_null_t0_mat$cost[dist_null_t0_mat$x==(-61.5) & dist_null_t0_mat$y==(-64.5)], 0)), cex=1.5, font=2)
+
+#plot.new()
+#legend_df <- as.data.frame(cbind(seq(0, length(cost_breaks)-1, length.out=(length(cost_breaks))), rep(0.25, (length(cost_breaks))), cost_breaks))
+#legend_image <- rasterFromXYZ(legend_df, res=0.01)
+#plot(legend_image, legend.only=T, col=cost_colors, horizontal=T, smallplot=c(0.2, 0.8, 0.45, 0.6), 
+#   axis.args=list(at=seq(mincost, maxcost, 500),labels=seq(mincost, maxcost, 500)), legend.args=list(text='connection cost'))
+```
+
+
+
+For a slightly more sophisticated cost function, where only sites which have environmental values (no NAs) are considered habitable and suitable terrestrial sites should have a cost penalty of one (x1), but dispersal over water sites should double (x2) the cost of dispersal. 
+
+```{r eval=FALSE}
+cost_function_water <- function(source, habitable_src, dest, habitable_dest) {
+  if(!all(habitable_src, habitable_dest)) {
+    return(2/1000)
+  } else {
+    return(1/1000)
+  }
+}
+```
+
+```{r, echo=FALSE, eval=FALSE}
+create_input_landscape(landscapes = landscapes_list_t0,
+                               cost_function = cost_function_water,
+                               output_directory = tempdir(),# a directory name to save the files in
+                               directions = 8, # all surrounding sites from a focus site
+                               calculate_full_distance_matrices = TRUE,  # full distance matrix
+                               overwrite_output = T,
+                               crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs" 
+)
+
+```
+
+```{r, eval=TRUE, echo=FALSE, fig.width=4, fig.height=7, fig.align='center', fig.cap='By using a cost function which penalises the crossing of water, the cost of travelling from our cell in the middle of South America to Antarctica increases to 5204.'}
+knitr::include_graphics("../inst/extdata/SouthAmerica/images/var_cost.png")
+# dist_matrix_water_t0 <- readRDS('inst/extdata/SouthAmerica/landscape/distances_full/cost_function_water/distances_full/distances_full_0.rds')
+# # C:\VITAL LOCAL\Meus Documentos\ETH PhD\Code\R\package\Gen3sis\inst\extdata\SouthAmerica\landscape\distances_full\cost_function_null\distances_full
+# landscapes_water <- readRDS('inst/extdata/SouthAmerica/landscape/andscapes.rds')
+# landscapes_water_t0 <- na.omit(landscapes_water$temp[, c('x', 'y', '0')])
+# dist_water_t0_mat <- cbind(landscapes_water_t0[,c('x', 'y')], cost=as.numeric(dist_matrix_water_t0[,1300]))
+# dist_water_t0 <- rasterFromXYZ(dist_water_t0_mat)
+# 
+# maxcost <- 6200
+# mincost <- 0
+# cost_breaks <- seq(mincost, maxcost, by=20)
+# cost_colors <- rev(gray(seq(0.03, 0.9, length.out=length(cost_breaks)-1)))
+# 
+# par(mar=c(1,2,1,2))
+# layout(matrix(c(1,1,1,1,2), ncol=1))
+# 
+# #par(mar=c(1,1,1,2))
+# image(dist_water_t0, col=cost_colors, breaks=cost_breaks)
+# #plot(dist_water_t0, col=cost_colors, breaks=cost_breaks, axes=F, box=F, legend.args = list(text = 'connection cost', side = 2, 
+# #         font = 2, line = 0.5, cex = 0.8))
+# arrows(-61.5, -30.5, -61.5, -64.5, lwd=3, col='red')
+# text(-55, -40, labels=paste('connection cost =', round(dist_water_t0_mat$cost[dist_water_t0_mat$x==(-61.5) & dist_water_t0_mat$y==(-64.5)], 0)), cex=1.5, font=2)
+# 
+# plot.new()
+# legend_df <- as.data.frame(cbind(seq(0, length(cost_breaks)-1, length.out=(length(cost_breaks))), rep(0.25, (length(cost_breaks))), cost_breaks))
+# legend_image <- rasterFromXYZ(legend_df, res=0.01)
+# plot(legend_image, legend.only=T, col=cost_colors, horizontal=T, smallplot=c(0.2, 0.8, 0.45, 0.6), 
+#    axis.args=list(at=seq(mincost, maxcost, 500),labels=seq(mincost, maxcost, 500)), legend.args=list(text='connection cost'))
+```
+
+
+Whether a specific site can be reached or not depends on the properties of the population or species.
+
+## Further useful arguments
+Besides the (i) landscape list, (ii) cost function and (iii) experiment folder, we can define further arguments such as: directions, time-steps and calculate_full_distance_matrices. 
+
+The argument 'directions' requires an integer providing the amount of directions used to calculate distances. It can take 4, 8 or 16 as values to consider the four, eighth or 16 neighboring sites. This is the same argument used by the function *transition* in the gdistance package (gdistance::transition). 
+
+The argument 'timesteps' requires a vector of strings and is used to name the files and to name the timesteps in the *landscapes.rds* landscape object created by the *create_input_landscape* function. It is not necessary to define this argument, but it helps readability when manipulating the object. 
+
+The argument 'calculate_full_distance_matrices' defines whether the *create_input_landscape* function will create one large distance matrix for all suitable sites (calculate_full_distance_matrices=TRUE) or a list of small distance matrices for the neighboring sites specified in 'directions' around each suitable site (calculate_full_distance_matrices=FALSE). The full distance matrix confers faster computing speed for the model, but requires a larger storage. The local distance matrices cause a slower computing speed, but require smaller storage. The slower speed emerges form the fact that a full distance matrix is then reconstructed by concatenating local distances matrices each time-step during a simulation run. 
+
+The real geographic coordinate system can be provided which allows for the global spherical distance correction. The reference system can be set by using the 'crs' argument of the *create_input_landscape* function. Here we are using the world geodetic system (WGS84) but providing a projected coordinate reference system is also possible. If you want to ensure that all cells have the same area you might consider an equal-area projection, such as the Lambert azimuthal equal-area projection.
+For real landscapes with valid coordinate systems (e.g. *crs="+proj=longlat +datum=WGS84"*), the distance unit is in meters (m). If you would use hypothetical landscapes, such as in the [**design_landscape vignette**](design_landscape.html), geographic distance would be measured in units of sites multiplied by the grid cell resolution.
+
+## Create input files 
+
+The *create_input_landscape* function creates *.rds* files that will be used as input for *gen3sis*. The file path where the landscapes and the distance matrices of all time steps should be stored can be specified within the function.
+```{r eval=FALSE}
+create_input_landscape(landscapes = landscapes_list,
+             cost_function = cost_function_water,
+             directions=8,
+             output_directory = file.path(tempdir(), "SouthAmerica"),
+             timesteps = paste0(seq(65, 0, by=-1), "Ma"),
+             crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
+             calculate_full_distance_matrices = F)
+```
+
+Finally, do not forget to specify the landscape metadata you just created. We recommend storing it in form of a METADATA.txt file within the landscape folder. A template is automatically created by the functions *create_input_landscape* at the correct location.
+Once the input landscape is ready, the *run_simulation* function can start the simulation using the path of the new landscape.
+
 
 Here our `spaces` object contains temperature and aridity values. We can access the `spaces.rds` object, and create maps of our environmental conditions.
 

@@ -28,7 +28,7 @@ In this vignette you will be introduced to *gen3sis*, an engine for simulating v
 
 In particular, we will go through the following steps: 
 
-[1. **Set-up**](#setup) the input files needed by the *gen3sis* package, specifically the [space](#space) object, which defines the spatial confines of the simulation, and the [configuration](#configuration) file, which defines the parameters used.
+[1. **Set-up**](#setup) the input files needed by the *gen3sis* package, specifically the [space](#space) objects, which defines the spatial confines of the simulation, and the [configuration](#configuration) file, which defines the parameters used.
 
 [2. **Run**](#run) a simulation.
 
@@ -56,7 +56,7 @@ packageVersion("gen3sis2")
 ```
 
 ## 1. Set-up {#setup}
-The first step for running a *gen3sis* simulation consists of generating the files containing the input data and model settings. For this example, we have provided environmental data for South American over the Cenozoic. To access this dataset, we will define the path to the data contained inside the package.
+Before we can run a *gen3sis* simulation, we need to generate files containing the input data and model settings. For this example, we have provided environmental data for South American over the Cenozoic. To access this dataset, we will define the path to the data contained inside the package.
 
 ```{r eval=TRUE, echo=FALSE}
 # Set the filepath to the location in gen3sis2 files with test data
@@ -81,28 +81,23 @@ Ultimately, our experiment folder should look like this:
 We will start by preparing the contents of the `space` folder, followed by the `config` file.
 
 ## 1a. Space {#space}
-All *gen3sis* simulations need a **space** object which defines the environment over which the simulation will take place. This means our first task is to create spatial objects ready to input into *gen3sis*. These objects are:
+Our first task is to create the spatial objects ready to input into *gen3sis*. These objects are:
 
-- a spaces.rds file containing a list of raster stacks containing environmental variables; 
+- a `spaces.rds` file, containing (i) the geographic coordinates of the landscape cells, (ii) corresponding information on which cells are occupiable by the organisms modeled (e.g. land or ocean), and (iii) the environmental conditions relevant to the species’ ecology;
 
-- a series of .rds files, one for each time-step, describing distance matrices between sites.
+- a series of `.rds` files, one for each time-step, describing distance matrices between the sites.
 
-Space objects used in *gen3sis* represent spatially discretized temporal sequences of landscapes, which are stored in the form of raster files. 
+We will generate these using the `create_spaces_raster()` function.
 
-The first space class contains: (i) the geographic coordinates of the landscape cells, (ii) corresponding information on which cells are occupiable by the organisms modeled (e.g. land or ocean), and (iii) the environmental conditions relevant to the species’ ecology.
-
-
-Below, we will generate the R objects required by the function *create_input_landscape* step by step.
-
-### Creating the environmental RasterBricks
-We need to create the RasterBricks containing the spatio-temporal distributions of the environmental variables of interest. Here, we will use temperature, aridity and area rasters for South America. Each raster comes in two components, a `.grd` file and a `.gri` file.
+### Loading the environmental data
+Our first step is to load raster files containing the spatio-temporal distributions of our environmental variables of interest. Here, we will use temperature, aridity and area rasters for South America. Each raster comes in two components, a `.grd` file and a `.gri` file.
 
 ```{r eval=TRUE, message=F}
 # View contents of input raster folder
 list.files(file.path(datapath, "input_rasters"))
 ```
 
-We will now load the three data files from the package example data and convert them to RasterBricks.
+We will load the three data files from the example data and convert them to RasterBricks.
 
 ```{r eval=FALSE, message=F}
 # Create temperature RasterBrick
@@ -115,45 +110,70 @@ aridity_brick <- brick(file.path(datapath, "input_rasters/aridity_rasters.grd"),
 area_brick <- brick(file.path(datapath, "input_rasters/area_rasters.grd"), package = "raster")
 ```
 
-If you want to see an example on how you can create a virtual dynamic landscape from scratch, please refer to the [**design_landscape vignette**](design_landscape.html).
-
-## Creating a list with the environmental raster bricks
-To create the input landscape for *gen3sis*, all environmental variables have to be stored as raster files in a named list. It is important to add the name of the environmental variable you want to use in the list, which will be used when specifying the config file. Alternatively, you can also create a list which contains all of the raster file paths on your hard drive.
-
-We will now create a list that contains all of the layers of our raster bricks for temperature, aridity and area.
+We will now generate a list containing all of the environmental data, with each variable named. It is also possible to create a list using the raster file paths on your hard drive, instead of loading all the data into R.
 
 ```{r eval=FALSE}
-landscapes_list <- list(temp=NULL, arid=NULL, area=NULL)
+# Create empty list with three elements, each named for a raster
+spaces_list <- list(temp = NULL, arid = NULL, area = NULL)
+
+# Populate each element with the relevant environmental raster
 for(i in 1:nlayers(temperature_brick)){
-  landscapes_list$temp <- c(landscapes_list$temp, temperature_brick[[i]])
-  landscapes_list$arid <- c(landscapes_list$arid, aridity_brick[[i]])
-  landscapes_list$area <- c(landscapes_list$area, area_brick[[i]])
+  spaces_list$temp <- c(spaces_list$temp, temperature_brick[[i]])
+  spaces_list$arid <- c(spaces_list$arid, aridity_brick[[i]])
+  spaces_list$area <- c(spaces_list$area, area_brick[[i]])
 }
 ```
 
+## Setting up the distance matrix
+The second step is to determine the distances between our sites, which we will do by defining a *cost function*. Essentially we are defining the species' dispersal ability, and therefore whether dispersal between each pair of sites is feasible or not.
 
-## Defining a cost function 
-Additionally, we need to define a *cost function* which defines the connection cost between sites. The species dispersal ability will determine if sites are reachable (i.e. if the dispersal event is higher than the connection cost).
+First, we will look at a simple case, in which the migration cost is equal to the distance between sites in grid cell units, multiplied by the raster resolution. For landscapes with a coordinate system (*crs*), the cost is defined in meters: by dividing the cost function by 1000, we get the cost of traveling 1 km.
 
-First, we will look at a very simple case, where no additional cost is added to the geographical distances, meaning that connections costs equal distance in  grid cell units multiplied by the raster resolution. For landscapes with a coordinate system (*crs*) the cost is defined in meters, as defined by the coordinate system. By dividing the cost function by 1000 we get the cost of traveling for 1 km. We can define a simple cost function in which the dispersal is not penalized: 
+We can define a simple cost function in which dispersal is not penalized: 
 
 ```{r eval=FALSE}
-cost_function_null <- function(source, habitable_src, dest, habitable_dest) {
+# Define simple cost function, with cost given in kilometers
+cost_function_null <- function(source,
+                               habitable_src,
+                               dest,
+                               habitable_dest) {
     return(1/1000) 
 }
 ```
 
+We can now generate our `spaces.rds` file and distance matrices by inputting our environmental data and cost function into the `create_spaces_raster()` function. Before we do that, there are a few other parameters required by the function that we need to choose values for.
+
+The argument `directions` sets the number of neighbouring directions in which to determine connectivity, and can take the values 4, 8, or 16. For this example, we will use 8 directions.
+
+The argument `full_dists` defines whether one large distance matrix is created for all suitable sites (TRUE) or a list of small distance matrices is generated for the neighboring sites specified in 'directions' around each suitable site (default; FALSE). The full distance matrix confers faster computing speed for the model, but requires larger storage. 
+
+The argument `duration` is where we define the time-steps used in the spaces objects. 
+
+The `crs` argument can also be used to set the geographic coordinate system, allowing for global spherical distance correction. Here we are using the world geodetic system (WGS84).
+
 ```{r, echo=FALSE, eval=FALSE}
-landscapes_list_t0 <- list(temp=NULL)
+# Generate list containing only temperature data
+landscapes_list_t0 <- list(temp = NULL)
 landscapes_list_t0$temp <- c(landscapes_list_t0$temp, temperature_brick[[1]])
 
-create_input_landscape(landscapes = landscapes_list_t0,
-                               cost_function = cost_function_null,
-                               output_directory =  tempdir(), # a directory name to save the files in
-                               directions = 8, # all surrounding sites from a focus site
-                               calculate_full_distance_matrices = TRUE,  # full distance matrix
-                               overwrite_output = T,
-                               crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs" 
+# Generate spaces object
+create_spaces_raster(
+  # Specify list of environmental variables
+  raster_list = landscapes_list_t0,
+  # Specify cost function
+  cost_function = cost_function_null,
+  # Specify name of the directory to save the files in
+  output_directory = "/Users/balle/Documents/test",
+  # Specify number of valid directions for migration (all surrounding cells)
+  directions = 8,
+  # Specify whether to generate the full distance matrices
+  full_dists = TRUE,
+  # Specify whether to overwrite if files already exist
+  overwrite_output = FALSE,
+  # Specify the timescale
+  duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
+  # Specify the projection system
+  crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 )
 
 ```
@@ -193,28 +213,49 @@ knitr::include_graphics("../inst/extdata/SouthAmerica/images/const_cost.png")
 #   axis.args=list(at=seq(mincost, maxcost, 500),labels=seq(mincost, maxcost, 500)), legend.args=list(text='connection cost'))
 ```
 
-
-
-For a slightly more sophisticated cost function, where only sites which have environmental values (no NAs) are considered habitable and suitable terrestrial sites should have a cost penalty of one (x1), but dispersal over water sites should double (x2) the cost of dispersal. 
+For a slightly more sophisticated cost function, we will now create a scenario where:
+- only sites which have environmental values (no NAs) are considered habitable
+- migration to suitable terrestrial sites has a cost penalty of one (x1)
+- dispersal over water sites doubles (x2) the cost of dispersal. 
 
 ```{r eval=FALSE}
-cost_function_water <- function(source, habitable_src, dest, habitable_dest) {
+# Define more complex cost function
+cost_function_water <- function(source,
+                                habitable_src,
+                                dest,
+                                habitable_dest) {
+  # If not all of the cells between the origin and destination are habitable...
   if(!all(habitable_src, habitable_dest)) {
+    # ... impose a cost of 2
     return(2/1000)
+    # Otherwise, impose a cost of 1
   } else {
     return(1/1000)
   }
 }
 ```
 
+We can now create new spaces objects with this more complex cost function.
+
 ```{r, echo=FALSE, eval=FALSE}
-create_input_landscape(landscapes = landscapes_list_t0,
-                               cost_function = cost_function_water,
-                               output_directory = tempdir(),# a directory name to save the files in
-                               directions = 8, # all surrounding sites from a focus site
-                               calculate_full_distance_matrices = TRUE,  # full distance matrix
-                               overwrite_output = T,
-                               crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs" 
+# Generate spaces object
+create_spaces_raster(
+  # Specify list of environmental variables
+  raster_list = spaces_list,
+  # Specify cost function
+  cost_function = cost_function_water,
+  # Specify name of the directory to save the files in
+  output_directory = "/Users/balle/Documents/test",
+  # Specify number of valid directions for migration (all surrounding cells)
+  directions = 8,
+  # Specify whether to generate the full distance matrices
+  full_dists = TRUE,
+  # Specify whether to overwrite if files already exist
+  overwrite_output = FALSE,
+  # Specify the timescale
+  duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
+  # Specify the projection system
+  crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 )
 
 ```
@@ -250,37 +291,11 @@ knitr::include_graphics("../inst/extdata/SouthAmerica/images/var_cost.png")
 #    axis.args=list(at=seq(mincost, maxcost, 500),labels=seq(mincost, maxcost, 500)), legend.args=list(text='connection cost'))
 ```
 
+Finally, do not forget to specify the landscape metadata you just created. We recommend storing it in form of a METADATA.txt file within the spaces folder. A template is automatically created at the correct location.
 
-Whether a specific site can be reached or not depends on the properties of the population or species.
+We have now generated our necessary spaces objects based on our empirical environmental data. Alternatively, if you want to see an example of how you can create a virtual dynamic landscape from scratch, please refer to the [**design_landscape vignette**](design_landscape.html).
 
-## Further useful arguments
-Besides the (i) landscape list, (ii) cost function and (iii) experiment folder, we can define further arguments such as: directions, time-steps and calculate_full_distance_matrices. 
-
-The argument 'directions' requires an integer providing the amount of directions used to calculate distances. It can take 4, 8 or 16 as values to consider the four, eighth or 16 neighboring sites. This is the same argument used by the function *transition* in the gdistance package (gdistance::transition). 
-
-The argument 'timesteps' requires a vector of strings and is used to name the files and to name the timesteps in the *landscapes.rds* landscape object created by the *create_input_landscape* function. It is not necessary to define this argument, but it helps readability when manipulating the object. 
-
-The argument 'calculate_full_distance_matrices' defines whether the *create_input_landscape* function will create one large distance matrix for all suitable sites (calculate_full_distance_matrices=TRUE) or a list of small distance matrices for the neighboring sites specified in 'directions' around each suitable site (calculate_full_distance_matrices=FALSE). The full distance matrix confers faster computing speed for the model, but requires a larger storage. The local distance matrices cause a slower computing speed, but require smaller storage. The slower speed emerges form the fact that a full distance matrix is then reconstructed by concatenating local distances matrices each time-step during a simulation run. 
-
-The real geographic coordinate system can be provided which allows for the global spherical distance correction. The reference system can be set by using the 'crs' argument of the *create_input_landscape* function. Here we are using the world geodetic system (WGS84) but providing a projected coordinate reference system is also possible. If you want to ensure that all cells have the same area you might consider an equal-area projection, such as the Lambert azimuthal equal-area projection.
-For real landscapes with valid coordinate systems (e.g. *crs="+proj=longlat +datum=WGS84"*), the distance unit is in meters (m). If you would use hypothetical landscapes, such as in the [**design_landscape vignette**](design_landscape.html), geographic distance would be measured in units of sites multiplied by the grid cell resolution.
-
-## Create input files 
-
-The *create_input_landscape* function creates *.rds* files that will be used as input for *gen3sis*. The file path where the landscapes and the distance matrices of all time steps should be stored can be specified within the function.
-```{r eval=FALSE}
-create_input_landscape(landscapes = landscapes_list,
-             cost_function = cost_function_water,
-             directions=8,
-             output_directory = file.path(tempdir(), "SouthAmerica"),
-             timesteps = paste0(seq(65, 0, by=-1), "Ma"),
-             crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
-             calculate_full_distance_matrices = F)
-```
-
-Finally, do not forget to specify the landscape metadata you just created. We recommend storing it in form of a METADATA.txt file within the landscape folder. A template is automatically created by the functions *create_input_landscape* at the correct location.
-Once the input landscape is ready, the *run_simulation* function can start the simulation using the path of the new landscape.
-
+#####
 
 Here our `spaces` object contains temperature and aridity values. We can access the `spaces.rds` object, and create maps of our environmental conditions.
 

@@ -88,7 +88,7 @@ setup_variables <- function(config, data, vars) {
   } else if (is.character(config$gen3sis$general$duration$from)) {
     # warns the user and ignores the string, starting at the earliest time-step
     message(
-      "Config's durantion$from must be numerical. Starting simulation from the first time-step."
+      "Config's duration$from must be numerical. Starting simulation from the first time-step."
     )
     config$gen3sis$general$duration$from <- length(data[["inputs"]][[
       "timesteps"
@@ -138,7 +138,7 @@ setup_variables <- function(config, data, vars) {
     # ignores the string, warns the user and ends at the latest available time-step
     config$gen3sis$general$duration$to <- 0
     message(
-      "Config's durantion$to must be numerical. Ending simulation at the last time-step."
+      "Config's duration$to must be numerical. Ending simulation at the last time-step."
     )
   } else if (is.numeric(config$gen3sis$general$duration$to)) {
     # fetches the end_time and converts from the config time unit to the space time unit
@@ -180,7 +180,7 @@ setup_variables <- function(config, data, vars) {
     # ignores the string, warns the user and ends at the latest available time-step
     config$gen3sis$general$duration$by <- data$inputs$duration$by
     message(
-      "Config's durantion$by must be numerical. Assuming spaces' time-step."
+      "Config's duration$by must be numerical. Assuming spaces' time-step."
     )
   }
 

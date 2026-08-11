@@ -172,7 +172,7 @@ apply_ecology <- function(abundance, traits, environment, config) {
 # 2. "apply_modifiers"
 ## Is called at the start of each time-step
 ## Its used to apply the modifiers computed in the previous time-step.
-## Will recieve the space and the modifiers object.
+## Will receive the space and the modifiers object.
 ## Must return the "space$environment" object.
 ## Only runs if modifiers are not NULL.
 

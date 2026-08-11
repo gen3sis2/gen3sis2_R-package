@@ -209,13 +209,14 @@ conv_unit <- function(x, from, to) {
   return(x * factor[[1]])
 }
 
-#' Convert time units
+#' Check time-step match between config and space
 #'
-#' @param x numeric. The numerical value in "from" unit
-#' @param from character. The unit to convert from
-#' @param to character. The unit to convert to
+#' Warns when `config$gen3sis$general$duration` is not aligned with the space duration.
 #'
-#' @returns The numerical values in "to" unit
+#' @param config gen3sis_config. The simulation configuration
+#' @param data list. The simulation data (must contain `space` and `inputs`)
+#' @param vars list. The simulation variables
+#'
 #' @noRd
 check_time_match <- function(config, data, vars){
   if(config$gen3sis$general$duration$unit != data$inputs$duration$unit) {

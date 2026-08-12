@@ -12,7 +12,7 @@ create_spaces_raster(
   full_dists = FALSE,
   overwrite_output = FALSE,
   verbose = FALSE,
-  duration = list(from = NA, to = NA, by = NA, unit = "Ma"),
+  duration = list(from = NA, to = NA, by = NA, unit = "Myr"),
   geodynamic = NULL,
   ...
 )
@@ -22,22 +22,22 @@ create_spaces_raster(
 NOTE: the list names are important since these are the environmental names}
 
 \item{cost_function}{function that returns a cost value between a pair of sites (neighbors) that should have the following signature:
- \code{cost_function <- 
+ \code{cost_function <-
  function(src, src_habitable, dest, dest_habitable){
  rules for environmental factors to be considered (e.g. elevation)
  return(cost value)
 }}
-where: **src** is a vector of environmental conditions for the origin sites, 
-**src_habitable** (TRUE or FALSE) for habitable condition of the origin sites, 
+where: **src** is a vector of environmental conditions for the origin sites,
+**src_habitable** (TRUE or FALSE) for habitable condition of the origin sites,
 **dest** is a vector of environmental conditions for the destination site, dest_habitable  (TRUE or FALSE) for habitable condition of the destination cell}
 
-\item{directions}{4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see gistance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16.}
+\item{directions}{4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see distance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16.}
 
 \item{output_directory}{path for storing the gen3sis ready space (i.e. space.rds, metadata.txt and full- and/or local_distance folders)}
 
 \item{full_dists}{should a full distance matrix be calculated? TRUE or FALSE? Default is FALSE.
-If TRUE calculates the entire distance matrix for every time-step and between all habitable cells 
-(faster CPU time, higher storage required). 
+If TRUE calculates the entire distance matrix for every time-step and between all habitable cells
+(faster CPU time, higher storage required).
 If FALSE (default), only local distances are calculated (slower CPU time when simulating but smaller gen3sis space size)}
 
 \item{overwrite_output}{TRUE or FALSE}
@@ -46,7 +46,7 @@ If FALSE (default), only local distances are calculated (slower CPU time when si
 
 \item{duration}{list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
 E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
-   \code{duration = list(from = -10, to = 10, by = 5, unit = "Ma")}}
+   \code{duration = list(from = -10, to = 10, by = 5, unit = "Myr")}}
 
 \item{geodynamic}{True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
 i.e. deciding final value based on the input data using \code{?is_geodynamic}.}
@@ -66,7 +66,7 @@ no return object. This function saves the space input files for gen3sis at the o
 Create an spaces input from a named list of rasters or raster files and user defined cost function
 }
 \details{
-This function creates the input spaces.rds files needed by the run_simulation function. 
+This function creates the input spaces.rds files needed by the run_simulation function.
 It uses as input the dynamic rasters and user defined geodesimal corrections as well as rules to define the connection costs between sites
 }
 \examples{
@@ -99,7 +99,7 @@ create_spaces_raster(
   full_dists = TRUE, # save full distance matrices
   overwrite_output = TRUE,
   verbose = TRUE,
-  duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
+  duration = list(from = 65, to = 0, by = -1, unit = "Myr"),
   geodynamic = TRUE
 )
 }

@@ -11,7 +11,7 @@ check_names(reference, datags, error_report = NULL)
 
 \item{datags}{list of which \code{names(datags) is contrastet for reference}}
 
-\item{error_report}{an error report that increases in case mismatches are 
+\item{error_report}{an error report that increases in case mismatches are
 found for each sub-list.
 default is NULL}
 }

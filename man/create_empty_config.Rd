@@ -28,7 +28,7 @@ empty_config <- create_empty_config()
 # directories: input and output directories
 names(empty_config)
 
-# "gen3sis" include the main functions categories 
+# "gen3sis" include the main functions categories
 names(empty_config$gen3sis)
 }
 \keyword{config}

@@ -25,19 +25,19 @@ path_space <- system.file("extdata/TestSpaces/geodynamic_spaces/raster", package
 # 2. Run simulation
 
 sim <- run_simulation(
-  config = path_config, 
+  config = path_config,
   space = path_space,
   output_directory = tempdir())
 
 # 3. Visualize the outputs
 # plot summary of entire simulation
 plot_summary(sim)
-# plot richness at a given time-step 
+# plot richness at a given time-step
 # this only works if species is saved for this time-step
 space_t_3 <- readRDS(file.path(tempdir(),"TestConfig","spaces","space_t_3.rds"))
 species_t_3 <- readRDS(file.path(tempdir(),"TestConfig","species","species_t_3.rds"))
 
-plot_richness(species_t_3, space_t_3)   
+plot_richness(species_t_3, space_t_3)
 }
 }
 \references{
@@ -51,6 +51,8 @@ O. Hagen, B. Flück, F. Fopp, J.S. Cabral, F. Hartig, M. Pontarp, T.F. Rangel, L
 
 Authors:
 \itemize{
+  \item Admir C. de O. Junior \email{admircjunior@gmail.com}
+  \item Bouwe Reijenga \email{bouwe.reijenga@earth.ox.ac.uk}
   \item Benjamin Flück \email{benjamin.flueck@alumni.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland)
   \item Fabian Fopp \email{fabian.fopp@usys.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland)
   \item Juliano S. Cabral \email{juliano.sarmento_cabral@uni-wuerzburg.de} (Ecosystem Modeling, Center for Computational and Theoretical Biology, University of Würzburg, Würzburg, Germany)
@@ -58,14 +60,13 @@ Authors:
   \item Mikael Pontarp \email{mikael.pontarp@biol.lu.se} (Department of Biology, Lund University, Lund, Sweden)
   \item Thiago F. Rangel \email{rangel.tf@gmail.com} (Department of Ecology, Universidade Federal de Goiás, Goiás, Brazil)
   \item Loïc Pellissier \email{loic.pellissier@usys.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland) [thesis advisor]
-  \item Admir C. de O. Junior \email{admircjunior@gmail.com}
 }
 
 Other contributors:
 \itemize{
   \item ETH Zürich [copyright holder]
   \item Charles Novaes de Santana \email{charles.novaes@usys.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland) [contributor]
-  \item Theo Gaboriau \email{theo.gaboriau@unil.ch} (Depatment of Computational Biology, Lausanne University, Switzerland) [contributor]
+  \item Theo Gaboriau \email{theo.gaboriau@unil.ch} (Department of Computational Biology, Lausanne University, Switzerland) [contributor]
 }
 
 }

@@ -296,6 +296,8 @@ We have now generated our necessary spaces objects based on our empirical enviro
 
 #####
 
+Alternatively, you can load our premade `spaces` object.
+
 Here our `spaces` object contains temperature and aridity values. We can access the `spaces.rds` object, and create maps of our environmental conditions.
 
 ```{r eval=T, fig.width=7, fig.height=4, message=F, echo=F, warning=T, results='hide', fig.cap='This figure shows the temperature and aridity of the landscape used in this vignette at 5 and 0Ma.'}
@@ -440,191 +442,136 @@ create_ancestor_species <- function(space, config) {
 ### ***Core Processes***
 
 #### ***Dispersal***
-The dispersal function iterates over all species populations and determines the connectivity between sites and the colonization of new sites in the grid cell. In our example, species dispersal between time-steps is stochastic and similar to all species. It follows a Weibull distribution with shape 1.5 and scale 133. For different dispersal between species, the dispersal trait should be defined. Note that dispersal can be made deterministic by making the function return a fix value. 
+The dispersal function determines, for each species population, the connectivity between sites and the colonization of new sites.
 
->```{r eval=FALSE}
-get_dispersal_values <- function(n, species, landscape, config) {
+In our example, species dispersal between time-steps is stochastic and follows a Weibull distribution. This is consistent between species.
+
+```{r eval=T, fig.width=6, fig.height=3.2}
+# Generate a histogram illustrating the Weibull distribution
+hist(rweibull(1000, shape = 1.5, scale = 133),
+     main = NA, xlab = "Value",
+     col="black")
+```
+
+```{r eval=FALSE}
+# Modify
+get_dispersal_values <- function(n, species, space, config) {
+  stop("calculate dispersal values here")
+}
+# to
+get_dispersal_values <- function(n, species, space, config) {
   values <- rweibull(n, shape = 1.5, scale = 133)
   return(values) 
 }
->```
-
-The histogram of 100 draws from the dispersal function used above.
-
->```{r eval=T, fig.width=6, fig.height=3.2}
-n <- 100
-hist(rweibull(n, shape = 1.5, scale = 133), col="black")
->```
+```
 
 ### ***Speciation***
-The speciation iterates over every species separately, registers populations’ geographic occupancy (species range), and determines when geographic isolation between population clusters is higher than a user-defined threshold, triggering a lineage splitting event of cladogenesis. The clustering of occupied sites is based on the species’ dispersal capacity and the landscape connection costs. Over time, disconnected clusters gradually accumulate incompatibility, analogous to genetic differentiation. When the divergence between clusters is above the speciation threshold, those clusters become two or more distinct species, and a divergence matrix reset follows. On the other hand, if geographic clusters come into secondary contact before the speciation occurs, they coalesce and incompatibilities are gradually reduced to zero. In our example, speciation takes place after 2 time-steps of isolation and the divergence increase is the same for all species as indicated by *get_divergence_threshold*. Since our landscape consists of 1 myr time-steps, these 2 time-steps correspond to a span of 2 myr.
+The speciation function iterates over each existing species, registers its range, and determines when geographic isolation between population clusters is higher than a user-defined threshold, triggering a lineage splitting event (cladogenesis).
 
->```{r eval=FALSE}
-divergence_threshold = 2 
-get_divergence_factor <- function(species, cluster_indices, landscape, config) {
+In our example, we will set speciation to take place after 2 time-steps of isolation. Since our landscape consists of 1 My time-steps, this corresponds to 2 My of isolation needed for species divergence.
+
+```{r eval=FALSE}
+# Modify
+divergence_threshold = NULL
+# to
+divergence_threshold = 2
+```
+
+Using *get_divergence_factor*, we will indicate that the divergence increase is the same for all species. 
+
+```{r eval=FALSE}
+# Modify
+get_divergence_factor <- function(species, cluster_indices, space, config) {
+  stop("calculate divergence factor here")
+}
+# to
+get_divergence_factor <- function(species, cluster_indices, space, config) {
   return(1) 
   }
->```
+```
 
-### ***Evolution***
+### ***Trait evolution***
 
-In the evolution function, clustered populations (exchanging genes) had their trait homogenized and weighted by abundance, meaning that a trait of a population that is doing well in a site, as dictated by the ecology function, will contribute more to the average trait of a cluster. Later, populations mutate based on a normal distribution with standard deviation 0.001, possibly increasing or decreasing species optimum temperature.
+In the trait evolution function, clustered populations (those which can exchange genes) have their trait values summarised. Trait value averaging is weighted by abundance, meaning that the most common trait values will have more influence over the perceived average. After this, mutation of the trait value occurs, based on a normal distribution with standard deviation of 0.001. Here we are only manipulating the "temp" trait, meaning that the optimum temperature value of each population is calculated, then mutated, allowing this value to increase or decrease.
 
->```{r eval=FALSE}
-# mutate the traits of a species and return the new traits matrix
-apply_evolution <- function(species, cluster_indices, landscape, config) {
+```{r eval=FALSE}
+# Modify
+apply_trait_evolution <- function(species, cluster_indices, space, config) {
+  stop("mutate species traits here")
+}
+# to
+apply_trait_evolution <- function(species, cluster_indices, space, config) {
   trait_evolutionary_power <- 0.001
   traits <- species[["traits"]]
   cells <- rownames(traits)
-  #homogenize trait based on abundance
   for(cluster_index in unique(cluster_indices)){
     cells_cluster <- cells[which(cluster_indices == cluster_index)]
     mean_abd <- mean(species$abundance[cells_cluster])
     weight_abd <- species$abundance[cells_cluster]/mean_abd
-    traits[cells_cluster, "temp"] <- mean(traits[cells_cluster, "temp"]*weight_abd)
+    traits[cells_cluster, "temp"] <-
+      mean(traits[cells_cluster, "temp"]*weight_abd)
   }
-  #mutations
-  mutation_deltas <-rnorm(length(traits[, "temp"]), mean=0, sd=trait_evolutionary_power)
+  mutation_deltas <-rnorm(length(traits[, "temp"]), mean = 0,
+                          sd = trait_evolutionary_power)
   traits[, "temp"] <- traits[, "temp"] + mutation_deltas
   return(traits)
 }
->```
+```
 
-###  ***Ecology***
-The ecology function determines the abundance or presence of the populations in occupied sites of each species. The function iterates over all occupied sites and updates the species population abundances or presences on the basis of local environmental values, updated co-occurrence patterns and species traits. The function takes as input the species abundance, species trait, species divergence and clusters, and the landscape values. In our example, we calculate abundances in a site based on how close the species is to the site temperature. We scale the values to avoid small numbers and apply a carrying capacity based on aridity and temperature corrected by the area of a site. If abundances are below 1, species are considered extinct, if total abundance in a site is above the carrying capacity, small abundances are removed progressively and randomly distributed across the present species until total abundance is smaller or equal to the carrying capacity.
+###  ***Ecology: Biotic and Abiotic Interactions***
+The ecology function determines the presence, and abundance, of the populations in occupied sites. Species populations are updated the basis of local environmental values, updated co-occurrence patterns, and species traits.
 
->```{r eval=FALSE}
-apply_ecology <- function(abundance, traits, landscape, config) {
+In our example, we will calculate abundances based on how close the population's optimum temperature value is to the site temperature. We scale the values to avoid small numbers and apply a carrying capacity based on aridity and temperature corrected by the area of a site. If abundances are below 1, species are considered extinct, if total abundance in a site is above the carrying capacity, small abundances are removed progressively and randomly distributed across the present species until total abundance is smaller or equal to the carrying capacity.
+
+```{r eval=FALSE}
+# Modify
+apply_ecology <- function(abundance, traits, environment, config) {
+  stop("calculate species abundances and deaths here")
+}
+# to
+apply_ecology <- function(abundance, traits, space, config) {
   abundance_scale = 10
   abundance_threshold = 1
-  #abundance treashold
-  survive <- abundance>=abundance_threshold
+  survive <- abundance >= abundance_threshold
   abundance[!survive] <- 0
-  abundance <- (( 1-abs( traits[, "temp"] - landscape[, "temp"]))*abundance_scale)*as.numeric(survive)
-  #abundance thhreashold
-  abundance[abundance<abundance_threshold] <- 0
-  k <- ((landscape[,"area"]*(landscape[,"arid"]+0.1)*(landscape[,"temp"]+0.1))*abundance_scale^2)
+  abundance <- ((1 - abs(traits[, "temp"] - space[, "temp"])) *
+                  abundance_scale) * as.numeric(survive)
+  abundance[abundance < abundance_threshold] <- 0
+  k <- ((space[, "area"] * (space[, "arid"] + 0.1) *
+           (space[, "temp"] + 0.1)) *
+          abundance_scale ^ 2)
   total_ab <- sum(abundance)
-  subtract <- total_ab-k
+  subtract <- total_ab - k
   if (subtract > 0) {
-    # print(paste("should:", k, "is:", total_ab, "DIFF:", round(subtract,0) ))
     while (total_ab>k){
-      alive <- abundance>0
-      loose <- sample(1:length(abundance[alive]),1)
-      abundance[alive][loose] <- abundance[alive][loose]-1
+      alive <- abundance > 0
+      loose <- sample(1 : length(abundance[alive]), 1)
+      abundance[alive][loose] <- abundance[alive][loose] - 1
       total_ab <- sum(abundance)
     }
-    #set negative abundances to zero
     abundance[!alive] <- 0
   }
   return(abundance)
 }
->```
-
-## 3. Modify a config {#modify}
-
-A configuration object can be modified by editing a file or the config object in R. Here we will load the *config_southamerica.R* as an R object and modify the initialization of species. Instead of having multiple species that occupy one site each, we will now initialize one species that occurs in all habitable sites and starts with abundance 10.
-
-```{r eval=T}
-# get data path
-datapath <- system.file(file.path("extdata", "SouthAmerica"), package="gen3sis")
-# creates config object from config file
-config_object <- create_input_config(file.path(datapath, "config/config_southamerica.R"))
-
-# modify the initialization function
-config_object$gen3sis$initialization$create_ancestor_species <- function(landscape, config) {
-  range <- c(-95, -24, -68, 13)
-  co <- landscape$coordinates
-  selection <- co[, "x"] >= range[1] &
-    co[, "x"] <= range[2] &
-    co[, "y"] >= range[3] &
-    co[, "y"] <= range[4]
-
-  initial_cells <- rownames(co)[selection]
-  new_species <- create_species(initial_cells, config)
-  #set local adaptation to max optimal temp equals local temp
-  new_species$traits[ , "temp"] <- landscape$environment[initial_cells,"temp"]
-  new_species$traits[ , "dispersal"] <- 1
-  new_species$abundance <- new_species$abundance*10
-  return(list(new_species))
-}
 ```
 
-Additionally, we will now implement a simpler ecology function in our config_object. 
-Abundances in a site are defined by how close the species population optimum temperature is to the site temperature.
-The abundance_threshold parameter defines the niche width cutoff. The higher the value, the narrower is the temperature range of the niche.
+It is also possible to set up ***Biotic Modification of the Environment***, but in this example we will not include this and leave the values to default.
 
-```{r eval=T}
-# modify the ecology function
-config_object$gen3sis$ecology$apply_ecology <- function(abundance, traits, landscape, config, abundance_scale = 10, abundance_threshold = 8) {
-  #abundance threshold
-  abundance <- as.numeric(!abundance<abundance_threshold)
-  abundance <- (( 1-abs( traits[, "temp"] - landscape[, "temp"]))*abundance_scale)*abundance
-  #abundance threshold
-  abundance[abundance<abundance_threshold] <- 0
-  return(abundance)
-}
-```
-
-
-Like so, functions and parameters can be conveniently changed and simulated in gen3sis. Remember that *run_simulation* works either with a path to a config file or config object, so we can run the old and the new modified config.
-
-To compare the initial modified config, we will load the old config and set the old and the new config to run only for 3 time-steps and plot species ranges *plot_ranges* 
-
-```{r eval=T, fig.width=7, fig.height=3}
-config_object_old <- create_input_config(file.path(datapath, "config/config_southamerica.R"))
-
-# define observer
-config_object_old$gen3sis$general$end_of_timestep_observer <- function(data, vars, config){
-  plot_ranges(data$all_species, data$landscape, disturb=0, max_sps=10)
-}
-
-config_object$gen3sis$general$end_of_timestep_observer <- config_object_old$gen3sis$general$end_of_timestep_observer 
-
-# define only 3 time-steps
-config_object_old$gen3sis$general$end_time <- 38
-config_object$gen3sis$general$end_time <- 38
-
-```
-
-Before using the modified configs, test if it is valid. If the function *verify_config* returns TRUE, you are good to go.
+Before using your config, you can test whether it is valid. If the function *verify_config* returns TRUE, you are good to go.
 
 ```{r}
-verify_config(config_object_old)
+# Check whether config settings conform to *gen3sis* requirements
 verify_config(config_object)
-```
-
-Run the modified old config
-
-```{r eval=FALSE, fig.width=7, fig.height=3}
-sim_old <- run_simulation(config = config_object_old,
-               landscape = file.path(datapath, "landscape"),
-               output_directory=tempdir(),
-               call_observer = 4,
-               verbose=0) # no progress printed
-```
-
-And run the modified new config
-
-```{r eval=FALSE, fig.width=7, fig.height=3}
-sim_new <- run_simulation(config = config_object,
-                          landscape = file.path(datapath, "landscape"),
-                          verbose=0, # no progress printed
-                          output_directory=tempdir())
 ```
 
 #####
 
-The **configuration** file is where we define all the ecological and evolutionary equations and parameters, describing the rules of our virtual planet.
-
-We already have a configuration file prepared, which we can view.
+Alternatively, we already have this configuration file prepared, which we can view.
 
 ```{r eval=FALSE, echo=FALSE}
 # Open the config file to view
 file.edit(file.path(datapath, "config/config_southamerica.R"))
 ```
-
-To give a brief overview of the contents, the *initialization* function creates the ancestor species at the start of the simulation. Users can define the number of species, their distribution within the landscape, and their trait values. The *observer* function allows recording any abiotic or biotic information of the virtual world as it changes by defining the outputs that are saved at specified time-steps. The configuration further allows for the definition of eco-evolutionary rules, via inputs on the *speciation* function, the *dispersal* function, the *evolution* function, and the *ecology* function. For more details regarding the configuration file used here and how to modify it, please refer to [**create_config vignette**](create_config.html).
 
 ## 2. Run {#run}
 
@@ -642,7 +589,8 @@ To launch a simulation you need to call the *run_simulation* function. For simpl
 
 ```{r eval=FALSE, echo=TRUE}
 #Run the simulation
-sim <- run_simulation(config = file.path(datapath, "config/config_southamerica.R"), 
+sim <- run_simulation(config = file.path(datapath,
+                                         "config/config_southamerica.R"), 
                space = file.path(datapath, "space"),
                output_directory = tempdir(),
                call_observer = 1,

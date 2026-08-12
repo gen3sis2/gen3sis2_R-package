@@ -38,7 +38,8 @@ In particular, we will go through the following steps:
 
 We will do this using a highly simplified example. Here we will model the evolution of species in South America over the last five million years.
 
-First of all, we will load the packages we need, including the *gen3sis* package. 
+First of all, we will load the packages we need, including the *gen3sis* package.
+
 ```{r setup, message=F}
 # Load packages
 library(gen3sis2)
@@ -64,7 +65,7 @@ datapath <- system.file(file.path("extdata", "SouthAmerica"),
                         package = "gen3sis2")
 
 # View contents of SouthAmerica folder
-#list.files(datapath, recursive = TRUE)
+list.files(datapath, recursive = TRUE)
 ```
 
 Ultimately, our experiment folder should look like this:
@@ -163,7 +164,7 @@ create_spaces_raster(
   # Specify cost function
   cost_function = cost_function_null,
   # Specify name of the directory to save the files in
-  output_directory = "/Users/balle/Documents/test",
+  output_directory = "/Choose/your/directory",
   # Specify number of valid directions for migration (all surrounding cells)
   directions = 8,
   # Specify whether to generate the full distance matrices
@@ -245,7 +246,7 @@ create_spaces_raster(
   # Specify cost function
   cost_function = cost_function_water,
   # Specify name of the directory to save the files in
-  output_directory = "/Users/balle/Documents/test",
+  output_directory = "/Choose/your/directory",
   # Specify number of valid directions for migration (all surrounding cells)
   directions = 8,
   # Specify whether to generate the full distance matrices
@@ -337,7 +338,7 @@ First, to create an empty config, we will use the function *write_config_skeleto
 
 ```{r eval=FALSE, message=FALSE}
 # Write config skeleton in specified folder
-write_config_skeleton("/Users/balle/Documents/test/SouthAmericanConfig.R")
+write_config_skeleton("/Choose/your/directory/SouthAmericanConfig.R")
 ```
 
 If successful, `TRUE` will be printed here.
@@ -346,7 +347,7 @@ We can now open our skeleton file and start populating it.
 
 ```{r eval=FALSE, echo=FALSE}
 # Open the config file to view
-file.edit("/Users/balle/Documents/test/SouthAmericanConfig.R")
+file.edit("/Choose/your/directory/SouthAmericanConfig.R")
 ```
 
 We will briefly explore the different components of the configuration file, entering values and modifying where needed to produce a simple model set-up.
@@ -618,7 +619,7 @@ We can quickly visualize some main results using the `plot_summary()` function.
 plot_summary(sim)
 ```
 
-There are a few visualization tools already included in the package, but you are free to explore and check the outputs with your favorite plotting functions and colors. REFER TO OTHER TUTORIALS
+There are a few visualization tools already included in the package, but you are free to explore and check the outputs with your favorite plotting functions and colors.
 
 ## 4. Analyze {#analyze}
 
@@ -698,16 +699,6 @@ points(space_t0$arid, space_t0$rich, col = rgb(0.5,0.5,0.5, alpha = 0.4), pch=16
 legend(0.4,30, col = c(rgb(0.5,0.5,0.5,0.4), 'blue'), legend = c(n, 'model fit'), pch = c(16, NA), lty = c(NA, 1), lwd = c(NA, 2), bty = 'n')
 ```
 
-Finally, we will fit a multivariate model, explaining species richness by taking into account the two predictors (temperature and aridity) together.
-
-```{r eval=TRUE}
-# Fit generalized linear model with temperature and aridity
-richness_model <- glm(rich ~ poly(temp, 2) + poly(arid, 2), family = 'quasipoisson', data = space_t0)
-summary(richness_model)$coefficients
-```
-
-Above, we reported the explained deviance of the glm model on species richness considering temperature and aridity. The explained deviance of this relationship is D2 = `r round((richness_model$null.deviance - richness_model$deviance) / richness_model$null.deviance,3)`. This explained deviance will not be complete, since there are other factors affecting species richness in our model.
-
 It is important to consider that we have only been analyzing the species richness at one time-step, namely the last one (0 Ma). The emerging patterns are likely not only influenced by the environmental conditions of the present, but also by historical conditions, as well as the complex process interactions enacted by *gen3sis*. 
 
-For more details on how to create a landscape and prepare it to use in *gen3sis* see [**design_landscape vignette**](design_landscape.html) and [**create_input_landscape vignette**](create_input_landscape.html). For more details on how to create or modify a configuration object see [**create_config vignette**](create_config.html). It's now up to you to explore the "virtual" world.
+For more details on how to set up more complex or theoretical analyses, see our other vignettes. It's now up to you to explore the "virtual" world.

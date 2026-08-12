@@ -323,205 +323,103 @@ list.files(file.path(datapath, "space/distances_local"))
 
 ### 1b. Configuration {#configuration}
 
-The configuration object defines the core processes of the system modeled. By defining some run settings the configuration object is essential to define the model to be simulated and facilitates formalization of eco-evolutionary processes.
+The configuration object defines the core processes of the system modeled, formalising eco-evolutionary processes and defining run settings.
 
-- Core functions:  include a custom initialization, observer, speciation, dispersal, evolution and ecology functions. Altogether, these six functions are applied as defined in the simulation engine. The possibility to customize these functions confers the high flexibility and generality of *gen3sis* in terms of including a wide range of theoretical knowledge.
-- Settings: include the ecological traits considered in the simulation; whether a random seed is used thus enabling simulation reproducibility; start and end times of the simulation; and rules about aborting the simulation, including the maximum global or local species number permitted.
+The core functions include custom initialization, observer, speciation, dispersal, evolution and ecology functions. Altogether, these six functions are applied as defined in the simulation engine. The possibility to customize these functions confers the high flexibility and generality of *gen3sis* in terms of including a wide range of theoretical knowledge.
 
-This vignette will guide you trough the config input object. It can be either an R object or a file, that can be easily shared and modified.
+Additional settings include the ecological traits considered in the simulation; whether a random seed is used thus enabling simulation reproducibility; start and end times of the simulation; and rules about aborting the simulation, including the maximum global or local species number permitted.
 
-Here we will:
+For this example, we will generate an empty config file, populate it, and show how it can also be edited.
 
-[1. **Create an empty config**](#create) using the *write_config_skeleton* function. 
-
-[2. **Explain an example config**](#explore) using the config from [**introduction vignette**](introduction.html).
-
-[3. **Modify a config**](#modify) from within R.
-
-
-
-
-```{r setup}
-library(gen3sis)
-```
-
-## 1. Create an empty config {#create}
-
-
-In order to create an empty config, we use the function *write_config_skeleton* and define the output location. For that we have to define where the empty config will be stored.
-
-```{r eval=FALSE}
-# get data path
-datapath <- system.file(file.path("extdata", "EmptyConfig"), package="gen3sis")
-# set config_empty.R file path
-config_file_path <- file.path(tempdir(), "config_empty.R")
-```
-
-And then create an empty config.
+First, to create an empty config, we will use the function *write_config_skeleton*, defining the output location and file name. 
 
 ```{r eval=FALSE, message=FALSE}
-#writes out a config skeleton
-write_config_skeleton(config_file_path)
+# Write config skeleton in specified folder
+write_config_skeleton("/Users/balle/Documents/test/SouthAmericanConfig.R")
 ```
-This is how the *config_empty.R* looks like. We present them by main areas and each part is described briefly. For more information and a hand's on example, see next session.
 
+If successful, `TRUE` will be printed here.
 
-::: {.infobox .caution data-latex="{caution}"}
-> ## **Content of config_empty.R**
->
->***Metadata***
->```{r eval=FALSE}
-# Version: 1.0
-# Author:
-# Date:
-# Landscape:
-# Publications:
-# Description:
->```
->***Settings***
->```{r eval=FALSE}
-# set the random seed for the simulation.
-random_seed = NA
-# set the starting time step or leave NA to use the earliest/highest time-step.
-start_time = NA
-# set the end time step or leave as NA to use the latest/lowest time-step (0).
-end_time = NA
-# maximum total number of species in the simulation before it is aborted.
-max_number_of_species = 25000
-# maximum number of species within one cell before the simulation is aborted.
-max_number_of_coexisting_species = 2500
-# a list of traits to include with each species.
-# a "dispersal" trait is implicitly added in any case.
-trait_names = c("dispersal")
-# ranges to scale the input environments with:
-# not listed variable:         no scaling takes place
-# listed, set to NA:           env. variable will be scaled from [min, max] to [0, 1]
-# listed with a given range r: env. variable will be scaled from [r1, r2] to [0, 1]
-environmental_ranges = list( )
->```
->***Observer***
->```{r eval=FALSE}
-end_of_timestep_observer = function(data, vars, config){
-  # the list of all species can be found in data$all_species.
-  # the current landscape can be found in data$landscape.
-}
->```
->***Initialization***
->```{r eval=FALSE}
-# the initial abundance of a newly colonized cell, both during setup and later when 
-# colonizing a cell during the dispersal.
-initial_abundance = 1
-# place species in the landscape:
-create_ancestor_species <- function(landscape, config) {
- stop("create the initial species here")
-}
->```
->***Core Processes***
->```{r eval=FALSE}
-### Dispersal
-# the maximum range to consider when calculating the distances from local distance inputs.
-max_dispersal <- Inf
-# returns n dispersal values.
-get_dispersal_values <- function(n, species, landscape, config) {
-  stop("calculate dispersal values here")
-}
-### Speciation
-# threshold for genetic distance after which a speciation event takes place.
-divergence_threshold = NULL
-# factor by which the divergence is increased between geographically isolated population.
-# can also be a matrix between the different population clusters.
-get_divergence_factor <- function(species, cluster_indices, landscape, config) {
-  stop("calculate divergence factor here")
-}
-### Evolution
-# mutate the traits of a species and return the new traits matrix.
-apply_evolution <- function(species, cluster_indices, landscape, config) {
-  stop("mutate species traits here")
-}
-### Ecology
-# called for every cell with all occurring species, this function calculates abundances and/or who survives for each sites
-# returns a vector of abundances.
-# set the abundance to 0 for every species supposed to die.
-apply_ecology <- function(abundance, traits, environment, config) {
-  stop("calculate species abundances and deaths here")
-}
->```
-:::
+We can now open our skeleton file and start populating it.
 
-Note that the main core functions have stop warnings by default, this forces the configuration to be edited according to the rules and assumptions (model) that is to be created. You can do this from scratch or by modifying an existing config.
+```{r eval=FALSE, echo=FALSE}
+# Open the config file to view
+file.edit("/Users/balle/Documents/test/SouthAmericanConfig.R")
+```
 
-
-## 2. Explain example config {#explore}
-
-Here we will go bit by bit of the config used at the [**introduction vignette**](introduction.html) vignette. We will follow the structure presented above.
-
-
-### **Content of config_.empty_southamerica.R**
+We will briefly explore the different components of the configuration file, entering values and modifying where needed to produce a simple model set-up.
 
 ### ***Metadata***
-The first section of the config file contains metadata. It informs the user when and by whom the file has been created, which landscape it was made for and informs about associated publications and implemented processes or exploration intentions of the specific configuration.
+The first section contains metadata, such as when and by whom the file has been created, and which spaces object it was made for. It can also include information about intentions of the specific configuration, and any associated publications. This information is designed to be human-readable.
 
->```{r eval=FALSE}
-# Version: 1.0
-# Author: Oskar Hagen
-# Date: 26.10.2020
-# Landscape: SouthAmerica
-# Publications: R-package gen3sis
-# Description: Example config used at the introduction vignette and similar to case study global configs in Hagen et al. 2020.
-# O. Hagen, B. Flück, F. Fopp, J.S. Cabral, F. Hartig, M. Pontarp, T.F. Rangel, L. Pellissier. gen3sis: the general engine for eco-evolutionary simulations on the origins of biodiversity.
->```
+```{r eval=FALSE}
+# Enter your name as the author of the configuration file.
 
+# For `space`, we will enter the geographic extent: South America.
 
-### ***Settings***
-We start our simulation 40 Ma, which corresponds to time step 40 since 1 time-step = 1 myr. We end it a the latest available time-step at the landscape, thus *start_time* is set to *40* and *end_time* is set to NA. We limit the maximum total number of species alive in a simulation to 50000 with *max_number_of_species* and the maximum number of species within one site to 10000 with *max_number_of_coexisting_species*. Like so, simulations that could possible go off hand and generate too many species are stopped and properly flagged at the sgen3sis summary object. We define which traits we will consider in our simulation with *traits_names*, in our example, species only have a dispersal ability and a optimum temperature traits. For our model to work, we normalize the environmental values, according to the range informed at *environmental_ranges*.
+# For `Description`, give a brief outline of the model remit and your goals in running this gen3sis model.
+```
 
->```{r eval=FALSE}
-random_seed = 6
-start_time = 40
-end_time = NA
-max_number_of_species = 50000
-max_number_of_coexisting_species = 10000
-trait_names = c("temp",  "dispersal")
-environmental_ranges = list("temp" = c(-45, 55), "area"=c(2361.5, 12923.4), 
-    "arid"=c(1,0.5))
->```
+### ***General settings***
+Here we are able to set various overarching settings for the model. We can see the option to set a random seed, and set temporal, environmental and biodiversity constraints on the simulation.
+
+We will leave most of these values at the default - for the temporal settings, this means that these values will be inherited from our spaces object.
+
+However, we will alter the traits modeled in our simulation, set using *traits_names*. In addition to the default dispersal ability possessed by our species, we also want them to have optimum temperature traits.
+
+```{r eval=FALSE}
+# Modify
+trait_names = c("dispersal")
+# to
+trait_names = c("temp", "dispersal")
+```
+
+We also need to normalize the environmental values, according to the range informed at *environmental_ranges*.
+
+```{r eval=FALSE}
+# Modify
+environmental_ranges = list( )
+# to
+environmental_ranges = list("temp" = c(-45, 55),
+                            "area" = c(2361.5, 12923.4),
+                            "arid" = c(1, 0.5))
+```
 
 ### ***Observer***
-With the observer function, changes over time in any abiotic or biotic information of the virtual world can be recorded by defining the outputs that are saved at specified time steps, and results can be saved and plotted in real-time as the model runs. 
-In our observer function we save the species and plot the richness. Like so, plots are printed as the simulation progresses and also saved inside the plot folder inside output.
+The observer function is how the virtual world is recorded, defining the outputs that are saved at specified time steps. Results can also be exported and plotted in real time, as the model runs. No settings are provided as defaults here, but a list of example outputs are given in the notes provided.
 
->```{r eval=FALSE}
+Here we will save the species richness, and generate plots in real time, which are also saved inside the plot folder.
+
+```{r eval=FALSE}
+# Modify
+end_of_timestep_observer = function(data, vars, config){
+}
+# to
 end_of_timestep_observer = function(data, vars, config){
   save_species()
-  plot_richness(data$all_species, data$landscape)
+  plot_richness(data$all_species, data$space)
 }
->```
-
-Combined plots can be generated inside the observer function as for example:
-
->```{r eval=FALSE}
-end_of_timestep_observer = function(data, vars, config){
-    par(mfrow=c(2,3))
-    plot_raster_single(data$landscape$environment[,"temp"], data$landscape, "temp", NA)
-    plot_raster_single(data$landscape$environment[,"arid"], data$landscape, "arid", NA)
-    plot_raster_single(data$landscape$environment[,"area"], data$landscape, "area", NA)
-    plot_richness(data$all_species, data$landscape)
-    plot_species_presence(data$all_species[[1]], data$landscape)
-    plot(0,type='n',axes=FALSE,ann=FALSE)
-    mtext("STATUS",1)
-}
->```
+```
 
 ### ***Initialization***
-The initialization function creates the ancestor species at the start of the simulation. Users can define the number of ancestor from a single to multiple species, their distribution within the paleolandscape and their trait values.
-In our example, the initial abundance of the 10 ancestor species, as well as the abundance of species on newly colonized sites is 1. We restrict the region of colonization to South America by limiting the range to a spatial extent of *c(-95, -24, -68, 13)*. We then create ten different species, each of which is randomly inhabiting one of the sites of the continent. Thereby all of the sites have an equal probability of being inhabited by a species in the beginning of the simulation. However since the sites vary in their size, the habitation probability per area is not the same for all regions. If you want to correct for that you can consider using an equal area transformation of your coordinates or tweeking sampling functions to account for area correction.
-We set the optimum temperature trait **temp** of each population of the initial species to the environmental temperature. This means, that each population is adapted to the local conditions, as we will see later again at the ecology function. Dispersal is set to one, since it is not allowed to evolve, we use it's maximum value. The function *create_ancestor_species* is expected to return a list of new species, i.e. the ancestor(s) one(s).
+The initialization function creates the ancestral species present at the start of the simulation, using the function `create_ancestor_species()`. Users can define the number of ancestors, their distribution across the paleolandscape, and their trait values.
 
->```{r eval=FALSE}
+In our example, we will generate an initial 10 ancestor species, each of which is randomly inhabiting one site. We will restrict the region of colonization to South America by limiting the range to a spatial extent of *c(-95, -24, -68, 13)*. All sites have an equal probability of being inhabited by a species in the beginning of the simulation.
+
+We will set the optimum temperature trait, **temp**, of each initial species population to the temperature of its site, meaning it is adapted to the local conditions. We will set all ancestral dispersal traits to 1.
+
+```{r eval=FALSE}
+# Retain
 initial_abundance = 1
-create_ancestor_species <- function(landscape, config) {
+
+# Modify
+create_ancestor_species <- function(space, config) {
+ stop("create the initial species here")
+}
+# to
+create_ancestor_species <- function(space, config) {
   range <- c(-95, -24, -68, 13)
-  co <- landscape$coordinates
+  co <- space$coordinates
   selection <- co[, "x"] >= range[1] &
     co[, "x"] <= range[2] &
     co[, "y"] >= range[3] &
@@ -531,14 +429,13 @@ create_ancestor_species <- function(landscape, config) {
     initial_cells <- rownames(co)[selection]
     initial_cells <- sample(initial_cells, 1)
     new_species[[i]] <- create_species(initial_cells, config)
-    #set local adaptation to max optimal temp equals local temp
-    new_species[[i]]$traits[ , "temp"] <- landscape$environment[initial_cells,"temp"]
+    new_species[[i]]$traits[ , "temp"] <-
+      space$environment[initial_cells, "temp"]
     new_species[[i]]$traits[ , "dispersal"] <- 1 
-    plot_species_presence(landscape, species=new_species[[i]])
   }
   return(new_species)
 }
->```
+```
 
 ### ***Core Processes***
 

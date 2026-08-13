@@ -43,7 +43,6 @@ First of all, we will load the packages we need, including the *gen3sis* package
 ```{r setup, message=F}
 # Load packages
 library(gen3sis2)
-library(raster)
 library(terra)
 ```
 
@@ -84,7 +83,7 @@ We will start by preparing the contents of the `space` folder, followed by the `
 ## 1a. Space {#space}
 Our first task is to create the spatial objects ready to input into *gen3sis*. These objects are:
 
-- a `spaces.rds` file, containing (i) the geographic coordinates of the landscape cells, (ii) corresponding information on which cells are occupiable by the organisms modeled (e.g. land or ocean), and (iii) the environmental conditions relevant to the species’ ecology;
+- a `spaces.rds` file, containing (i) the geographic coordinates of the space cells, (ii) corresponding information on which cells are occupiable by the organisms modeled (e.g. land or ocean), and (iii) the environmental conditions relevant to the species’ ecology;
 
 - a series of `.rds` files, one for each time-step, describing distance matrices between the sites.
 
@@ -101,28 +100,25 @@ list.files(file.path(datapath, "input_rasters"))
 We will load the three data files from the example data and convert them to RasterBricks.
 
 ```{r eval=FALSE, message=F}
-# Create temperature RasterBrick
-temperature_brick <- brick(file.path(datapath, "input_rasters/temperature_rasters.grd"), package = "raster")
+# Create temperature SpatRaster
+temperature_raster <- rast(file.path(datapath, "input_rasters/temperature_rasters.grd"))
 
-# Create aridity RasterBrick
-aridity_brick <- brick(file.path(datapath, "input_rasters/aridity_rasters.grd"), package = "raster")
+# Create aridity SpatRaster
+aridity_raster <- rast(file.path(datapath, "input_rasters/aridity_rasters.grd"))
 
-# Create area RasterBrick
-area_brick <- brick(file.path(datapath, "input_rasters/area_rasters.grd"), package = "raster")
+# Create area SpatRaster
+area_raster <- rast(file.path(datapath, "input_rasters/area_rasters.grd"))
 ```
 
 We will now generate a list containing all of the environmental data, with each variable named. It is also possible to create a list using the raster file paths on your hard drive, instead of loading all the data into R.
 
 ```{r eval=FALSE}
-# Create empty list with three elements, each named for a raster
-spaces_list <- list(temp = NULL, arid = NULL, area = NULL)
-
-# Populate each element with the relevant environmental raster
-for(i in 1:nlayers(temperature_brick)){
-  spaces_list$temp <- c(spaces_list$temp, temperature_brick[[i]])
-  spaces_list$arid <- c(spaces_list$arid, aridity_brick[[i]])
-  spaces_list$area <- c(spaces_list$area, area_brick[[i]])
-}
+# Create a list with three elements, each named and corresponding to a raster
+spaces_list <- list(
+  temp = temperature_raster,
+  arid = aridity_raster,
+  area = area_raster
+)
 ```
 
 ## Setting up the distance matrix
@@ -154,13 +150,13 @@ The `crs` argument can also be used to set the geographic coordinate system, all
 
 ```{r, echo=FALSE, eval=FALSE}
 # Generate list containing only temperature data
-landscapes_list_t0 <- list(temp = NULL)
-landscapes_list_t0$temp <- c(landscapes_list_t0$temp, temperature_brick[[1]])
+spaces_list_t0 <- list(temp = NULL)
+spaces_list_t0$temp <- temperature_raster
 
 # Generate spaces object
 create_spaces_raster(
   # Specify list of environmental variables
-  raster_list = landscapes_list_t0,
+  raster_list = spaces_list_t0,
   # Specify cost function
   cost_function = cost_function_null,
   # Specify name of the directory to save the files in
@@ -174,7 +170,9 @@ create_spaces_raster(
   # Specify the timescale
   duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
   # Specify the projection system
-  crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+  crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
+  # Specify if the environment and the available cells change through time
+  geodynamic = TRUE
 )
 
 ```
@@ -184,9 +182,9 @@ create_spaces_raster(
 knitr::include_graphics("../inst/extdata/SouthAmerica/images/const_cost.png")
 
 #dist_matrix_null_t0 <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/distances_full/distances_full_0.rds'))
-#landscapes_null <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/landscapes.rds'))
+#landscapes_null <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/spaces.rds'))
 
-#landscapes_null <- readRDS('inst/extdata/SouthAmerica/landscape/landscapes.rds')
+#landscapes_null <- readRDS('inst/extdata/SouthAmerica/space/spaces.rds')
 #landscapes_null_t0 <- na.omit(landscapes_null$temp[, c('x', 'y', '0')])
 
 #dist_null_t0_mat <- cbind(landscapes_null_t0[,c('x', 'y')], cost=as.numeric(dist_matrix_null_t0[,1300]))
@@ -242,7 +240,7 @@ We can now create new spaces objects with this more complex cost function.
 # Generate spaces object
 create_spaces_raster(
   # Specify list of environmental variables
-  raster_list = spaces_list,
+  raster_list = spaces_list_t0,
   # Specify cost function
   cost_function = cost_function_water,
   # Specify name of the directory to save the files in
@@ -256,15 +254,17 @@ create_spaces_raster(
   # Specify the timescale
   duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
   # Specify the projection system
-  crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+  crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
+  # Specify if the environment and the available cells change through time
+  geodynamic = TRUE
 )
 ```
 
 ```{r, eval=TRUE, echo=FALSE, fig.width=4, fig.height=7, fig.align='center', fig.cap='By using a cost function which penalises the crossing of water, the cost of travelling from our cell in the middle of South America to Antarctica increases to 5204.'}
 knitr::include_graphics("../inst/extdata/SouthAmerica/images/var_cost.png")
-# dist_matrix_water_t0 <- readRDS('inst/extdata/SouthAmerica/landscape/distances_full/cost_function_water/distances_full/distances_full_0.rds')
-# # C:\VITAL LOCAL\Meus Documentos\ETH PhD\Code\R\package\Gen3sis\inst\extdata\SouthAmerica\landscape\distances_full\cost_function_null\distances_full
-# landscapes_water <- readRDS('inst/extdata/SouthAmerica/landscape/andscapes.rds')
+# dist_matrix_water_t0 <- readRDS('inst/extdata/SouthAmerica/space/distances_full/cost_function_water/distances_full/distances_full_0.rds')
+# # C:\VITAL LOCAL\Meus Documentos\ETH PhD\Code\R\package\Gen3sis\inst\extdata\SouthAmerica\space\distances_full\cost_function_null\distances_full
+# landscapes_water <- readRDS('inst/extdata/SouthAmerica/space/andscapes.rds')
 # landscapes_water_t0 <- na.omit(landscapes_water$temp[, c('x', 'y', '0')])
 # dist_water_t0_mat <- cbind(landscapes_water_t0[,c('x', 'y')], cost=as.numeric(dist_matrix_water_t0[,1300]))
 # dist_water_t0 <- rasterFromXYZ(dist_water_t0_mat)
@@ -291,9 +291,9 @@ knitr::include_graphics("../inst/extdata/SouthAmerica/images/var_cost.png")
 #    axis.args=list(at=seq(mincost, maxcost, 500),labels=seq(mincost, maxcost, 500)), legend.args=list(text='connection cost'))
 ```
 
-Finally, do not forget to specify the landscape metadata you just created. We recommend storing it in form of a METADATA.txt file within the spaces folder. A template is automatically created at the correct location.
+Finally, do not forget to specify the space metadata you just created. We recommend storing it in form of a METADATA.txt file within the spaces folder. A template is automatically created at the correct location.
 
-We have now generated our necessary spaces objects based on our empirical environmental data. Alternatively, if you want to see an example of how you can create a virtual dynamic landscape from scratch, please refer to the [**design_landscape vignette**](design_landscape.html).
+We have now generated our necessary spaces objects based on our empirical environmental data. Alternatively, if you want to see an example of how you can create a virtual dynamic space from scratch, please refer to the [**design_landscape vignette**](design_landscape.html).
 
 #####
 
@@ -301,13 +301,13 @@ Alternatively, you can load our premade `spaces` object.
 
 Here our `spaces` object contains temperature and aridity values. We can access the `spaces.rds` object, and create maps of our environmental conditions.
 
-```{r eval=T, fig.width=7, fig.height=4, message=F, echo=F, warning=T, results='hide', fig.cap='This figure shows the temperature and aridity of the landscape used in this vignette at 5 and 0Ma.'}
+```{r eval=T, fig.width=7, fig.height=4, message=F, echo=F, warning=T, results='hide', fig.cap='This figure shows the temperature and aridity of the space used in this vignette at 5 and 0Ma.'}
 # Read the spaces object
 spaces <- readRDS(file.path(datapath, "space/spaces.rds"))
 
 # Create rasters for temperature data, for start and end timestep
-temp_5 <- rasterFromXYZ(spaces$env$temp[, c(1,2,3)])
-temp_0 <- rasterFromXYZ(spaces$env$temp[, c(1,2,8)])
+temp_5 <- rast(spaces$env$temp[, c(1,2,3)], "xyz")
+temp_0 <- rast(spaces$env$temp[, c(1,2,8)], "xyz")
 
 # Plot temperature at 5Ma and 0Ma
 plot(temp_0); plot(temp_5)
@@ -315,7 +315,7 @@ plot(temp_0); plot(temp_5)
 
 To see how to create a space object, refer to [**design_landscape vignette**](design_landscape.html) and [**create_input_landscape vignette**](create_input_landscape.html).
 
-The second landscape class defines the permeability of the landscape for species movement between cells via dispersal. The connection cost between sites is computed for each time step from the gridded landscape data based on haversine geographic distances modified by a user-defined cost function. Distance matrices containing the connection costs are provided at every time step, as either: (i) a pre-computed full distance matrix, containing all habitable cells in the landscape (faster simulations but more storage required); or (ii) a local distance matrix, computed from neighboring site distances up to a user-defined range limit (slower simulations but less storage required).
+The second space class defines the permeability of the space for species movement between cells via dispersal. The connection cost between sites is computed for each time step from the gridded space data based on haversine geographic distances modified by a user-defined cost function. Distance matrices containing the connection costs are provided at every time step, as either: (i) a pre-computed full distance matrix, containing all habitable cells in the space (faster simulations but more storage required); or (ii) a local distance matrix, computed from neighboring site distances up to a user-defined range limit (slower simulations but less storage required).
 
 We can see these already generated in our `space/distances_local` repository, with one matrix for each time step.
    
@@ -469,7 +469,7 @@ get_dispersal_values <- function(n, species, space, config) {
 ### ***Speciation***
 The speciation function iterates over each existing species, registers its range, and determines when geographic isolation between population clusters is higher than a user-defined threshold, triggering a lineage splitting event (cladogenesis).
 
-In our example, we will set speciation to take place after 2 time-steps of isolation. Since our landscape consists of 1 My time-steps, this corresponds to 2 My of isolation needed for species divergence.
+In our example, we will set speciation to take place after 2 time-steps of isolation. Since our space consists of 1 My time-steps, this corresponds to 2 My of isolation needed for species divergence.
 
 ```{r eval=FALSE}
 # Modify
@@ -578,9 +578,9 @@ file.edit(file.path(datapath, "config/config_southamerica.R"))
 
 Now that we have set up our input files, we can run a simulation using the *run_simulation* function. This function will:
 
-1) Read in the config and initial landscape, and call *create_ancestor_species* from the user config to create the initial species distributions for the simulation.
+1) Read in the config and initial space, and call *create_ancestor_species* from the user config to create the initial species distributions for the simulation.
 
-2) Loop over the time-steps. For every time-step the appropriate landscape is loaded, and eco-evolutionary processes are implemented.
+2) Loop over the time-steps. For every time-step the appropriate space is loaded, and eco-evolutionary processes are implemented.
 
 3) At the end of every time-step, the simulation saves the species, landscapes, species richness patterns, etc... by calling the *end_of_timestep_observer* from the user config.
 

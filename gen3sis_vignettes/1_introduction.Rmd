@@ -21,7 +21,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r tidy=T, out.width='70%', echo=F, fig.cap='*gen3sis*: **gen**eral **e**ngine for **e**co-**e**volutionary **si**mulation**s**', fig.margin=F}
-knitr::include_graphics("../inst/logo/gen3sis_logo.png")
+knitr::include_graphics("../man/figures/gen3sis_logo.png")
+# knitr::include_graphics("../inst/logo/gen3sis_logo.png")
 ```
 
 In this vignette you will be introduced to *gen3sis*, an engine for simulating various spatial eco-evolutionary models. Here we will create a virtual planet, populate it and implement evolution, then examine our virtual species.
@@ -526,20 +527,20 @@ In our example, we will calculate abundances based on how close the population's
 
 ```{r eval=FALSE}
 # Modify
-apply_ecology <- function(abundance, traits, environment, config) {
+apply_ecology <- function(abundance, traits, local_environment, config) {
   stop("calculate species abundances and deaths here")
 }
 # to
-apply_ecology <- function(abundance, traits, space, config) {
+apply_ecology <- function(abundance, traits, local_environment, config) {
   abundance_scale = 10
   abundance_threshold = 1
   survive <- abundance >= abundance_threshold
   abundance[!survive] <- 0
-  abundance <- ((1 - abs(traits[, "temp"] - space[, "temp"])) *
+  abundance <- ((1 - abs(traits[, "temp"] - local_environment[, "temp"])) *
                   abundance_scale) * as.numeric(survive)
   abundance[abundance < abundance_threshold] <- 0
-  k <- ((space[, "area"] * (space[, "arid"] + 0.1) *
-           (space[, "temp"] + 0.1)) *
+  k <- ((local_environment[, "area"] * (local_environment[, "arid"] + 0.1) *
+           (local_environment[, "temp"] + 0.1)) *
           abundance_scale ^ 2)
   total_ab <- sum(abundance)
   subtract <- total_ab - k
@@ -560,7 +561,7 @@ It is also possible to set up ***Biotic Modification of the Environment***, but 
 
 Before using your config, you can test whether it is valid. If the function *verify_config* returns TRUE, you are good to go.
 
-```{r}
+```{r, eval=FALSE}
 # Check whether config settings conform to *gen3sis* requirements
 verify_config(config_object)
 ```
@@ -599,7 +600,7 @@ sim <- run_simulation(config = file.path(datapath,
 ```
 
 
-```{r eval=F, echo=F}
+```{r eval=T, echo=F}
 # Load the simulation outputs from the package examples
 sim <- readRDS(file.path(datapath, "output/sgen3sis.rds"))
 ```

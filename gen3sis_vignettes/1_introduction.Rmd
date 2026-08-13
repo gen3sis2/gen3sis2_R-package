@@ -101,13 +101,13 @@ list.files(file.path(datapath, "input_rasters"))
 We will load the three data files from the example data and convert them to RasterBricks.
 
 ```{r eval=FALSE, message=F}
-# Create temperature SpatRaster
+# Create a SpatRaster of the temperature change through time
 temperature_raster <- rast(file.path(datapath, "input_rasters/temperature_rasters.grd"))
 
-# Create aridity SpatRaster
+# Create a SpatRaster of the aridity change through time
 aridity_raster <- rast(file.path(datapath, "input_rasters/aridity_rasters.grd"))
 
-# Create area SpatRaster
+# Create a SpatRaster of the cell area (static in time)
 area_raster <- rast(file.path(datapath, "input_rasters/area_rasters.grd"))
 ```
 

@@ -51,6 +51,7 @@ O. Hagen, B. Flück, F. Fopp, J.S. Cabral, F. Hartig, M. Pontarp, T.F. Rangel, L
 
 Authors:
 \itemize{
+  \item Oskar Hagen \email{oskar@hagen.bio} (space Ecology, WSL and ETH Zürich, Switzerland)
   \item Admir C. de O. Junior \email{admircjunior@gmail.com}
   \item Bouwe Reijenga \email{bouwe.reijenga@earth.ox.ac.uk}
   \item Benjamin Flück \email{benjamin.flueck@alumni.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland)

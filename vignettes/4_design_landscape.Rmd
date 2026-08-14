@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width=7,
-  tidy=T,
+  tidy=F,
   fig.align='center',
   tidy.opts = list(width.cutoff=80)
 )
@@ -58,8 +58,8 @@ Our conceptual island has it's number of sites and environmental values changing
 
 
 
-```{r tidy=T, out.width='100%', echo=F, fig.cap='A1: Animation of the conceptual island that we will create as an input landscape for gen3sis.', fig.margin=T}
-knitr::include_graphics("../inst/extdata/CaseStudy1/landscape/case_study_landscape.gif")
+```{r tidy=F, out.width='100%', echo=F, fig.cap='A1: Animation of the conceptual island that we will create as an input landscape for gen3sis.', fig.margin=T}
+#knitr::include_graphics("../inst/extdata/CaseStudy1/landscape/case_study_landscape.gif")
 ```
 
 

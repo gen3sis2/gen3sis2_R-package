@@ -33,7 +33,9 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a-create-input-space.html">2. Creating spaces: the basics (gen3sis2 input)</a></li>
+<li><a class="dropdown-item" href="../articles/1_introduction.html">1. Introducing gen3sis</a></li>
+    <li><a class="dropdown-item" href="../articles/4_design_landscape.html">4. Example designing landscapes</a></li>
+    <li><a class="dropdown-item" href="../articles/a-create-input-space.html">2. Creating spaces: the basics (gen3sis2 input)</a></li>
     <li><a class="dropdown-item" href="../articles/b-cost-functions-mtx-symmetry.html">2.1 Creating spaces: cost functions and matrices symmetry</a></li>
     <li><a class="dropdown-item" href="../articles/c-create-config.html">3. Creating configurations (gen3sis input)</a></li>
     <li><a class="dropdown-item" href="../articles/d-custom-plot-aesthetics.html">4. Plotting stuff</a></li>
@@ -64,7 +66,7 @@
 
       <h1>4. Plotting stuff</h1>
             
-            <h4 data-toc-skip class="date">30.07.2026</h4>
+            <h4 data-toc-skip class="date">14.08.2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/project-Gen3sis/R-package/blob/development/vignettes/d-custom-plot-aesthetics.Rmd" class="external-link"><code>vignettes/d-custom-plot-aesthetics.Rmd</code></a></small>
       <div class="d-none name"><code>d-custom-plot-aesthetics.Rmd</code></div>
@@ -151,7 +153,7 @@ the simulation:</p>
 <span>  output_directory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## config found:  /home/runner/work/_temp/Library/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /home/runner/work/_temp/Library/gen3sis2/extdata/SouthAmerica/space </span></span>
-<span><span class="co">## Output directory is: /tmp/RtmpSaop48/config_southamerica</span></span></code></pre>
+<span><span class="co">## Output directory is: /tmp/RtmprHpgBt/config_southamerica</span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "inputs" "space"</span></span></code></pre>
@@ -298,7 +300,7 @@ from all plots in the session, by overriding package’s options:</p>
 <span><span class="co">##             axis.text = element_blank(), axis.ticks = element_blank()), </span></span>
 <span><span class="co">##         ggplot2::labs(title = title), ggplot2::coord_fixed(ratio = 1))</span></span>
 <span><span class="co">## }</span></span>
-<span><span class="co">## &lt;bytecode: 0x5601c13850d0&gt;</span></span>
+<span><span class="co">## &lt;bytecode: 0x556c2b42c450&gt;</span></span>
 <span><span class="co">## &lt;environment: namespace:gen3sis2&gt;</span></span></code></pre>
 <p>Now, let’s override it, defining our own aesthetics:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">

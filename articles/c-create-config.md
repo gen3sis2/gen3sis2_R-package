@@ -516,20 +516,12 @@ Before using the modified configs, test if it is valid. If the function
 ``` r
 
 verify_config(config_object_old)
-#> These settings must be set in the configuration:
-#> trait_evolution
-#> - apply_trait_evolution
-#> space_modifier
-#> - get_modifiers
-#> - apply_modifiers
+#> Time unit '' is not accepted. 
+#> Accepted time units are: yr Kyr Myr Gyr timestep
 #> [1] FALSE
 verify_config(config_object)
-#> These settings must be set in the configuration:
-#> trait_evolution
-#> - apply_trait_evolution
-#> space_modifier
-#> - get_modifiers
-#> - apply_modifiers
+#> Time unit '' is not accepted. 
+#> Accepted time units are: yr Kyr Myr Gyr timestep
 #> [1] FALSE
 ```
 

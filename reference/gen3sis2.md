@@ -37,6 +37,9 @@ ETH Zürich, Switzerland)
 
 Authors:
 
+- Oskar Hagen <oskar@hagen.bio> (space Ecology, WSL and ETH Zürich,
+  Switzerland)
+
 - Admir C. de O. Junior <admircjunior@gmail.com>
 
 - Bouwe Reijenga <bouwe.reijenga@earth.ox.ac.uk>

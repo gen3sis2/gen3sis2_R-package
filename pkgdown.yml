@@ -2,10 +2,12 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  1_introduction: 1_introduction.html
+  4_design_landscape: 4_design_landscape.html
   a-create-input-space: a-create-input-space.html
   b-cost-functions-mtx-symmetry: b-cost-functions-mtx-symmetry.html
   c-create-config: c-create-config.html
   d-custom-plot-aesthetics: d-custom-plot-aesthetics.html
   e-daisy-world: e-daisy-world.html
   h-support-functions: h-support-functions.html
-last_built: 2026-07-30T23:51Z
+last_built: 2026-08-14T14:05Z

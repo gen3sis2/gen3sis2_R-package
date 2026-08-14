@@ -33,7 +33,9 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a-create-input-space.html">2. Creating spaces: the basics (gen3sis2 input)</a></li>
+<li><a class="dropdown-item" href="../articles/1_introduction.html">1. Introducing gen3sis</a></li>
+    <li><a class="dropdown-item" href="../articles/4_design_landscape.html">4. Example designing landscapes</a></li>
+    <li><a class="dropdown-item" href="../articles/a-create-input-space.html">2. Creating spaces: the basics (gen3sis2 input)</a></li>
     <li><a class="dropdown-item" href="../articles/b-cost-functions-mtx-symmetry.html">2.1 Creating spaces: cost functions and matrices symmetry</a></li>
     <li><a class="dropdown-item" href="../articles/c-create-config.html">3. Creating configurations (gen3sis input)</a></li>
     <li><a class="dropdown-item" href="../articles/d-custom-plot-aesthetics.html">4. Plotting stuff</a></li>
@@ -64,7 +66,7 @@
 
       <h1>3. Creating configurations (gen3sis input)</h1>
             
-            <h4 data-toc-skip class="date">30.07.2026</h4>
+            <h4 data-toc-skip class="date">14.08.2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/project-Gen3sis/R-package/blob/development/vignettes/c-create-config.Rmd" class="external-link"><code>vignettes/c-create-config.Rmd</code></a></small>
       <div class="d-none name"><code>c-create-config.Rmd</code></div>
@@ -558,20 +560,12 @@ species ranges <em>plot_ranges</em></p>
 function <em>verify_config</em> returns TRUE, you are good to go.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/verify_config.html">verify_config</a></span><span class="op">(</span><span class="va">config_object_old</span><span class="op">)</span></span>
-<span><span class="co">#&gt; These settings must be set in the configuration:</span></span>
-<span><span class="co">#&gt; trait_evolution</span></span>
-<span><span class="co">#&gt; - apply_trait_evolution</span></span>
-<span><span class="co">#&gt; space_modifier</span></span>
-<span><span class="co">#&gt; - get_modifiers</span></span>
-<span><span class="co">#&gt; - apply_modifiers</span></span>
+<span><span class="co">#&gt; Time unit '' is not accepted. </span></span>
+<span><span class="co">#&gt; Accepted time units are: yr Kyr Myr Gyr timestep</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span>
 <span><span class="fu"><a href="../reference/verify_config.html">verify_config</a></span><span class="op">(</span><span class="va">config_object</span><span class="op">)</span></span>
-<span><span class="co">#&gt; These settings must be set in the configuration:</span></span>
-<span><span class="co">#&gt; trait_evolution</span></span>
-<span><span class="co">#&gt; - apply_trait_evolution</span></span>
-<span><span class="co">#&gt; space_modifier</span></span>
-<span><span class="co">#&gt; - get_modifiers</span></span>
-<span><span class="co">#&gt; - apply_modifiers</span></span>
+<span><span class="co">#&gt; Time unit '' is not accepted. </span></span>
+<span><span class="co">#&gt; Accepted time units are: yr Kyr Myr Gyr timestep</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
 <p>Run the modified old config</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">

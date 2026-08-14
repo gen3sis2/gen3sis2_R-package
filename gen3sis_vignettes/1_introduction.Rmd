@@ -169,7 +169,7 @@ create_spaces_raster(
   # Specify whether to overwrite if files already exist
   overwrite_output = FALSE,
   # Specify the timescale
-  duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
+  duration = list(from = 65, to = 0, by = -1, unit = "Myr"),
   # Specify the projection system
   crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
   # Specify if the environment and the available cells change through time
@@ -253,7 +253,7 @@ create_spaces_raster(
   # Specify whether to overwrite if files already exist
   overwrite_output = FALSE,
   # Specify the timescale
-  duration = list(from = 65, to = 0, by = -1, unit = "Ma"),
+  duration = list(from = 65, to = 0, by = -1, unit = "Myr"),
   # Specify the projection system
   crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
   # Specify if the environment and the available cells change through time
@@ -700,6 +700,6 @@ points(space_t0$arid, space_t0$rich, col = rgb(0.5,0.5,0.5, alpha = 0.4), pch=16
 legend(0.4,30, col = c(rgb(0.5,0.5,0.5,0.4), 'blue'), legend = c(n, 'model fit'), pch = c(16, NA), lty = c(NA, 1), lwd = c(NA, 2), bty = 'n')
 ```
 
-It is important to consider that we have only been analyzing the species richness at one time-step, namely the last one (0 Ma). The emerging patterns are likely not only influenced by the environmental conditions of the present, but also by historical conditions, as well as the complex process interactions enacted by *gen3sis*. 
+It is important to consider that we have only been analyzing the species richness at one time-step, namely the last one (0 Myr). The emerging patterns are likely not only influenced by the environmental conditions of the present, but also by historical conditions, as well as the complex process interactions enacted by *gen3sis*. 
 
 For more details on how to set up more complex or theoretical analyses, see our other vignettes. It's now up to you to explore the "virtual" world.

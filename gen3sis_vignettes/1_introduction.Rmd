@@ -152,14 +152,10 @@ The `crs` argument can also be used to set the geographic coordinate system, all
 Finally, the `geodynamic` argument informs the function of whether the environmental rasters (including cell area) change through time. We have one raster for each 1My of our simulation, so we set this value to `TRUE`.
 
 ```{r, echo=FALSE, eval=FALSE}
-# Generate list containing only temperature data
-spaces_list_t0 <- list(temp = NULL)
-spaces_list_t0$temp <- temperature_raster
-
 # Generate spaces object
 create_spaces_raster(
   # Specify list of environmental variables
-  raster_list = spaces_list_t0,
+  raster_list = spaces_list,
   # Specify cost function
   cost_function = cost_function_null,
   # Specify name of the directory to save the files in
@@ -177,124 +173,9 @@ create_spaces_raster(
   # Specify if the environment and the available cells change through time
   geodynamic = TRUE
 )
-
 ```
 
-
-```{r, eval=T, echo=FALSE, fig.width=4, fig.height=7, fig.cap='This figure shows the connection costs from one site in the middle of South America to all other sites. To travel to the site of Antarctica that is indicated with the arrow, the travelling cost is 3790. The distance matrix was computed using the very simple cost function that has been introduced before and is not adding any penalty.', fig.align='center'}
-knitr::include_graphics("../inst/extdata/SouthAmerica/images/const_cost.png")
-
-#dist_matrix_null_t0 <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/distances_full/distances_full_0.rds'))
-#landscapes_null <- readRDS(file.path(datapath, 'CostFunctionExamples/cost_function_null/spaces.rds'))
-
-#landscapes_null <- readRDS('inst/extdata/SouthAmerica/space/spaces.rds')
-#landscapes_null_t0 <- na.omit(landscapes_null$temp[, c('x', 'y', '0')])
-
-#dist_null_t0_mat <- cbind(landscapes_null_t0[,c('x', 'y')], cost=as.numeric(dist_matrix_null_t0[,1300]))
-#dist_null_t0 <- rasterFromXYZ(dist_null_t0_mat)
-
-#maxcost <- 6200
-#mincost <- 0
-#cost_breaks <- seq(mincost, maxcost, by=20)
-#cost_colors <- rev(gray(seq(0.03, 0.9, length.out=length(cost_breaks)-1)))
-
-#par(mar=c(1,2,1,2))
-#layout(matrix(c(1,1,1,1,2), ncol=1))
-
-#par(mar=c(1,1,1,2))
-#image(dist_null_t0, col=cost_colors, breaks=cost_breaks)
-#plot(dist_null_t0, col=cost_colors, breaks=cost_breaks, axes=F, box=F, legend.args = list(text = 'connection cost', side = 2, 
-#         font = 2, line = 0.5, cex = 0.8))
-#arrows(-61.5, -30.5, -61.5, -64.5, lwd=3, col='red')
-#text(-55, -40, labels=paste('connection cost =', round(dist_null_t0_mat$cost[dist_null_t0_mat$x==(-61.5) & dist_null_t0_mat$y==(-64.5)], 0)), cex=1.5, font=2)
-
-#plot.new()
-#legend_df <- as.data.frame(cbind(seq(0, length(cost_breaks)-1, length.out=(length(cost_breaks))), rep(0.25, (length(cost_breaks))), cost_breaks))
-#legend_image <- rasterFromXYZ(legend_df, res=0.01)
-#plot(legend_image, legend.only=T, col=cost_colors, horizontal=T, smallplot=c(0.2, 0.8, 0.45, 0.6), 
-#   axis.args=list(at=seq(mincost, maxcost, 500),labels=seq(mincost, maxcost, 500)), legend.args=list(text='connection cost'))
-```
-
-For a slightly more sophisticated cost function, we will now create a scenario where:
-- only sites which have environmental values (no NAs) are considered habitable
-- migration to suitable terrestrial sites has a cost penalty of one (x1)
-- dispersal over water sites doubles (x2) the cost of dispersal. 
-
-```{r eval=FALSE}
-# Define more complex cost function
-cost_function_water <- function(source,
-                                habitable_src,
-                                dest,
-                                habitable_dest) {
-  # If not all of the cells between the origin and destination are habitable...
-  if(!all(habitable_src, habitable_dest)) {
-    # ... impose a cost of 2
-    return(2/1000)
-    # Otherwise, impose a cost of 1
-  } else {
-    return(1/1000)
-  }
-}
-```
-
-We can now create new spaces objects with this more complex cost function.
-
-```{r, echo=FALSE, eval=FALSE}
-# Generate spaces object
-create_spaces_raster(
-  # Specify list of environmental variables
-  raster_list = spaces_list_t0,
-  # Specify cost function
-  cost_function = cost_function_water,
-  # Specify name of the directory to save the files in
-  output_directory = "/Choose/your/directory",
-  # Specify number of valid directions for migration (all surrounding cells)
-  directions = 8,
-  # Specify whether to generate the full distance matrices
-  full_dists = TRUE,
-  # Specify whether to overwrite if files already exist
-  overwrite_output = FALSE,
-  # Specify the timescale
-  duration = list(from = 65, to = 0, by = -1, unit = "Myr"),
-  # Specify the projection system
-  crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
-  # Specify if the environment and the available cells change through time
-  geodynamic = TRUE
-)
-```
-
-```{r, eval=TRUE, echo=FALSE, fig.width=4, fig.height=7, fig.align='center', fig.cap='By using a cost function which penalises the crossing of water, the cost of travelling from our cell in the middle of South America to Antarctica increases to 5204.'}
-knitr::include_graphics("../inst/extdata/SouthAmerica/images/var_cost.png")
-# dist_matrix_water_t0 <- readRDS('inst/extdata/SouthAmerica/space/distances_full/cost_function_water/distances_full/distances_full_0.rds')
-# # C:\VITAL LOCAL\Meus Documentos\ETH PhD\Code\R\package\Gen3sis\inst\extdata\SouthAmerica\space\distances_full\cost_function_null\distances_full
-# landscapes_water <- readRDS('inst/extdata/SouthAmerica/space/andscapes.rds')
-# landscapes_water_t0 <- na.omit(landscapes_water$temp[, c('x', 'y', '0')])
-# dist_water_t0_mat <- cbind(landscapes_water_t0[,c('x', 'y')], cost=as.numeric(dist_matrix_water_t0[,1300]))
-# dist_water_t0 <- rasterFromXYZ(dist_water_t0_mat)
-# 
-# maxcost <- 6200
-# mincost <- 0
-# cost_breaks <- seq(mincost, maxcost, by=20)
-# cost_colors <- rev(gray(seq(0.03, 0.9, length.out=length(cost_breaks)-1)))
-# 
-# par(mar=c(1,2,1,2))
-# layout(matrix(c(1,1,1,1,2), ncol=1))
-# 
-# #par(mar=c(1,1,1,2))
-# image(dist_water_t0, col=cost_colors, breaks=cost_breaks)
-# #plot(dist_water_t0, col=cost_colors, breaks=cost_breaks, axes=F, box=F, legend.args = list(text = 'connection cost', side = 2, 
-# #         font = 2, line = 0.5, cex = 0.8))
-# arrows(-61.5, -30.5, -61.5, -64.5, lwd=3, col='red')
-# text(-55, -40, labels=paste('connection cost =', round(dist_water_t0_mat$cost[dist_water_t0_mat$x==(-61.5) & dist_water_t0_mat$y==(-64.5)], 0)), cex=1.5, font=2)
-# 
-# plot.new()
-# legend_df <- as.data.frame(cbind(seq(0, length(cost_breaks)-1, length.out=(length(cost_breaks))), rep(0.25, (length(cost_breaks))), cost_breaks))
-# legend_image <- rasterFromXYZ(legend_df, res=0.01)
-# plot(legend_image, legend.only=T, col=cost_colors, horizontal=T, smallplot=c(0.2, 0.8, 0.45, 0.6), 
-#    axis.args=list(at=seq(mincost, maxcost, 500),labels=seq(mincost, maxcost, 500)), legend.args=list(text='connection cost'))
-```
-
-Finally, do not forget to specify the space metadata you just created. We recommend storing it in form of a METADATA.txt file within the spaces folder. A template is automatically created at the correct location.
+Finally, do not forget to specify/describe the space data you just created. We recommend storing it in form of a METADATA.txt file within the spaces folder.
 
 We have now generated our necessary spaces objects based on our empirical environmental data. Alternatively, if you want to see an example of how you can create a virtual dynamic space from scratch, please refer to the [**design_landscape vignette**](design_landscape.html).
 
@@ -315,8 +196,6 @@ temp_0 <- rast(spaces$env$temp[, c(1,2,8)], "xyz")
 # Plot temperature at 5Ma and 0Ma
 plot(temp_0); plot(temp_5)
 ``` 
-
-To see how to create a space object, refer to [**design_landscape vignette**](design_landscape.html) and [**create_input_landscape vignette**](create_input_landscape.html).
 
 The second space class defines the permeability of the space for species movement between cells via dispersal. The connection cost between sites is computed for each time step from the gridded space data based on haversine geographic distances modified by a user-defined cost function. Distance matrices containing the connection costs are provided at every time step, as either: (i) a pre-computed full distance matrix, containing all habitable cells in the space (faster simulations but more storage required); or (ii) a local distance matrix, computed from neighboring site distances up to a user-defined range limit (slower simulations but less storage required).
 

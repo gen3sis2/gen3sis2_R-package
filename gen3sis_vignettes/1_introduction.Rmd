@@ -91,7 +91,7 @@ Our first task is to create the spatial objects ready to input into *gen3sis*. T
 We will generate these using the `create_spaces_raster()` function.
 
 ### Loading the environmental data
-Our first step is to load raster files containing the spatio-temporal distributions of our environmental variables of interest. Here, we will use temperature, aridity and area rasters for South America. Each raster comes in two components, a `.grd` file and a `.gri` file.
+Our first step is to load raster files containing the spatio-temporal distributions of our environmental variables of interest. Here, we will use temperature, aridity and cell area rasters for South America. Each raster comes in two components, a `.grd` file and a `.gri` file.
 
 ```{r eval=TRUE, message=F}
 # View contents of input raster folder
@@ -148,6 +148,8 @@ The argument `full_dists` defines whether one large distance matrix is created f
 The argument `duration` is where we define the time-steps used in the spaces objects. 
 
 The `crs` argument can also be used to set the geographic coordinate system, allowing for global spherical distance correction. Here we are using the world geodetic system (WGS84).
+
+Finally, the `geodynamic` argument informs the function of whether the environmental rasters (including cell area) change through time. We have one raster for each 1My of our simulation, so we set this value to `TRUE`.
 
 ```{r, echo=FALSE, eval=FALSE}
 # Generate list containing only temperature data
@@ -378,15 +380,15 @@ trait_names = c("dispersal")
 trait_names = c("temp", "dispersal")
 ```
 
-We also need to normalize the environmental values, according to the range informed at *environmental_ranges*.
+We also need to normalize the environmental values. We will do this by providing a list of the raster objects to *environmental_ranges*, each given the value `NA`. This will scale each between 0 and 1, based on the minimum and maximum values present in the dataset.
 
 ```{r eval=FALSE}
 # Modify
 environmental_ranges = list( )
 # to
-environmental_ranges = list("temp" = c(-45, 55),
-                            "area" = c(2361.5, 12923.4),
-                            "arid" = c(1, 0.5))
+environmental_ranges = list("temp" = NA,
+                            "area" = NA,
+                            "arid" = NA)
 ```
 
 ### ***Observer***
@@ -401,7 +403,6 @@ end_of_timestep_observer = function(data, vars, config){
 # to
 end_of_timestep_observer = function(data, vars, config){
   save_species()
-  plot_richness(data$all_species, data$space)
 }
 ```
 
@@ -446,7 +447,7 @@ create_ancestor_species <- function(space, config) {
 #### ***Dispersal***
 The dispersal function determines, for each species population, the connectivity between sites and the colonization of new sites.
 
-In our example, species dispersal between time-steps is stochastic and follows a Weibull distribution. This is consistent between species.
+In our example, species dispersal between time-steps is stochastic and follows a Weibull distribution. This distribution can easily be right-skewed, allowing for infrequent long-distance dispersal events. This distribution is consistent between species.
 
 ```{r eval=T, fig.width=6, fig.height=3.2}
 # Generate a histogram illustrating the Weibull distribution

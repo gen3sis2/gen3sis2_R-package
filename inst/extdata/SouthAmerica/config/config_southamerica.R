@@ -39,9 +39,9 @@ trait_names <- c("temp", "dispersal")
 
 # ranges to scale the input environments with:
 environmental_ranges <- list(
-  "temp" = c(-45, 55),
-  "area" = c(2361.5, 12923.4),
-  "arid" = c(1, 0.5)
+  "temp" = NA,
+  "area" = NA,
+  "arid" = NA
 )
 
 ######################################
@@ -51,19 +51,6 @@ environmental_ranges <- list(
 # a place to inspect the internal state of the simulation and collect additional information if desired
 end_of_timestep_observer <- function(data, vars, config) {
   save_species()
-  plot_richness(data$all_species, data$space)
-  # example 1 plot over simulation
-  # par(mfrow=c(2,3))
-  # plot_raster_single(data$space$environment[,"temp"], data$space, "temp", NA)
-  # plot_raster_single(data$space$environment[,"arid"], data$space, "arid", NA)
-  # plot_raster_single(data$space$environment[,"area"], data$space, "area", NA)
-  # plot_richness(data$all_species, data$space)
-  # plot_species_presence(data$all_species[[1]], data$space)
-  # plot(0,type='n',axes=FALSE,ann=FALSE)
-  # mtext("STATUS",1)
-  # example 2 plot over simulations saving plots
-  # plot_richness(data$all_species, data$space)
-  # plot_space(data$space)
 }
 
 ######################################

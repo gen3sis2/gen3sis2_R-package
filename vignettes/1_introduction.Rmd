@@ -33,9 +33,9 @@ In particular, we will go through the following steps:
 
 [2. **Run**](#run) a simulation.
 
-[3. **Visualize**](#visualize) the outputs.
+[3. **Visualise**](#visualise) the outputs.
 
-[4. **Analyze**](#analyze) the outputs.
+[4. **Analyse**](#analyse) the outputs.
 
 We will do this using a highly simplified example. Here we will model the evolution of species in South America over the last five million years.
 
@@ -84,7 +84,7 @@ We will start by preparing the contents of the `space` folder, followed by the `
 ## 1a. Space {#space}
 Our first task is to create the spatial objects ready to input into *gen3sis*. These objects are:
 
-- a `spaces.rds` file, containing (i) the geographic coordinates of the space cells, (ii) corresponding information on which cells are occupiable by the organisms modeled (e.g. land or ocean), and (iii) the environmental conditions relevant to the species’ ecology;
+- a `spaces.rds` file, containing (i) the geographic coordinates of the space cells, (ii) corresponding information on which cells can be occupied by the organisms modeled (e.g. land or ocean), and (iii) the environmental conditions relevant to the species' ecology;
 
 - a series of `.rds` files, one for each time-step, describing distance matrices between the sites.
 
@@ -98,7 +98,7 @@ Our first step is to load raster files containing the spatio-temporal distributi
 list.files(file.path(datapath, "input_rasters"))
 ```
 
-We will load the three data files from the example data and convert them to RasterBricks.
+We will load the three data files from the example data and convert them to SpatRasters.
 
 ```{r eval=FALSE, message=F}
 # Create a SpatRaster of the temperature change through time
@@ -127,9 +127,9 @@ spaces_list <- list(
 ## Setting up the distance matrix
 The second step is to determine the distances between our sites, which we will do by defining a *cost function*. Essentially we are defining the species' dispersal ability, and therefore whether dispersal between each pair of sites is feasible or not.
 
-First, we will look at a simple case, in which the migration cost is equal to the distance between sites in grid cell units, multiplied by the raster resolution. For landscapes with a coordinate system (*crs*), the cost is defined in meters: by dividing the cost function by 1000, we get the cost of traveling 1 km.
+First, we will look at a simple case, in which the migration cost is equal to the distance between sites in grid cell units, multiplied by the raster resolution. For landscapes with a coordinate system (*crs*), the cost is defined in meters: by dividing the cost function by 1000, we get the cost of travelling 1 km.
 
-We can define a simple cost function in which dispersal is not penalized: 
+We can define a simple cost function in which dispersal is not penalised: 
 
 ```{r eval=FALSE}
 # Define simple cost function, with cost given in kilometers
@@ -183,7 +183,7 @@ We have now generated our necessary spaces objects based on our empirical enviro
 
 #####
 
-Alternatively, you can load our premade `spaces` object.
+Alternatively, you can load our pre-made `spaces` object.
 
 Here our `spaces` object contains temperature and aridity values. We can access the `spaces.rds` object, and create maps of our environmental conditions.
 
@@ -212,7 +212,7 @@ list.files(file.path(datapath, "space/distances_local"))
 
 The configuration object defines the core processes of the system modeled, formalising eco-evolutionary processes and defining run settings.
 
-The core functions include custom initialization, observer, speciation, dispersal, evolution and ecology functions. Altogether, these six functions are applied as defined in the simulation engine. The possibility to customize these functions confers the high flexibility and generality of *gen3sis* in terms of including a wide range of theoretical knowledge.
+The core functions include custom initialization, observer, speciation, dispersal, evolution and ecology functions. Altogether, these six functions are applied as defined in the simulation engine. The possibility to customise these functions confers the high flexibility and generality of *gen3sis* in terms of including a wide range of theoretical knowledge.
 
 Additional settings include the ecological traits considered in the simulation; whether a random seed is used thus enabling simulation reproducibility; start and end times of the simulation; and rules about aborting the simulation, including the maximum global or local species number permitted.
 
@@ -261,7 +261,7 @@ trait_names = c("dispersal")
 trait_names = c("temp", "dispersal")
 ```
 
-We also need to normalize the environmental values. We will do this by providing a list of the raster objects to *environmental_ranges*, each given the value `NA`. This will scale each between 0 and 1, based on the minimum and maximum values present in the dataset.
+We also need to normalise the environmental values. We will do this by providing a list of the raster objects to *environmental_ranges*, each given the value `NA`. This will scale each between 0 and 1, based on the minimum and maximum values present in the dataset.
 
 ```{r eval=FALSE}
 # Modify
@@ -288,7 +288,7 @@ end_of_timestep_observer = function(data, vars, config){
 ```
 
 ### ***Initialization***
-The initialization function creates the ancestral species present at the start of the simulation, using the function `create_ancestor_species()`. Users can define the number of ancestors, their distribution across the paleolandscape, and their trait values.
+The initialization function creates the ancestral species present at the start of the simulation, using the function `create_ancestor_species()`. Users can define the number of ancestors, their distribution across the palaeolandscape, and their trait values.
 
 In our example, we will generate an initial 10 ancestor species, each of which is randomly inhabiting one site. We will restrict the region of colonization to South America by limiting the range to a spatial extent of *c(-95, -24, -68, 13)*. All sites have an equal probability of being inhabited by a species in the beginning of the simulation.
 
@@ -487,26 +487,26 @@ sim <- run_simulation(config = file.path(datapath,
 sim <- readRDS(file.path(datapath, "output/sgen3sis.rds"))
 ```
 
-Additionally to the main functions, *gen3sis* provides several convenience functions to generate input data, configuration files, and plots. Moreover, all functions are accessible to the observer functions, which requests the variables for logging and calculation during the model runs. This allows the output of the simulation to be stored in a format that can be readily analyzed. Here, our config set-up has produced plots of species richness at our starting (5Ma), single observer call (3Ma) and final (0Ma) time steps.
+Additionally to the main functions, *gen3sis* provides several convenience functions to generate input data, configuration files, and plots. Moreover, all functions are accessible to the observer functions, which requests the variables for logging and calculation during the model runs. This allows the output of the simulation to be stored in a format that can be readily analysed. Here, our config set-up has produced plots of species richness at our starting (5Ma), single observer call (3Ma) and final (0Ma) time steps.
 
 After the simulation is finished, output files are automatically stored in a sub-folder called **output**.
 
-## 3. Visualize {#visualize}
+## 3. Visualise {#visualise}
 
 *gen3sis* returns a summary object (of `gen3sis_output` class) at the end of the simulation, storing default summary statistics and important data over time. Here we stored the summary object as *sim*, as well as saving it to the **output** folder.
 
-We can quickly visualize some main results using the `plot_summary()` function. 
+We can quickly visualise some main results using the `plot_summary()` function. 
 
 ```{r eval=TRUE, fig.width=7, fig.height=7}
 # Plot main summary statistics
 plot_summary(sim)
 ```
 
-There are a few visualization tools already included in the package, but you are free to explore and check the outputs with your favorite plotting functions and colors.
+There are a few visualization tools already included in the package, but you are free to explore and check the outputs with your favourite plotting functions and colors.
 
-## 4. Analyze {#analyze}
+## 4. Analyse {#analyse}
 
-We are now ready to perform analyses to investigate the model's behavior. Typically this will be the way in which we determine how our simulation relates to the hypothesis we are trying to test. Here, we set a lower limit on total abundance in colder and more arid environments, so we expect that the number of species that can co-exist also decreases in those environments: we can now investigate that in more detail.
+We are now ready to perform analyses to investigate the model's behaviour. Typically this will be the way in which we determine how our simulation relates to the hypothesis we are trying to test. Here, we set a lower limit on total abundance in colder and more arid environments, so we expect that the number of species that can co-exist also decreases in those environments: we can now investigate that in more detail.
 
 Before we perform a few statistical analyses, we first need to combine environmental data from our `spaces` object with the simulated species richness in the `sim` output object.
 
@@ -525,9 +525,9 @@ space_t0 <- na.omit(space_t0)
 
 Now we want to investigate the relationship between species richness and our environmental variables at the final time-step of the simulation.
 
-First, we can fit a generalized linear model between richness and temperature.
+First, we can fit a generalised linear model between richness and temperature.
 ```{r eval=TRUE, echo=TRUE}
-# Fit generalized linear model
+# Fit generalised linear model
 glm.uni <- glm(rich ~ poly(temp, 2), data = space_t0, family = poisson)
 # Print correlation between temperature and richness
 cor(space_t0$temp, space_t0$rich)
@@ -558,10 +558,10 @@ legend(-20,30, col = c(rgb(0.5,0.5,0.5,0.4), 'red'), legend = c(n, 'model fit'),
 
 We can see that the relationship between the two variables is hump-shaped, indicating that species richness is highest at intermediate temperatures. The higher richness found above 10° is consistent with the ecological rule that we imposed: at higher temperatures, there is higher energy availability and capacity for species to coexist.
 
-We observe a large spread in the points at higher temperatures. This is likely because high temperature regions frequently also have high aridity. Thus, we will next investigate the relationship between aridity and species richness by fitting another generalized linear model.
+We observe a large spread in the points at higher temperatures. This is likely because high temperature regions frequently also have high aridity. Thus, we will next investigate the relationship between aridity and species richness by fitting another generalised linear model.
 
 ```{r eval=TRUE, fig.width=7, fig.height=6, fig.retina=2, results='hide', echo=F}
-# Fit generalized linear model for aridity
+# Fit generalised linear model for aridity
 glm.uni <- glm(rich ~ poly(arid, 2), data = space_t0, family = poisson)
 cor(space_t0$arid, space_t0$rich)
 ```
@@ -582,6 +582,6 @@ points(space_t0$arid, space_t0$rich, col = rgb(0.5,0.5,0.5, alpha = 0.4), pch=16
 legend(0.4,30, col = c(rgb(0.5,0.5,0.5,0.4), 'blue'), legend = c(n, 'model fit'), pch = c(16, NA), lty = c(NA, 1), lwd = c(NA, 2), bty = 'n')
 ```
 
-It is important to consider that we have only been analyzing the species richness at one time-step, namely the last one (0 Myr). The emerging patterns are likely not only influenced by the environmental conditions of the present, but also by historical conditions, as well as the complex process interactions enacted by *gen3sis*. 
+It is important to consider that we have only been analysing the species richness at one time-step, namely the last one (0 Myr). The emerging patterns are likely not only influenced by the environmental conditions of the present, but also by historical conditions, as well as the complex process interactions enacted by *gen3sis*. 
 
 For more details on how to set up more complex or theoretical analyses, see our other vignettes. It's now up to you to explore the "virtual" world.

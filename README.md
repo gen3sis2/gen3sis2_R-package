@@ -127,6 +127,7 @@ We thank the developers of the following methods and dependencies:
 
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -149,10 +150,32 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=AdmirJr">AdmirJr</a>
 </td>
 <td align="center">
+<a href="https://github.com/LewisAJones">
+<img src="https://avatars.githubusercontent.com/u/41071747?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=LewisAJones">LewisAJones</a>
+</td>
+<td align="center">
 <a href="https://github.com/benj919">
 <img src="https://avatars.githubusercontent.com/u/926479?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=benj919">benj919</a>
+</td>
+<td align="center">
+<a href="https://github.com/bouwerutger">
+<img src="https://avatars.githubusercontent.com/u/44290366?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bouwerutger">bouwerutger</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/bethany-j-allen">
+<img src="https://avatars.githubusercontent.com/u/39991015?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bethany-j-allen">bethany-j-allen</a>
 </td>
 <td align="center">
 <a href="https://github.com/florianhartig">
@@ -161,26 +184,10 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=florianhartig">florianhartig</a>
 </td>
 <td align="center">
-<a href="https://github.com/LewisAJones">
-<img src="https://avatars.githubusercontent.com/u/41071747?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=LewisAJones">LewisAJones</a>
-</td>
-</tr>
-
-
-<tr>
-<td align="center">
 <a href="https://github.com/loic-pellissier">
 <img src="https://avatars.githubusercontent.com/u/62331405?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=loic-pellissier">loic-pellissier</a>
-</td>
-<td align="center">
-<a href="https://github.com/bouwerutger">
-<img src="https://avatars.githubusercontent.com/u/44290366?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bouwerutger">bouwerutger</a>
 </td>
 <td align="center">
 <a href="https://github.com/yihui">
@@ -194,16 +201,16 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=FFopp">FFopp</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/mmore500">
 <img src="https://avatars.githubusercontent.com/u/10763333?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=mmore500">mmore500</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/ZHG2017">
 <img src="https://avatars.githubusercontent.com/u/31282190?v=4" width="100px;" alt=""/>
@@ -228,11 +235,15 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=castroinsua">castroinsua</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
-<a href="https://github.com/bethany-j-allen">
-<img src="https://avatars.githubusercontent.com/u/39991015?u=174109d940f7a5292b435965308a8a7c6032f71d&v=4" width="100px;" alt=""/>
+<a href="https://github.com/adamkocsis">
+<img src="https://avatars.githubusercontent.com/u/13674799?u=881fb3d951a7530e4eaeb85a725a45a13c756404&v=4" width="100px;" alt=""/>
 </a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bethany-j-allen">bethany-j-allen</a>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=adamkocsis">adamkocsis</a>
 </td>
 </tr>
 
@@ -241,6 +252,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
 
 
 

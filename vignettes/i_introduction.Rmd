@@ -98,7 +98,7 @@ Our first step is to load raster files containing the spatio-temporal distributi
 list.files(file.path(datapath, "input_rasters"))
 ```
 
-We will load the three data files from the example data and convert them to SpatRasters.
+We will load the three data files from the example data and convert each of them into a SpatRaster.
 
 ```{r eval=FALSE, message=F}
 # Create a SpatRaster of the temperature change through time

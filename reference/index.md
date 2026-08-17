@@ -4,8 +4,8 @@
 
 Main gen3sis2 functions to run and summarize simulations
 
-- [`gen3sis2-package`](gen3sis2.md) [`gen3sis2`](gen3sis2.md) :
-  gen3sis2: General Engine for Eco-Evolutionary Simulations
+- [`gen3sis2`](gen3sis2.md) : gen3sis2: General Engine for
+  Eco-Evolutionary Simulations
 - [`run_simulation()`](run_simulation.md) : Run a simulation in gen3sis
   and return a summary object possibly saving outputs and plots to the
   output folder

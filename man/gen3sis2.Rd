@@ -2,7 +2,6 @@
 % Please edit documentation in R/gen3sis_main.R
 \docType{package}
 \name{gen3sis2}
-\alias{gen3sis2-package}
 \alias{gen3sis2}
 \title{gen3sis2: General Engine for Eco-Evolutionary Simulations}
 \description{

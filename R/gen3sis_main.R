@@ -151,7 +151,7 @@ run_simulation <- function(
   val <- setup_variables(val$config, val$data, val$vars)
   val <- setup_space(val$config, val$data, val$vars)
   # Check the time matching between config and space
-  check_time_match(val$config, val$data, val$vars)
+  check_time_match(val$config$gen3sis$general$duration, val$data$inputs$duration)
 
   # conceptually the result of the initialization is the "end" of a previous timestep
   val$data$space$id <- val$data$space$id + 1

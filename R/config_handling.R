@@ -335,7 +335,7 @@ create_empty_config <- function() {
   config[["gen3sis"]] <- list(
     "general" = list(
       "random_seed" = NA,
-      "duration" = list("from" = NULL, "to" = NULL, "by" = 1, "unit" = "timestep"),
+      "duration" = list("from" = NA, "to" = NA, "by" = 1, "unit" = "timestep"),
       "max_number_of_species" = NA,
       "max_number_of_coexisting_species" = NA,
       "end_of_timestep_observer" = function(...) {},
@@ -436,7 +436,7 @@ write_config_skeleton <- function(
 #' \dontrun{
 #'   # return TRUE
 #'   time_unit_check("yr")
-#'   time_unit_check("Kyr")
+#'   time_unit_check("kyr")
 #'   time_unit_check("Myr")
 #'   time_unit_check("Gyr")
 #'   time_unit_check("timestep")
@@ -445,7 +445,7 @@ write_config_skeleton <- function(
 #'   time_unit_check("eons")
 #' }
 time_unit_check <- function(time_unit=NULL){
-  accepted_timeunits <- c("yr","Kyr", "Myr", "Gyr","timestep")
+  accepted_timeunits <- c("yr","kyr", "Myr", "Gyr","timestep")
   
   if(is.null(time_unit)){
     return(accepted_timeunits)

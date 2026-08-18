@@ -78,8 +78,25 @@ setup_variables <- function(config, data, vars) {
   # they will be indexed in a sequence {4, 3, 2, 1, 0}. That way the latest time-step will be always 0,
   # and the earlist time-step will always n-1, what ensures compatibility across all possible situations.
   # TL;DR: -1 as time-steps are 0-based, i.e., latest must be 0 and earliest must be the length-1
+
+  # --- TODO --- 
+  # all error conditions must be caught in the config check. Invalid values that pass the check must abort the simulation. 
+  # Values that are min/max clamped should be printed, possibly as warnings (e.g. start time outside spaces time window).
+  # Should we change these conditionals below?
+
+
   zero_base_ts <- (length(data$inputs$timesteps) - 1):0
-  if (is.na(config$gen3sis$general$duration$from)) {
+
+  if (is.na(config$gen3sis$general$duration$by) || is.character(config$gen3sis$general$duration$to)) {
+    # assumes the timestep duration of space
+    # ignores the string, warns the user and ends at the latest available time-step
+    config$gen3sis$general$duration$by <- "timestep"
+    message(
+      "Config's durantion$by must be numerical. Changing config duration$by to 'timestep'. Assuming spaces' time-step."
+    )
+  } 
+
+  if (is.na(config$gen3sis$general$duration$from) || config$gen3sis$general$duration$unit == "timestep") {
     # start at the earliest available time-step
     config$gen3sis$general$duration$from <- length(data[["inputs"]][[
       "timesteps"
@@ -99,16 +116,16 @@ setup_variables <- function(config, data, vars) {
     # e.g.: -2000 means 2000 time units in the past
 
     # fetch the start_time
-    start_time <- config$gen3sis$general$duration$from
     # convert it from the config time unit to the space time unit
+
     start_time <- conv_unit(
-      start_time,
+      config$gen3sis$general$duration$from,
       config$gen3sis$general$duration$unit,
       data$inputs$duration$unit
     )
 
     # gets the absolute time for each timesteps in the space
-    # e.g.: {"-10Ma", "-5Ma", "0Ma"} -> {-10, -5, 0}
+    # e.g.: {"-10Myr", "-5Myr", "0Myr"} -> {-10, -5, 0}
     ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |>
       as.numeric()
     # gets which time-step is closer in time to the start_time
@@ -131,7 +148,7 @@ setup_variables <- function(config, data, vars) {
     )
   }
 
-  if (is.na(config$gen3sis$general$duration$to)) {
+  if (is.na(config$gen3sis$general$duration$to) || config$gen3sis$general$duration$unit == "timestep") {
     # ends at the latest available time-step
     config$gen3sis$general$duration$to <- 0
   } else if (is.character(config$gen3sis$general$duration$to)) {
@@ -142,15 +159,14 @@ setup_variables <- function(config, data, vars) {
     )
   } else if (is.numeric(config$gen3sis$general$duration$to)) {
     # fetches the end_time and converts from the config time unit to the space time unit
-    end_time <- config$gen3sis$general$duration$to
     end_time <- conv_unit(
-      end_time,
+      config$gen3sis$general$duration$to,
       config$gen3sis$general$duration$unit,
       data$inputs$duration$unit
     )
 
     # gets the absolute time for each timesteps in the space
-    # e.g.: {"-10Ma", "-5Ma", "0Ma"} -> {-10, -5, 0}
+    # e.g.: {"-10Myr", "-5Myr", "0Myr"} -> {-10, -5, 0}
     ts_times <- gsub(data$inputs$duration$unit, "", data$inputs$timesteps) |>
       as.numeric()
 
@@ -173,25 +189,15 @@ setup_variables <- function(config, data, vars) {
     )
   }
 
-  if (is.na(config$gen3sis$general$duration$by)) {
-    # assumes the timestep duration of space
-    config$gen3sis$general$duration$by <- data$inputs$duration$by
-  } else if (is.character(config$gen3sis$general$duration$to)) {
-    # ignores the string, warns the user and ends at the latest available time-step
-    config$gen3sis$general$duration$by <- data$inputs$duration$by
-    message(
-      "Config's durantion$by must be numerical. Assuming spaces' time-step."
-    )
-  }
-
   # put in start time for create_space
   vars$ti <- config$gen3sis$general$duration$from
 
   # flag
   vars$flag <- "OK"
 
+
   return(list(config = config, data = data, vars = vars))
-    }
+}
 
 
 #' Calls the creation for the initial species and prepares further data storage

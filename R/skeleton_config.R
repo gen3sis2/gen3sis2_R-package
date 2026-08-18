@@ -40,7 +40,7 @@ random_seed = NA
 # Set config duration
 # Currently available units are:
 # "yr": year (1 year)
-# "Kyr": kilo year (1,000 years)
+# "kyr": kilo year (1,000 years)
 # "Myr": mega year (1,000,000 years)
 # "Gyr": giga year (1,000,000,000 years)
 # "timestep": bypass the entire time-conversion and assumes the config in the same unit as the space

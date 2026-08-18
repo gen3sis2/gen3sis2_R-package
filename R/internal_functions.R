@@ -204,48 +204,57 @@ conv_unit <- function(x, from, to) {
   if (from == "timestep" || to == "timestep") {
     return(x)
   }
-  exponents <- c(a = 0, ka = 3, Ma = 6, Ga = 9)
+  exponents <- c(a = 0, kyr = 3, Myr = 6, Gyr = 9)
   factor <- 10^(exponents[from] - exponents[to])
   return(x * factor[[1]])
 }
 
-#' Convert time units
+#' Check if time matches between space and config
 #'
-#' @param x numeric. The numerical value in "from" unit
-#' @param from character. The unit to convert from
-#' @param to character. The unit to convert to
+#' @param config_duration numeric. The numerical value in "from" unit
+#' @param space_duration character. The unit to convert from
 #'
-#' @returns The numerical values in "to" unit
+#' @returns NULL
 #' @noRd
-check_time_match <- function(config, data, vars){
-  if(config$gen3sis$general$duration$unit != data$inputs$duration$unit) {
-    text_warn <- paste0(
-      "--- TIME-STEP MISMATCH ---\n  ",
-        "Config's time-steps are set as ", 
-        config$gen3sis$general$duration$by, " ",
-        config$gen3sis$general$duration$unit, ", ",
-        "but space's time-steps are set as ",
-        data$inputs$duration$by, " ",
-        data$inputs$duration$unit, ".\n  ",
-        "Did you consider time-scaling in your config?\n  ",
-        "Read more about time-scaling in the respective vignette."
-      )
-    warning(text_warn)
-    message(text_warn)
-  }
-
-  time_proportion <- config$gen3sis$general$duration$by/data$space$duration$by
-
-  if(time_proportion != 1){
-    text_warn <- paste0(
+check_time_match <- function(config_duration, space_duration){
+  if(config_duration$unit != "timestep"){
+    if(config_duration$unit != space_duration$unit) {
+      text_warn <- paste0(
         "--- TIME-STEP MISMATCH ---\n  ",
-        "Config's time-steps are ",
-        time_proportion, " ",
-        "times space's time-steps.\n  ",
-        "Did you consider time-scaling in your config?\n  ",
+          "Config's time-steps are set as ", 
+          config_duration$by, " ",
+          config_duration$unit, ", ",
+          "but space's time-steps are set as ",
+          space_duration$by, " ",
+          space_duration$unit, ".\n  ",
+          "Did you consider time-scaling in your config?\n  ",
+          "Read more about time-scaling in the respective vignette."
+        )
+      warning(text_warn)
+      message(text_warn)
+    }
+
+    time_proportion <- config_duration$by/conv_unit(space_duration$by, space_duration$unit, config_duration$unit)
+
+    if(time_proportion != 1){
+      text_warn <- paste0(
+          "--- TIME-STEP MISMATCH ---\n  ",
+          "Config's time-steps are ",
+          time_proportion, " ",
+          "times space's time-steps.\n  ",
+          "Did you consider time-scaling in your config?\n  ",
+          "Read more about time-scaling in the respective vignette."
+        )
+      message(text_warn)
+      warning(text_warn)
+    }
+  } else {
+    text_warn <- paste0(
+      "  Config time unit is set to 'timestep'.\n  ",
+        "The simulation will fully assume spaces duration.\n  ",
         "Read more about time-scaling in the respective vignette."
       )
-    message(text_warn)
     warning(text_warn)
+    message(text_warn)
   }
 }

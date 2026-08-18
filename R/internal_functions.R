@@ -204,7 +204,7 @@ conv_unit <- function(x, from, to) {
   if (from == "timestep" || to == "timestep") {
     return(x)
   }
-  exponents <- c(a = 0, kyr = 3, Myr = 6, Gyr = 9)
+  exponents <- c(yr = 0, kyr = 3, Myr = 6, Gyr = 9)
   factor <- 10^(exponents[from] - exponents[to])
   return(x * factor[[1]])
 }

@@ -189,6 +189,17 @@ setup_variables <- function(config, data, vars) {
     )
   }
 
+  if (is.na(config$gen3sis$general$duration$by)) {
+    # assumes the timestep duration of space
+    config$gen3sis$general$duration$by <- data$inputs$duration$by
+  } else if (is.character(config$gen3sis$general$duration$to)) {
+    # ignores the string, warns the user and ends at the latest available time-step
+    config$gen3sis$general$duration$by <- data$inputs$duration$by
+    message(
+      "Config's duration$by must be numerical. Assuming spaces' time-step."
+    )
+  }
+
   # put in start time for create_space
   vars$ti <- config$gen3sis$general$duration$from
 

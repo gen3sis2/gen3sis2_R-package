@@ -45,9 +45,9 @@ random_seed = NA
 # "Gyr": giga year (1,000,000,000 years)
 # "timestep": bypass the entire time-conversion and assumes the config in the same unit as the space
 duration <- list(
-  from = NA, # set the starting time (in the same unit as step_time) or leave NA to use the earliest/highest time-step.
-  to = NA, # set the end time (in the same unit as step_time) or leave as NA to use the latest/lowest time-step (0).
-  by = NA, # set the amount of time each config time-step comprises.
+  from = NA, # set the starting time (in the same unit as duration$unit) or leave NA to use the earliest/highest time-step.
+  to = NA, # set the end time (in the same unit as duration$unit) or leave as NA to use the latest/lowest time-step (0).
+  by = NA, # set the amount of time each config time-step comprises (in duration$unit).
   unit = "timestep" # set the unit in which time is measured in config.
 )
 
@@ -172,7 +172,7 @@ apply_ecology <- function(abundance, traits, environment, config) {
 # 2. "apply_modifiers"
 ## Is called at the start of each time-step
 ## Its used to apply the modifiers computed in the previous time-step.
-## Will recieve the space and the modifiers object.
+## Will receive the space and the modifiers object.
 ## Must return the "space$environment" object.
 ## Only runs if modifiers are not NULL.
 

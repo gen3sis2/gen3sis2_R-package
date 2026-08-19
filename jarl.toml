@@ -1,6 +1,7 @@
 [lint]
 extend-select = ["quotes", "TESTTHAT"]
 ignore = ["expect_type"]
+exclude = ["inst/"]
 fixable = ["ALL"]
 fix-roxygen = true
 

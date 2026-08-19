@@ -164,7 +164,7 @@ apply_ecology <- function(abundance, traits, environment, config) {
 #--------------------------------------------#
 
 # Accounts for Biospheric Feedbacks to the space
-# 1. "get_mofiers" 
+# 1. "get_modifiers" 
 ## Is called at the end of each time-step.
 ## Users can set any rules to get environmental modifiers.
 ## Can return any object.

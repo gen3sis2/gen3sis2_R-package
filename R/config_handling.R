@@ -299,7 +299,10 @@ verify_config <- function(config) {
   # time_unit_check() returns a logical when a time unit is provided
   # and a character vector of accepted units when called with NULL.
   tu <- NULL
-  if (!is.null(config$gen3sis$general$duration) && !is.null(config$gen3sis$general$duration$unit)) {
+  if (
+    !is.null(config$gen3sis$general$duration) &&
+      !is.null(config$gen3sis$general$duration$unit)
+  ) {
     tu <- config$gen3sis$general$duration$unit
   }
   accepted <- time_unit_check(tu)
@@ -447,10 +450,10 @@ write_config_skeleton <- function(
 #'   # return FALSE
 #'   time_unit_check("eons")
 #' }
-time_unit_check <- function(time_unit=NULL){
-  accepted_timeunits <- c("yr","kyr", "Myr", "Gyr","timestep")
-  
-  if(is.null(time_unit)){
+time_unit_check <- function(time_unit = NULL) {
+  accepted_timeunits <- c("yr", "kyr", "Myr", "Gyr", "timestep")
+
+  if (is.null(time_unit)) {
     return(accepted_timeunits)
   } else {
     is.accepted <- time_unit %in% accepted_timeunits

@@ -79,24 +79,29 @@ setup_variables <- function(config, data, vars) {
   # and the earlist time-step will always n-1, what ensures compatibility across all possible situations.
   # TL;DR: -1 as time-steps are 0-based, i.e., latest must be 0 and earliest must be the length-1
 
-  # --- TODO --- 
-  # all error conditions must be caught in the config check. Invalid values that pass the check must abort the simulation. 
+  # --- TODO ---
+  # all error conditions must be caught in the config check. Invalid values that pass the check must abort the simulation.
   # Values that are min/max clamped should be printed, possibly as warnings (e.g. start time outside spaces time window).
   # Should we change these conditionals below?
 
-
   zero_base_ts <- (length(data$inputs$timesteps) - 1):0
 
-  if (is.na(config$gen3sis$general$duration$by) || is.character(config$gen3sis$general$duration$to)) {
+  if (
+    is.na(config$gen3sis$general$duration$by) ||
+      is.character(config$gen3sis$general$duration$to)
+  ) {
     # assumes the timestep duration of space
     # ignores the string, warns the user and ends at the latest available time-step
     config$gen3sis$general$duration$by <- "timestep"
     message(
       "Config's durantion$by must be numerical. Changing config duration$by to 'timestep'. Assuming spaces' time-step."
     )
-  } 
+  }
 
-  if (is.na(config$gen3sis$general$duration$from) || config$gen3sis$general$duration$unit == "timestep") {
+  if (
+    is.na(config$gen3sis$general$duration$from) ||
+      config$gen3sis$general$duration$unit == "timestep"
+  ) {
     # start at the earliest available time-step
     config$gen3sis$general$duration$from <- length(data[["inputs"]][[
       "timesteps"
@@ -148,7 +153,10 @@ setup_variables <- function(config, data, vars) {
     )
   }
 
-  if (is.na(config$gen3sis$general$duration$to) || config$gen3sis$general$duration$unit == "timestep") {
+  if (
+    is.na(config$gen3sis$general$duration$to) ||
+      config$gen3sis$general$duration$unit == "timestep"
+  ) {
     # ends at the latest available time-step
     config$gen3sis$general$duration$to <- 0
   } else if (is.character(config$gen3sis$general$duration$to)) {
@@ -205,7 +213,6 @@ setup_variables <- function(config, data, vars) {
 
   # flag
   vars$flag <- "OK"
-
 
   return(list(config = config, data = data, vars = vars))
 }

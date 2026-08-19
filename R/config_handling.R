@@ -100,7 +100,6 @@ prepare_directories <- function(
 #' @example inst/examples/create_input_config_help.R
 #' @export
 create_input_config <- function(config_file = NA, config_name = NULL) {
-  
   # Verify config name
   if (!is.null(config_name)) {
     if (length(config_name) != 1) {
@@ -158,7 +157,6 @@ create_input_config <- function(config_file = NA, config_name = NULL) {
   }
 }
 
-
 internal_categories <- c(
   "general",
   "initialization",
@@ -168,7 +166,6 @@ internal_categories <- c(
   "ecology",
   "space_modifier"
 )
-
 
 #' Initializes a config with the values from a provided config file
 #'
@@ -299,8 +296,8 @@ verify_config <- function(config) {
   # time_unit_check() returns a logical when a time unit is provided
   # and a character vector of accepted units when called with NULL.
   tu <- NULL
-  if (!is.null(config$user$step_time) && !is.null(config$user$step_time$unit)) {
-    tu <- config$user$step_time$unit
+  if (!is.null(config$gen3sis$general$duration) && !is.null(config$gen3sis$general$duration$unit)) {
+    tu <- config$gen3sis$general$duration$unit
   }
   accepted <- time_unit_check(tu)
   # accepted should be a single TRUE value for a valid unit
@@ -310,7 +307,7 @@ verify_config <- function(config) {
       is.na(accepted) ||
       !accepted
   ) {
-    message(paste0(
+    warning(paste0(
       "Time unit '",
       tu,
       "' is not accepted. \nAccepted time units are: ",
@@ -338,8 +335,7 @@ create_empty_config <- function() {
   config[["gen3sis"]] <- list(
     "general" = list(
       "random_seed" = NA,
-      "start_time" = NA,
-      "end_time" = NA,
+      "duration" = list("from" = NA, "to" = NA, "by" = 1, "unit" = "timestep"),
       "max_number_of_species" = NA,
       "max_number_of_coexisting_species" = NA,
       "end_of_timestep_observer" = function(...) {},
@@ -440,7 +436,7 @@ write_config_skeleton <- function(
 #' \dontrun{
 #'   # return TRUE
 #'   time_unit_check("yr")
-#'   time_unit_check("Kyr")
+#'   time_unit_check("kyr")
 #'   time_unit_check("Myr")
 #'   time_unit_check("Gyr")
 #'   time_unit_check("timestep")
@@ -449,7 +445,7 @@ write_config_skeleton <- function(
 #'   time_unit_check("eons")
 #' }
 time_unit_check <- function(time_unit=NULL){
-  accepted_timeunits <- c("yr","Kyr", "Myr", "Gyr","timestep")
+  accepted_timeunits <- c("yr","kyr", "Myr", "Gyr","timestep")
   
   if(is.null(time_unit)){
     return(accepted_timeunits)

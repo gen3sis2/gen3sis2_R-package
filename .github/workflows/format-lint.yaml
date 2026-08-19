@@ -28,7 +28,7 @@ jobs:
         uses: posit-dev/setup-air@f3a5b6aec110503f81b8d69439023308ebdf4874 # v1
       - name: Check
         id: check
-        run: air format . --check
+        run: air format . --check --exclude inst
         continue-on-error: true
       - name: Save results
         if: github.event_name == 'pull_request'

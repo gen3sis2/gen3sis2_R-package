@@ -66,7 +66,7 @@
 
       <h1>3. Creating configurations (gen3sis input)</h1>
             
-            <h4 data-toc-skip class="date">17.08.2026</h4>
+            <h4 data-toc-skip class="date">19.08.2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/project-Gen3sis/R-package/blob/development/vignettes/c-create-config.Rmd" class="external-link"><code>vignettes/c-create-config.Rmd</code></a></small>
       <div class="d-none name"><code>c-create-config.Rmd</code></div>
@@ -560,13 +560,9 @@ species ranges <em>plot_ranges</em></p>
 function <em>verify_config</em> returns TRUE, you are good to go.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/verify_config.html">verify_config</a></span><span class="op">(</span><span class="va">config_object_old</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time unit '' is not accepted. </span></span>
-<span><span class="co">#&gt; Accepted time units are: yr Kyr Myr Gyr timestep</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu"><a href="../reference/verify_config.html">verify_config</a></span><span class="op">(</span><span class="va">config_object</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Time unit '' is not accepted. </span></span>
-<span><span class="co">#&gt; Accepted time units are: yr Kyr Myr Gyr timestep</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>Run the modified old config</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sim_old</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_simulation.html">run_simulation</a></span><span class="op">(</span>config <span class="op">=</span> <span class="va">config_object_old</span>,</span>

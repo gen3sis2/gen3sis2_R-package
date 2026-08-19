@@ -516,13 +516,9 @@ Before using the modified configs, test if it is valid. If the function
 ``` r
 
 verify_config(config_object_old)
-#> Time unit '' is not accepted. 
-#> Accepted time units are: yr Kyr Myr Gyr timestep
-#> [1] FALSE
+#> [1] TRUE
 verify_config(config_object)
-#> Time unit '' is not accepted. 
-#> Accepted time units are: yr Kyr Myr Gyr timestep
-#> [1] FALSE
+#> [1] TRUE
 ```
 
 Run the modified old config

@@ -18,7 +18,7 @@
 #'
 #' @keywords user
 #' @export
-apply_ecology <- function(abundance, traits, within_site_divergence, local_environment, config) {
+apply_ecology <- function(abundance, traits, ecological_states, local_environment, config) {
   stop(
     "this function documents the user function interface only, do not use it."
   )
@@ -79,12 +79,21 @@ loop_ecology <- function(config, data, vars) {
       )
     )
     
+    traits <- matrix(
+      NA,
+      nrow = length(config$gen3sis$general$ecological_states_names) + 1,
+      ncol = length(coo_sp),
+      dimnames = list(
+        c("abundance", config$gen3sis$general$trait_names),
+        as.character(coo_sp)
+      )
+    )
+    
+    # create a matrix here as well for the ecological indicators (per-population)
+    
     abundance <- numeric(length(coo_sp))
-    within_site_divergence <- numeric(length(coo_sp))
-    
     names(abundance) <- as.character(coo_sp)
-    names(within_site_divergence) <- as.character(coo_sp)
-    
+
     for (i in seq_along(coo_sp)) {
       spi <- coo_sp[i]
       species <- data$all_species[[spi]]
@@ -98,30 +107,36 @@ loop_ecology <- function(config, data, vars) {
       abundance[i] <-
         species[["abundance"]][cell]
       
-      within_site_divergence[i] <-
-        species[["divergence"]][["within_site"]][cell]
+      ecological_states[i,] <-
+        species[["ecological_states"]][
+          cell,
+          config$gen3sis$general$ecological_states_names
+        ]
+      
+      ##### also add the names of the indicators to the config so that we can select them here
+      ##### just as was done for the traits table, and add it to the config handler
+      
     }
 
-    
     
     ecological_result <-
       config$gen3sis$ecology$apply_ecology(
         abundance,
         traits,
-        within_site_divergence,
+        ecological_states,
         local_environment,
         config
       )
-    if(is.list(ecological_result)){
-      new_abundance <-
-        ecological_result[["abundance"]]
-      
-      new_within_site_divergence <-
-        ecological_result[["within_site_divergence"]]
-    }else{
-      new_abundance <- ecological_result
+    
+    new_abundance <-
+      ecological_result["abundance",]
+    
+    if(nrow(ecological_result) > 1){
+      new_ecological_states <-
+        ecological_result[config$gen3sis$general$ecological_states_names,]
     }
-
+    
+    #### EVALUATE FROM HERE #####
     
     for (i in seq_along(coo_sp)) {
       spi <- coo_sp[i]

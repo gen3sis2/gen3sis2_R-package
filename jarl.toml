@@ -1,7 +1,7 @@
 [lint]
-extend-select = ["quotes", "TESTTHAT"]
+extend-select = ["quotes", "TESTTHAT", "t_and_f_symbol"]
 ignore = ["expect_type"]
-exclude = ["inst/"]
+exclude = ["inst/", "vignettes/"]
 fixable = ["ALL"]
 fix-roxygen = true
 

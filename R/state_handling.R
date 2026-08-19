@@ -52,7 +52,7 @@ save_val <- function(val, save_state = NA) {
 save_ecogengeo <- function(val) {
   # save eco at time ti
   if (is.null(val$vars$ti)) {
-    ti <- val$config$gen3sis$general$start_time
+    ti <- val$config$gen3sis$general$duration$from
   } else {
     ti <- val$vars$ti
   }
@@ -109,8 +109,8 @@ restore_state <- function(val, timestep_restart) {
   .GlobalEnv$.Random.seed <- val$config$seed
 
   if (timestep > 0) {
-    val$vars$save_steps <- (timestep - 1):(val$config$gen3sis$general$end_time)
-    val$vars$steps <- (timestep - 1):(val$config$gen3sis$general$end_time)
+    val$vars$save_steps <- (timestep - 1):(val$config$gen3sis$general$duration$to)
+    val$vars$steps <- (timestep - 1):(val$config$gen3sis$general$duration$to)
     message(paste("[!] Restarting at time-step:", timestep))
   } else {
     val$vars$save_steps <- NULL

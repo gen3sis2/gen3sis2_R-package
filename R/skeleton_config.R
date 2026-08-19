@@ -39,20 +39,19 @@ skeleton_config <- function() {
 # set the random seed for the simulation.
 random_seed = NA
 
-# set the time unit
+# Set config duration
 # Currently available units are:
 # "yr": year (1 year)
-# "Kyr": kilo year (1,000 years)
+# "kyr": kilo year (1,000 years)
 # "Myr": mega year (1,000,000 years)
 # "Gyr": giga year (1,000,000,000 years)
-# "timestep": bypass the entire time-conversion and assumes the config in the same unit as the space 
-step_time <- list(x = NA, unit = "timestep")
-
-# set the starting time (in the same unit as step_time) or leave NA to use the earliest/highest time-step.
-start_time = NA
-
-# set the end time (in the same unit as step_time) or leave as NA to use the latest/lowest time-step (0).
-end_time = NA
+# "timestep": bypass the entire time-conversion and assumes the config in the same unit as the space
+duration <- list(
+  from = NA, # set the starting time (in the same unit as duration$unit) or leave NA to use the earliest/highest time-step.
+  to = NA, # set the end time (in the same unit as duration$unit) or leave as NA to use the latest/lowest time-step (0).
+  by = NA, # set the amount of time each config time-step comprises (in duration$unit).
+  unit = "timestep" # set the unit in which time is measured in config.
+)
 
 # maximum total number of species in the simulation before it is aborted.
 max_number_of_species = 25000
@@ -167,26 +166,24 @@ apply_ecology <- function(abundance, traits, environment, config) {
 #--------------------------------------------#
 
 # Accounts for Biospheric Feedbacks to the space
-# "modify_space" must be a list containing two functions called 
-# at the beggining and end of each time-step
-# 1. "modify_space$get_mofiers" 
+# 1. "get_modifiers" 
 ## Is called at the end of each time-step.
 ## Users can set any rules to get environmental modifiers.
 ## Can return any object.
 ## To deactivate environmental modifiers, the function must simply return NULL.
-# 2. "modify_space$apply_modifiers"
+# 2. "apply_modifiers"
 ## Is called at the start of each time-step
 ## Its used to apply the modifiers computed in the previous time-step.
-## Will recieve the space and the modifiers object.
+## Will receive the space and the modifiers object.
 ## Must return the "space$environment" object.
 ## Only runs if modifiers are not NULL.
 
-get_modifiers <- function(space, all_species){
+get_modifiers <- function(space, config, all_species){
   modifiers <- NULL
   return(modifiers)
 }
 
-apply_modifiers <- function(space, modifiers){
+apply_modifiers <- function(space, config, modifiers){
   return(space$environment)
 }
 

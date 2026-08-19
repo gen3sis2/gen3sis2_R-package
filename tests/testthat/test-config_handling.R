@@ -179,15 +179,15 @@ test_that("wrong usage of create_input_config arguments", {
 
 # populate_config()
 ## Test if the function returns invisible object
-test_that("returns teh correct object", {
+test_that("returns the correct object", {
   new_config <- create_empty_config()
 
-  expect_invisible(populate_config(
+  expect_invisible(gen3sis2:::populate_config(
     new_config,
     file.path(base_dir, "TestConfig.R")
   ))
 
-  y <- populate_config(new_config, file.path(base_dir, "TestConfig.R"))
+  y <- gen3sis2:::populate_config(new_config, file.path(base_dir, "TestConfig.R"))
   expect_s3_class(y, "gen3sis_config")
 })
 
@@ -242,8 +242,7 @@ test_that("verify_config: config with missing values", {
 
   fields <- c(
     "random_seed",
-    "start_time",
-    "end_time",
+    "duration",
     "max_number_of_species",
     "max_number_of_coexisting_species",
     "end_of_timestep_observer",

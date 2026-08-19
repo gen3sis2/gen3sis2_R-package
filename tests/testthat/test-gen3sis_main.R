@@ -362,7 +362,7 @@ test_that("wrong config usage", {
         }) |>
           suppressWarnings()
       },
-      "config verification failed"
+      "Config verification failed."
     )
   })
 })

@@ -70,12 +70,12 @@ create_spaces_raster <- function(
 
   if (
     !is.list(duration) ||
-      any(!c("from", "to", "by", "unit") %in% names(duration))
+      !all(c("from", "to", "by", "unit") %in% names(duration))
   ) {
     stop("Duration is ideally informed as a list with from, to, by and unit.")
   }
 
-  if (any(is.na(duration))) {
+  if (anyNA(duration)) {
     required_elements <- names(which(is.na(duration)))
 
     if (length(required_elements) > 1) {
@@ -338,7 +338,7 @@ get_local_distances <- function(
   # g <- igraph::graph_from_edgelist(edge_list)
   # #
 
-  for (k in 1:nrow(transition_cells)) {
+  for (k in seq_len(nrow(transition_cells))) {
     ind_i <- transition_cells[k, "i"] # destination
     ind_j <- transition_cells[k, "j"] # origin
 
@@ -404,10 +404,10 @@ get_local_distances <- function(
 #' @noRd
 get_habitable_mask <- function(habitability_masks, space_stack, i) {
   if (is.null(habitability_masks)) {
-    habitable_mask <- !any(is.na(space_stack)) # TODO is this the best solution?
+    habitable_mask <- !anyNA(space_stack) # TODO is this the best solution?
   } else if (is.character(habitability_masks[[i]])) {
     habitable_mask <- terra::rast(habitability_masks[[i]])
-  } else if ("SpatRaster" %in% class(habitability_masks[[i]])) {
+  } else if (inherits(habitability_masks[[i]], "SpatRaster")) {
     habitable_mask <- habitability_masks[[i]]
   } else {
     stop(

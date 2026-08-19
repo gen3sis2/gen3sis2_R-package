@@ -1,5 +1,5 @@
 # Copyright (c) 2020, ETH Zurich
-base_dir <- system.file(file.path("extdata"), package = "gen3sis2")
+base_dir <- system.file("extdata", package = "gen3sis2")
 
 # run_simulation()
 ## Test if the simulation runs without errors

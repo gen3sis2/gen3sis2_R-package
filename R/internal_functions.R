@@ -155,7 +155,7 @@ write_nex <- function(phy, label = "sp", output_file) {
     #adding ext times!
     extsps <- phy[phy$Extinction.Time > 0, c("Descendent", "Extinction.Time")]
     if (nrow(extsps) > 0) {
-      for (i in 1:nrow(extsps)) {
+      for (i in seq_len(nrow(extsps))) {
         spi <- paste0(label, extsps$Descendent[i], ":")
         # print("-------")
         # print(spi)

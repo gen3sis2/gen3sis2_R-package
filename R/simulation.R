@@ -30,7 +30,7 @@ setup_inputs <- function(config, data, vars) {
       range <- config[["gen3sis"]][["general"]][["environmental_ranges"]][[
         name
       ]]
-      if (any(is.na(range))) {
+      if (anyNA(range)) {
         r_min <- min(tmp, na.rm = TRUE)
         r_max <- max(tmp, na.rm = TRUE)
         range <- c(r_min, r_max)
@@ -201,7 +201,7 @@ init_attribute_ancestor_distribution <- function(config, data, vars) {
     data$space,
     config
   )
-  for (i in 1:length(all_species)) {
+  for (i in seq_along(all_species)) {
     force(i)
     all_species[[i]][["id"]] <- as.character(i)
   }

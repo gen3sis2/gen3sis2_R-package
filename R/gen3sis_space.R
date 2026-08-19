@@ -186,7 +186,7 @@ check_names <- function(reference, datags, error_report = NULL) {
         )
       }
     } # end NA comparison loop
-  } else if (any(is.na(datags[[reference]]))) {
+  } else if (anyNA(datags[[reference]])) {
     # if there is NA
     error_report <- paste(
       error_report,

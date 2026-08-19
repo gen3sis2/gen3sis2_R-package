@@ -74,9 +74,9 @@ limit_divergence_to_cells <- function(divergence, cells) {
     drop = FALSE
   ]
   if (length(unique_indices)) {
-    new_range <- 1:length(unique_indices)
+    new_range <- seq_along(unique_indices)
     dimnames(new_compressed_matrix) <- list(new_range, new_range)
-    for (i in 1:length(new_index)) {
+    for (i in seq_along(new_index)) {
       new_index[i] <- new_range[unique_indices == new_index[i]]
     }
   }

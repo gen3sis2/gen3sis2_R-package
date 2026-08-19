@@ -452,7 +452,7 @@ plot_summary <- function(output, summary_title = NULL, summary_legend = NULL) {
         paste(sum_names[2], sumss[2], sep = ": "),
         #paste(sum_names[3],
         #      sumss[3], sep=": "),
-        paste('end_time;', tail(names(sumar$occupancy), 1)),
+        paste("end_time;", tail(names(sumar$occupancy), 1)),
         paste("traits", paste0(sumss[7][[1]], collapse = ","), sep = ": "),
         paste(
           "world_habited_present",
@@ -509,12 +509,12 @@ plot_summary <- function(output, summary_title = NULL, summary_legend = NULL) {
       d[, "alive"],
       xlab = "",
       ylab = "",
-      type = 'l',
+      type = "l",
       col = "black",
       lwd = 4,
       frame.plot = FALSE,
-      xaxt = 'n',
-      yaxt = 'n'
+      xaxt = "n",
+      yaxt = "n"
     )
     axis(4, line = -1, cex = 1, cex.axis = 1, col = "black")
     mtext(
@@ -531,10 +531,10 @@ plot_summary <- function(output, summary_title = NULL, summary_legend = NULL) {
       col = rgb(0, 0, 1, 0.5),
       xlab = "",
       ylab = "",
-      type = 'b',
+      type = "b",
       frame.plot = FALSE,
-      xaxt = 'n',
-      yaxt = 'n',
+      xaxt = "n",
+      yaxt = "n",
       ylim = range(d[, c("speciations", "extinctions")])
     )
     points(d[, "extinctions"], pch = 4, col = rgb(1, 0, 0, 0.5), type = "b")
@@ -699,7 +699,7 @@ plot_ranges <- function(species_list, space, disturb = 0, max_sps = 10) {
   legend_title <- paste(
     n_sps_max,
     "species",
-    paste0("\n[", omitted, ' omitted]')
+    paste0("\n[", omitted, " omitted]")
   )
 
   # get species coordinates
@@ -1101,7 +1101,7 @@ plot_single.gen3sis_space_h3 <- function(no_data = 0, legend = TRUE, ...) {
     )
 
     names(col) <- unique(values)
-    col <- col[1:length(unique(values))]
+    col <- col[seq_along(unique(values))]
 
     # plot
     ggplot2::ggplot() +
@@ -1611,7 +1611,7 @@ wrap_dateline_h3 <- function(
     suppressWarnings(
       polygons <- sf::st_wrap_dateline(
         polygons,
-        options = c('WRAPDATELINE=YES', 'DATELINEOFFSET=180'),
+        options = c("WRAPDATELINE=YES", "DATELINEOFFSET=180"),
         quiet = TRUE
       )
     )

@@ -67,7 +67,7 @@ loop_speciation <- function(config, data, vars) {
       )
 
       permutation <- sample(
-        1:length(species_presence),
+        seq_along(species_presence),
         length(species_presence)
       )
       clu_geo_spi_ti <- Tdbscan_variable(
@@ -148,9 +148,9 @@ loop_speciation <- function(config, data, vars) {
       ]
       #update names
       if (length(ue) > 0) {
-        fullrange <- 1:length(ue)
+        fullrange <- seq_along(ue)
         dimnames(gen_dist_spi$compressed_matrix) <- list(fullrange, fullrange)
-        for (i in 1:length(gen_dist_spi$index)) {
+        for (i in seq_along(gen_dist_spi$index)) {
           gen_dist_spi$index[i] <- fullrange[ue == gen_dist_spi$index[i]]
         }
       }

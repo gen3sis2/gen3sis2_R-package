@@ -89,7 +89,10 @@ setup_variables <- function(config, data, vars) {
   # If config's duration$by is problematic, it is setted to 'timestep'.
   # It prevents any calculation and forces the simulation to overwrite config's duration$from and duration$to
   # to the earliest and latest available space's time-step.
-  if (is.na(config$gen3sis$general$duration$by) || is.character(config$gen3sis$general$duration$to)) {
+  if (
+    is.na(config$gen3sis$general$duration$by) ||
+      is.character(config$gen3sis$general$duration$to)
+  ) {
     config$gen3sis$general$duration$by <- "timestep"
     message(
       "Config's durantion$by must be numerical. Changing config duration$by to 'timestep'. Assuming spaces' time-step."
@@ -279,7 +282,7 @@ init_simulation <- function(config, data, vars) {
   # both are calculated in setup_variables()
   # config's duration$by is not important here, because simulation will follow spaces' time-step
   # user is always warned if config's and spaces' duration$by are different
-  # the simulation does not automatically correct or scale anything  
+  # the simulation does not automatically correct or scale anything
   steps <- (config$gen3sis$general$duration$from:config$gen3sis$general$duration$to)
 
   # create matrix for turnover

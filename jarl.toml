@@ -6,7 +6,7 @@ fixable = ["ALL"]
 fix-roxygen = true
 
 [lint.assignment]
-operator = "="
+operator = "<-"
 
 [lint.quotes]
 quote = "double"

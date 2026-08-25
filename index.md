@@ -1,6 +1,12 @@
-# General Engine for Eco-Evolutionary Simulations 2
+# Temporary Notice: “development” branch renamed to “main”
 
 ![](./reference/figures/gen3sis_logo.png)
+
+We are moving to a main branch and release tag model. Local repo clones
+need to be updated. See the github pop-up or the [instructions
+here](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/renaming-a-branch).
+
+# General Engine for Eco-Evolutionary Simulations 2
 
 This is the repository for the R-package of the gen3sis engine [gen3sis2
 git](https://github.com/gen3sis2/gen3sis2_R-package).

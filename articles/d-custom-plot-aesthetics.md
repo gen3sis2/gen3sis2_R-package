@@ -84,7 +84,7 @@ data <- simulate_space_format(
 ```
 
     ## config found:  /home/runner/work/_temp/Library/gen3sis2/extdata/SouthAmerica/config/config_southamerica.Rspace found: /home/runner/work/_temp/Library/gen3sis2/extdata/SouthAmerica/space 
-    ## Output directory is: /tmp/RtmpPSaioF/config_southamerica
+    ## Output directory is: /tmp/RtmpAzUodM/config_southamerica
 
     ## Config's durantion$by must be numerical. Changing config duration$by to 'timestep'. Assuming spaces' time-step.
 
@@ -264,7 +264,7 @@ gen3sis2:::.default_raster_plot_aesthetics
     ##             axis.text = element_blank(), axis.ticks = element_blank()), 
     ##         ggplot2::labs(title = title), ggplot2::coord_fixed(ratio = 1))
     ## }
-    ## <bytecode: 0x55ea0eac5dd8>
+    ## <bytecode: 0x56123ea31278>
     ## <environment: namespace:gen3sis2>
 
 Now, let’s override it, defining our own aesthetics:

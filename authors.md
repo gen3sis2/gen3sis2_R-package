@@ -42,7 +42,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/project-Gen3sis/R-package/blob/development/inst/CITATION)
+[`inst/CITATION`](https://github.com/project-Gen3sis/R-package/blob/main/inst/CITATION)
 
 Hagen O, Flueck B, Fopp F, Cabral JS, Hartig F, Pontarp M, Rangel TF,
 Pellissier L. (2021) "gen3sis: A general engine for eco-evolutionary

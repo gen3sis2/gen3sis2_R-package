@@ -136,12 +136,12 @@ install.packages("gen3sis")
 <div class="section level3">
 <h3 id="how-to-contribute">How to contribute<a class="anchor" aria-label="anchor" href="#how-to-contribute"></a>
 </h3>
-<p>Great that you are considering contributing! We welcome contributions from the community, whether they are bug fixes, new features, documentation improvements, or anything else that can help improve the package. Feel free to also reach out over e-mail to discuss ideas. For guidelines on contributing to this project, please refer to the <a href="./CONTRIBUTING.html">CONTRIBUTING.md</a> file. In short, the main branches of this repo are:</p>
+<p>Great that you are considering contributing! We welcome contributions from the community, whether they are bug fixes, new features, documentation improvements, or anything else that can help improve the package. Feel free to also reach out over e-mail to discuss ideas. For guidelines on contributing to this project, please refer to the <a href="./CONTRIBUTING.html">CONTRIBUTING.md</a> file. In short, we use a simplified trunk based model with a main branch:</p>
 <ul>
 <li>
-<strong>master</strong> – reflects the current CRAN release (if at all). Only hotfixes or release-ready changes are merged here, typically just before CRAN submission.</li>
+<strong>main</strong> – reflects the current head of development, and releases on CRAN are tagged here. Complete features are merged onto the main branch by PR or from feature branches</li>
 <li>
-<strong>development</strong> – serves as the main working branch. All new features, improvements, and fixes should be merged here from separate feature or bugfix branches.</li>
+<strong>feature_branches</strong> – New and partial developments happen on separate feature branches, which will be merged into main after passing a review and testing.</li>
 </ul>
 </div>
 <div class="section level3">

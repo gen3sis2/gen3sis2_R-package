@@ -86,15 +86,15 @@ from the community, whether they are bug fixes, new features,
 documentation improvements, or anything else that can help improve the
 package. Feel free to also reach out over e-mail to discuss ideas. For
 guidelines on contributing to this project, please refer to the
-[CONTRIBUTING.md](./CONTRIBUTING.md) file. In short, the main branches
-of this repo are:
+[CONTRIBUTING.md](./CONTRIBUTING.md) file. In short, we use a simplified
+trunk based model with a main branch:
 
-- **master** – reflects the current CRAN release (if at all). Only
-  hotfixes or release-ready changes are merged here, typically just
-  before CRAN submission.
-- **development** – serves as the main working branch. All new features,
-  improvements, and fixes should be merged here from separate feature or
-  bugfix branches.
+- **main** – reflects the current head of development, and releases on
+  CRAN are tagged here. Complete features are merged onto the main
+  branch by PR or from feature branches
+- **feature_branches** – New and partial developments happen on separate
+  feature branches, which will be merged into main after passing a
+  review and testing.
 
 ### Credits
 

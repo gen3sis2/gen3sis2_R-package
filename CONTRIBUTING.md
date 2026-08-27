@@ -4,7 +4,7 @@
 
 All contributions shall arrive in the form of pull requests. And we ask you to first open an issue to discuss the scope and design of a feature to avoid duplicated or wasted efforts. 
 
-We are moving to a simplified trunk based development model. The `main` branch contains a running and tested version of the code base. All development happens on shorter lived feature branches and will be merged onto the main branch by pull request and only after successful checks and reviews. Releases, especially for CRAN, are tagged on the main branch. 
+The `main` branch contains a running and tested version of the code base. All development happens on shorter lived feature branches and will be merged onto the main branch by pull request and only after successful checks and reviews. Name the branches with a meaningful name. Releases, especially for CRAN, are tagged on the main branch. 
 
 For a general introduction to branch management see for example [this overview (martinfowler.com)](https://martinfowler.com/articles/branching-patterns.html). 
 

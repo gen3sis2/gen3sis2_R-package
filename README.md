@@ -133,6 +133,7 @@ We thank the developers of the following methods and dependencies:
 
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -155,6 +156,12 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=AdmirJr">AdmirJr</a>
 </td>
 <td align="center">
+<a href="https://github.com/benj919">
+<img src="https://avatars.githubusercontent.com/u/926479?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=benj919">benj919</a>
+</td>
+<td align="center">
 <a href="https://github.com/bouwerutger">
 <img src="https://avatars.githubusercontent.com/u/44290366?v=4" width="100px;" alt=""/>
 </a><br>
@@ -165,12 +172,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <img src="https://avatars.githubusercontent.com/u/41071747?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=LewisAJones">LewisAJones</a>
-</td>
-<td align="center">
-<a href="https://github.com/benj919">
-<img src="https://avatars.githubusercontent.com/u/926479?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=benj919">benj919</a>
 </td>
 </tr>
 
@@ -256,6 +257,12 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=dromaeo">dromaeo</a>
 </td>
+<td align="center">
+<a href="https://github.com/thomaskeggin">
+<img src="https://avatars.githubusercontent.com/u/38811866?u=61c0809c76bc9eb366afa8daf67ff08397b7e68f&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=thomaskeggin">thomaskeggin</a>
+</td>
 </tr>
 
 </table>
@@ -263,6 +270,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
 
 
 

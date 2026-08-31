@@ -111,7 +111,7 @@ create_ancestor_species <- function(space, config) {
   # close(con)
 
   # getting cells
-  initial_sites <- sample(1:nrow(space$coordinates), 20)
+  initial_sites <- sample(seq_len(nrow(space$coordinates)), 20)
 
   # Black daisy
   # black_daisy <- create_species(initial_cells = initial_sites[1:10], config = config)

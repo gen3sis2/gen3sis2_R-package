@@ -1,11 +1,12 @@
 [lint]
-extend-select = ["quotes", "TESTTHAT"]
+extend-select = ["quotes", "TESTTHAT", "true_false_symbol"]
 ignore = ["expect_type"]
+exclude = ["inst/", "vignettes/"]
 fixable = ["ALL"]
 fix-roxygen = true
 
 [lint.assignment]
-operator = "="
+operator = "<-"
 
 [lint.quotes]
 quote = "double"

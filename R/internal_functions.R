@@ -99,7 +99,9 @@ write_nex <- function(phy, label = "sp", output_file) {
 
   if (nrow(phy_no_root) == 0) {
     #following TreeSimGM and TreeSim convertion
-    if (phy[1, "Extinction.Time"] == val$config$gen3sis$general$duration$to - 1) {
+    if (
+      phy[1, "Extinction.Time"] == val$config$gen3sis$general$duration$to - 1
+    ) {
       String_final <- "1" # tree with only root
     } else {
       String_final <- "0" # tree with only root that got extinct
@@ -155,7 +157,7 @@ write_nex <- function(phy, label = "sp", output_file) {
     #adding ext times!
     extsps <- phy[phy$Extinction.Time > 0, c("Descendent", "Extinction.Time")]
     if (nrow(extsps) > 0) {
-      for (i in 1:nrow(extsps)) {
+      for (i in seq_len(nrow(extsps))) {
         spi <- paste0(label, extsps$Descendent[i], ":")
         # print("-------")
         # print(spi)
@@ -216,44 +218,50 @@ conv_unit <- function(x, from, to) {
 #'
 #' @returns NULL
 #' @noRd
-check_time_match <- function(config_duration, space_duration){
-  if(config_duration$unit != "timestep"){
-    if(config_duration$unit != space_duration$unit) {
+check_time_match <- function(config_duration, space_duration) {
+  if (config_duration$unit != "timestep") {
+    if (config_duration$unit != space_duration$unit) {
       text_warn <- paste0(
         "--- TIME-STEP MISMATCH ---\n  ",
-          "Config's time-steps are set as ", 
-          config_duration$by, " ",
-          config_duration$unit, ", ",
-          "but space's time-steps are set as ",
-          space_duration$by, " ",
-          space_duration$unit, ".\n  ",
-          "Did you consider time-scaling in your config?\n  ",
-          "Read more about time-scaling in the respective vignette."
-        )
+        "Config's time-steps are set as ",
+        config_duration$by,
+        " ",
+        config_duration$unit,
+        ", ",
+        "but space's time-steps are set as ",
+        space_duration$by,
+        " ",
+        space_duration$unit,
+        ".\n  ",
+        "Did you consider time-scaling in your config?\n  ",
+        "Read more about time-scaling in the respective vignette."
+      )
       warning(text_warn)
       message(text_warn)
     }
 
-    time_proportion <- config_duration$by/conv_unit(space_duration$by, space_duration$unit, config_duration$unit)
+    time_proportion <- config_duration$by /
+      conv_unit(space_duration$by, space_duration$unit, config_duration$unit)
 
-    if(time_proportion != 1){
+    if (time_proportion != 1) {
       text_warn <- paste0(
-          "--- TIME-STEP MISMATCH ---\n  ",
-          "Config's time-steps are ",
-          time_proportion, " ",
-          "times space's time-steps.\n  ",
-          "Did you consider time-scaling in your config?\n  ",
-          "Read more about time-scaling in the respective vignette."
-        )
+        "--- TIME-STEP MISMATCH ---\n  ",
+        "Config's time-steps are ",
+        time_proportion,
+        " ",
+        "times space's time-steps.\n  ",
+        "Did you consider time-scaling in your config?\n  ",
+        "Read more about time-scaling in the respective vignette."
+      )
       message(text_warn)
       warning(text_warn)
     }
   } else {
     text_warn <- paste0(
       "  Config time unit is set to 'timestep'.\n  ",
-        "The simulation will fully assume spaces duration.\n  ",
-        "Read more about time-scaling in the respective vignette."
-      )
+      "The simulation will fully assume spaces duration.\n  ",
+      "Read more about time-scaling in the respective vignette."
+    )
     warning(text_warn)
     message(text_warn)
   }

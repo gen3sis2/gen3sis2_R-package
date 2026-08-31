@@ -40,7 +40,7 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
 #' @return an expanded species list including all newly created species
 #' @noRd
 loop_speciation <- function(config, data, vars) {
-  if (config$gen3sis$general$verbose >= 3){
+  if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering speciation module \n"))
   }
   for (spi in 1:vars$n_sp) {
@@ -67,7 +67,7 @@ loop_speciation <- function(config, data, vars) {
       )
 
       permutation <- sample(
-        1:length(species_presence),
+        seq_along(species_presence),
         length(species_presence)
       )
       clu_geo_spi_ti <- Tdbscan_variable(
@@ -84,8 +84,17 @@ loop_speciation <- function(config, data, vars) {
 
     gen_dist_spi <- decompress_divergence(species[["divergence"]])
     # update genetic distances
-    ifactor <- config$gen3sis$speciation$get_divergence_factor(species, clu_geo_spi_ti, data[["space"]], config)
-    gen_dist_spi <- update_divergence(gen_dist_spi, clu_geo_spi_ti, ifactor = ifactor )
+    ifactor <- config$gen3sis$speciation$get_divergence_factor(
+      species,
+      clu_geo_spi_ti,
+      data[["space"]],
+      config
+    )
+    gen_dist_spi <- update_divergence(
+      gen_dist_spi,
+      clu_geo_spi_ti,
+      ifactor = ifactor
+    )
 
     gen_dist_spi <- compress_divergence(gen_dist_spi)
 
@@ -139,9 +148,9 @@ loop_speciation <- function(config, data, vars) {
       ]
       #update names
       if (length(ue) > 0) {
-        fullrange <- 1:length(ue)
+        fullrange <- seq_along(ue)
         dimnames(gen_dist_spi$compressed_matrix) <- list(fullrange, fullrange)
-        for (i in 1:length(gen_dist_spi$index)) {
+        for (i in seq_along(gen_dist_spi$index)) {
           gen_dist_spi$index[i] <- fullrange[ue == gen_dist_spi$index[i]]
         }
       }

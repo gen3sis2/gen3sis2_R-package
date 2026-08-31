@@ -110,7 +110,7 @@ create_ancestor_species <- function(space, config) {
     "polS" = as.numeric(-plyc)
   )
   new_species <- list()
-  for (i in 1:length(yls)) {
+  for (i in seq_along(yls)) {
     # i <- 3
     initial_sites <- rownames(co[abs(co[, "y"] - yls[i]) < 30, ]) #tolerance of 5 degrees
     # initial_sites <- sample(initial_sites, 1)

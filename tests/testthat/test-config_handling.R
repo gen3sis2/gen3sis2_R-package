@@ -1,6 +1,6 @@
 # Copyright (c) 2020, ETH Zurich
 # Tests are organized per function, in the same order of appearance in config_handling.R
-base_dir <- system.file(file.path("extdata/TestConfigs"), package = "gen3sis2")
+base_dir <- system.file("extdata/TestConfigs", package = "gen3sis2")
 
 update_reference <- FALSE
 
@@ -120,8 +120,8 @@ test_that("properly writes config_name with config_file NA and config_name NULL"
   fake_time <- as.POSIXct("2025-05-21 10:00:00")
   fake_sample <- 1313
 
-  mockery::stub(create_input_config, 'Sys.time', fake_time)
-  mockery::stub(create_input_config, 'sample', fake_sample)
+  mockery::stub(create_input_config, "Sys.time", fake_time)
+  mockery::stub(create_input_config, "sample", fake_sample)
 
   config <- create_input_config(config_name = NULL)
 
@@ -187,7 +187,10 @@ test_that("returns the correct object", {
     file.path(base_dir, "TestConfig.R")
   ))
 
-  y <- gen3sis2:::populate_config(new_config, file.path(base_dir, "TestConfig.R"))
+  y <- gen3sis2:::populate_config(
+    new_config,
+    file.path(base_dir, "TestConfig.R")
+  )
   expect_s3_class(y, "gen3sis_config")
 })
 

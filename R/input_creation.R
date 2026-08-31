@@ -15,8 +15,8 @@
 #' where: **src** is a vector of environmental conditions for the origin sites,
 #' **src_habitable** (TRUE or FALSE) for habitable condition of the origin sites,
 #' **dest** is a vector of environmental conditions for the destination site, dest_habitable  (TRUE or FALSE) for habitable condition of the destination cell
-#' @param directions 4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see distance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16. 
-#' @param output_directory path for storing the gen3sis ready space (i.e. space.rds, metadata.txt and full- and/or local_distance folders) 
+#' @param directions 4, 8 or 16 neighbors, dictates the connection of cell neighbors on adjacency matrix (see distance package). This does not control the dispersal processes directly in the simulation, it only makes diagonal distances less biased. E.g., when using directions = 4, diagonals are not directly computed, thus inflating distances for diagonal movement. Default is 16.
+#' @param output_directory path for storing the gen3sis ready space (i.e. space.rds, metadata.txt and full- and/or local_distance folders)
 #' @param full_dists should a full distance matrix be calculated? TRUE or FALSE? Default is FALSE.
 #' If TRUE calculates the entire distance matrix for every time-step and between all habitable cells
 #' (faster CPU time, higher storage required).
@@ -26,7 +26,7 @@
 #' @param duration list with from, to, by and unit. Use negative value to represent past, 0 to represent present and positive values to represent future.
 #' E.g., a spaces from 10 Ma in the past to 10 Ma into the future, each timestep comprising 5 Ma:
 #'    \code{duration = list(from = -10, to = 10, by = 5, unit = "Myr")}
-#' @param geodynamic True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL, 
+#' @param geodynamic True or False, if the space is dynamic (e.g. sea-level change) or static. Default is NULL,
 #' i.e. deciding final value based on the input data using \code{?is_geodynamic}.
 #' @param ... additional arguments to be passed to the \code{\link{create_spaces}} function. Possible arguments include:
 #' \itemize{
@@ -70,12 +70,12 @@ create_spaces_raster <- function(
 
   if (
     !is.list(duration) ||
-      any(!c("from", "to", "by", "unit") %in% names(duration))
+      !all(c("from", "to", "by", "unit") %in% names(duration))
   ) {
     stop("Duration is ideally informed as a list with from, to, by and unit.")
   }
 
-  if (any(is.na(duration))) {
+  if (anyNA(duration)) {
     required_elements <- names(which(is.na(duration)))
 
     if (length(required_elements) > 1) {
@@ -338,7 +338,7 @@ get_local_distances <- function(
   # g <- igraph::graph_from_edgelist(edge_list)
   # #
 
-  for (k in 1:nrow(transition_cells)) {
+  for (k in seq_len(nrow(transition_cells))) {
     ind_i <- transition_cells[k, "i"] # destination
     ind_j <- transition_cells[k, "j"] # origin
 
@@ -404,10 +404,10 @@ get_local_distances <- function(
 #' @noRd
 get_habitable_mask <- function(habitability_masks, space_stack, i) {
   if (is.null(habitability_masks)) {
-    habitable_mask <- !any(is.na(space_stack)) # TODO is this the best solution?
+    habitable_mask <- !anyNA(space_stack) # TODO is this the best solution?
   } else if (is.character(habitability_masks[[i]])) {
     habitable_mask <- terra::rast(habitability_masks[[i]])
-  } else if ("SpatRaster" %in% class(habitability_masks[[i]])) {
+  } else if (inherits(habitability_masks[[i]], "SpatRaster")) {
     habitable_mask <- habitability_masks[[i]]
   } else {
     stop(

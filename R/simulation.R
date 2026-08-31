@@ -30,7 +30,7 @@ setup_inputs <- function(config, data, vars) {
       range <- config[["gen3sis"]][["general"]][["environmental_ranges"]][[
         name
       ]]
-      if (any(is.na(range))) {
+      if (anyNA(range)) {
         r_min <- min(tmp, na.rm = TRUE)
         r_max <- max(tmp, na.rm = TRUE)
         range <- c(r_min, r_max)
@@ -79,25 +79,30 @@ setup_variables <- function(config, data, vars) {
   # and the earliest time-step will always n-1, what ensures compatibility across all possible situations.
   # TL;DR: as time-steps are 0-based, i.e., latest must be 0 and earliest must be the length-1
 
-  # --- TODO --- 
-  # all error conditions must be caught in the config check. Invalid values that pass the check must abort the simulation. 
+  # --- TODO ---
+  # all error conditions must be caught in the config check. Invalid values that pass the check must abort the simulation.
   # Values that are min/max clamped should be printed, possibly as warnings (e.g. start time outside spaces time window).
   # Should we change these conditionals below?
-
 
   zero_base_ts <- (length(data$inputs$timesteps) - 1):0
 
   # If config's duration$by is problematic, it is setted to 'timestep'.
   # It prevents any calculation and forces the simulation to overwrite config's duration$from and duration$to
   # to the earliest and latest available space's time-step.
-  if (is.na(config$gen3sis$general$duration$by) || is.character(config$gen3sis$general$duration$to)) {
+  if (
+    is.na(config$gen3sis$general$duration$by) ||
+      is.character(config$gen3sis$general$duration$to)
+  ) {
     config$gen3sis$general$duration$by <- "timestep"
     message(
       "Config's durantion$by must be numerical. Changing config duration$by to 'timestep'. Assuming spaces' time-step."
     )
-  } 
+  }
 
-  if (is.na(config$gen3sis$general$duration$from) || config$gen3sis$general$duration$unit == "timestep") {
+  if (
+    is.na(config$gen3sis$general$duration$from) ||
+      config$gen3sis$general$duration$unit == "timestep"
+  ) {
     # start at the earliest available time-step
     config$gen3sis$general$duration$from <- length(data[["inputs"]][[
       "timesteps"
@@ -149,7 +154,10 @@ setup_variables <- function(config, data, vars) {
     )
   }
 
-  if (is.na(config$gen3sis$general$duration$to) || config$gen3sis$general$duration$unit == "timestep") {
+  if (
+    is.na(config$gen3sis$general$duration$to) ||
+      config$gen3sis$general$duration$unit == "timestep"
+  ) {
     # ends at the latest available time-step
     config$gen3sis$general$duration$to <- 0
   } else if (is.character(config$gen3sis$general$duration$to)) {
@@ -196,7 +204,6 @@ setup_variables <- function(config, data, vars) {
   # flag
   vars$flag <- "OK"
 
-
   return(list(config = config, data = data, vars = vars))
 }
 
@@ -219,7 +226,7 @@ init_attribute_ancestor_distribution <- function(config, data, vars) {
     data$space,
     config
   )
-  for (i in 1:length(all_species)) {
+  for (i in seq_along(all_species)) {
     force(i)
     all_species[[i]][["id"]] <- as.character(i)
   }
@@ -275,7 +282,7 @@ init_simulation <- function(config, data, vars) {
   # both are calculated in setup_variables()
   # config's duration$by is not important here, because simulation will follow spaces' time-step
   # user is always warned if config's and spaces' duration$by are different
-  # the simulation does not automatically correct or scale anything  
+  # the simulation does not automatically correct or scale anything
   steps <- (config$gen3sis$general$duration$from:config$gen3sis$general$duration$to)
 
   # create matrix for turnover

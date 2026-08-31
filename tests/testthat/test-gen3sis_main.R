@@ -1,5 +1,5 @@
 # Copyright (c) 2020, ETH Zurich
-base_dir <- system.file(file.path("extdata"), package = "gen3sis2")
+base_dir <- system.file("extdata", package = "gen3sis2")
 
 # run_simulation()
 ## Test if the simulation runs without errors
@@ -845,8 +845,8 @@ test_that("simulation loop breaks if the species limits are reached", {
 #   # TODO find an alternative to use spaces.rds
 #   # spac3tools::space_to_space(dir_input = file.path(datapath,"space"),
 #   #                                duration = list(from = 139, to = 0, by = -1, unit = "Myr"))
-#   
-#   
+#
+#
 #   s <- run_simulation(config = config,
 #                       space = file.path(datapath,"space"), output_directory = tmp_output)
 #   ref_summary <- readRDS(file.path(datapath, "reference_saves", "sgen3sis_summary.rds"))

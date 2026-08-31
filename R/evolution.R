@@ -54,7 +54,7 @@ evolve <- function(species, space, distance_matrix, config) {
     config
   )
 
-  permutation <- sample(1:length(species_presence), length(species_presence))
+  permutation <- sample(seq_along(species_presence), length(species_presence))
   cluster_indices <- Tdbscan_variable(
     distance_matrix[
       species_presence[permutation],

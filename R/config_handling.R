@@ -364,7 +364,7 @@ create_empty_config <- function() {
       "apply_within_site_speciation" = NA
     ),
     "trait_evolution" = list("apply_trait_evolution" = NULL),
-    "ecology" = list("apply_ecology" = NULL),
+    "ecology" = list("apply_ecology" = NULL, "ecological_state_names" = NA),
     "space_modifier" = list("get_modifiers" = NULL, "apply_modifiers" = NULL)
   )
   config[["user"]] <- list()

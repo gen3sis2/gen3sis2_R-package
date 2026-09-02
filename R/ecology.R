@@ -144,9 +144,11 @@ loop_ecology <- function(config, data, vars) {
       data$all_species[[spi]][["abundance"]][cell] <-
         new_abundance[i]
       
-      if(is.list(ecological_result)){
-        data$all_species[[spi]][["divergence"]][["within_site"]][cell] <-
-          new_within_site_divergence[i]
+      if(nrow(ecological_result) > 1){
+        # make sure this is correct
+        data$all_species[[spi]][["ecological_states"]][
+          cell, config$gen3sis$general$ecological_states_names
+          ] <- new_ecological_states[,i]
       }
     }
 

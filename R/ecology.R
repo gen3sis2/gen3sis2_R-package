@@ -81,7 +81,7 @@ loop_ecology <- function(config, data, vars) {
     
     traits <- matrix(
       NA,
-      nrow = length(config$gen3sis$general$ecological_states_names) + 1,
+      nrow = length(config$gen3sis$general$ecological_state_names) + 1,
       ncol = length(coo_sp),
       dimnames = list(
         c("abundance", config$gen3sis$general$trait_names),
@@ -110,7 +110,7 @@ loop_ecology <- function(config, data, vars) {
       ecological_states[i,] <-
         species[["ecological_states"]][
           cell,
-          config$gen3sis$general$ecological_states_names
+          config$gen3sis$general$ecological_state_names
         ]
       
       ##### also add the names of the indicators to the config so that we can select them here
@@ -133,7 +133,7 @@ loop_ecology <- function(config, data, vars) {
     
     if(nrow(ecological_result) > 1){
       new_ecological_states <-
-        ecological_result[config$gen3sis$general$ecological_states_names,]
+        ecological_result[config$gen3sis$general$ecological_state_names,]
     }
     
     #### EVALUATE FROM HERE #####
@@ -147,7 +147,7 @@ loop_ecology <- function(config, data, vars) {
       if(nrow(ecological_result) > 1){
         # make sure this is correct
         data$all_species[[spi]][["ecological_states"]][
-          cell, config$gen3sis$general$ecological_states_names
+          cell, config$gen3sis$general$ecological_state_names
           ] <- new_ecological_states[,i]
       }
     }

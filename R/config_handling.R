@@ -350,7 +350,8 @@ create_empty_config <- function() {
     ),
     "initialization" = list(
       "initial_abundance" = NULL,
-      "create_ancestor_species" = NULL
+      "create_ancestor_species" = NULL,
+      "initial_ecological_state" = NA
     ),
     "dispersal" = list(
       "max_dispersal" = Inf, 
@@ -364,7 +365,10 @@ create_empty_config <- function() {
       "apply_within_site_speciation" = NA
     ),
     "trait_evolution" = list("apply_trait_evolution" = NULL),
-    "ecology" = list("apply_ecology" = NULL, "ecological_state_names" = NA),
+    "ecology" = list(
+      "apply_ecology" = NULL,
+      "ecological_state_names" = NA
+      ),
     "space_modifier" = list("get_modifiers" = NULL, "apply_modifiers" = NULL)
   )
   config[["user"]] <- list()

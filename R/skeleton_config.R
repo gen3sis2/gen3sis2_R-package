@@ -109,6 +109,9 @@ create_ancestor_species <- function(space, config) {
  stop("create the initial species here")
 }
 
+# initial values for the user-specified ecological state(s). Relevant during setup
+# and later during dispersal.
+initial_ecological_state <- NA
 
 #-----------------#
 #### Dispersal ####

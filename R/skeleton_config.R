@@ -156,12 +156,16 @@ apply_trait_evolution <- function(species, cluster_indices, space, config) {
 #### Ecology: Biotic and Abiotic Interactions ####
 #------------------------------------------------#
 
+# names of population-level ecological states returned by apply_ecology.
+# use NA if no ecological states are required.
+ecological_state_names <- NA
+
 # called for every site with all occurring species, this function calculates abundances 
 # and/or who survives for each sites.
 # returns a vector of abundances.
 # set the abundance to 0 for every species supposed to die.
-apply_ecology <- function(abundance, traits, within_site_divergence, environment, config) {
-  stop("calculate species abundances and deaths here")
+apply_ecology <- function(abundance, traits, ecological_states, local_environment, config) {
+  stop("calculate species abundances and ecological states here")
 }
 
 

@@ -81,13 +81,13 @@ loop_ecology <- function(config, data, vars) {
     
     ecological_states <- NULL
     
-    if (!anyNA(config$gen3sis$ecology$ecological_state_names)) {
+    if (!anyNA(config$gen3sis$general$ecological_state_names)) {
       ecological_states <- matrix(
         NA,
-        nrow = length(config$gen3sis$ecology$ecological_state_names),
+        nrow = length(config$gen3sis$general$ecological_state_names),
         ncol = length(coo_sp),
         dimnames = list(
-          config$gen3sis$ecology$ecological_state_names,
+          config$gen3sis$general$ecological_state_names,
           as.character(coo_sp)
         )
       )
@@ -111,7 +111,7 @@ loop_ecology <- function(config, data, vars) {
       abundance[i] <-
         species[["abundance"]][cell]
       
-      if(!anyNA(config$gen3sis$ecology$ecological_state_names)){
+      if(!anyNA(config$gen3sis$general$ecological_state_names)){
         ecological_states[, i] <-
           species[["ecological_states"]][cell, 
                                          config$gen3sis$general$ecological_state_names]
@@ -127,20 +127,27 @@ loop_ecology <- function(config, data, vars) {
         config
       )
     
-    new_abundance <-
-      ecological_result["abundance",]
+    new_ecological_states <- NULL
     
-    if(nrow(ecological_result) > 1){
-      new_ecological_states <-
-        ecological_result[config$gen3sis$general$ecological_state_names,]
+    if(is.matrix(ecological_result)){
+      new_abundance <-
+        ecological_result["abundance",]
+      
+      if(nrow(ecological_result) > 1){
+        new_ecological_states <-
+          ecological_result[config$gen3sis$general$ecological_state_names,
+                            ,
+                            drop = FALSE]
+      }
+    }else{
+      new_abundance <- ecological_result
     }
-    
+
     for (i in seq_along(coo_sp)) {
       spi <- coo_sp[i]
       
       data$all_species[[spi]][["abundance"]][cell] <-
         new_abundance[i]
-      
       if(!is.null(new_ecological_states)){
         data$all_species[[spi]][["ecological_states"]][
           cell, config$gen3sis$general$ecological_state_names] <- 

@@ -62,17 +62,17 @@ create_species <- function(initial_cells, config) {
   )
   
 
-  if (!anyNA(config$gen3sis$ecology$ecological_state_names)) {
+  if (!anyNA(config$gen3sis$general$ecological_state_names)) {
     species[["ecological_states"]] <- matrix(
       config$gen3sis$initialization$initial_ecological_state[
-        config$gen3sis$ecology$ecological_state_names
+        config$gen3sis$general$ecological_state_names
         ],
       nrow = num_cells,
-      ncol = length(config$gen3sis$ecology$ecological_state_names),
+      ncol = length(config$gen3sis$general$ecological_state_names),
       byrow = TRUE,
       dimnames = list(
         initial_cells,
-        config$gen3sis$ecology$ecological_state_names
+        config$gen3sis$general$ecological_state_names
       )
     )
   }
@@ -261,14 +261,14 @@ disperse_species <- function(species, source, destination, config) {
   if (!is.null(species[["ecological_states"]])) {
     new_states <- matrix(
       config$gen3sis$initialization$initial_ecological_state[
-        config$gen3sis$ecology$ecological_state_names
+        config$gen3sis$general$ecological_state_names
       ],
       nrow = length(destination),
-      ncol = length(config$gen3sis$ecology$ecological_state_names),
+      ncol = length(config$gen3sis$general$ecological_state_names),
       byrow = TRUE,
       dimnames = list(
         destination,
-        config$gen3sis$ecology$ecological_state_names
+        config$gen3sis$general$ecological_state_names
       )
     )
     

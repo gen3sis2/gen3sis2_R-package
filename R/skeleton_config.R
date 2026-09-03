@@ -62,6 +62,10 @@ max_number_of_coexisting_species = 2500
 # a "dispersal" trait is implicitly added in any case
 trait_names = c("dispersal")
 
+# names of population-level ecological states returned by apply_ecology.
+# use NA if no ecological states are required.
+ecological_state_names <- NA
+
 # ranges to scale the input environments with:
 # not listed variable:         no scaling takes place
 # listed, set to NA:           the environmental variable will be scaled from [min, max] to [0, 1]
@@ -158,10 +162,6 @@ apply_trait_evolution <- function(species, cluster_indices, space, config) {
 #------------------------------------------------#
 #### Ecology: Biotic and Abiotic Interactions ####
 #------------------------------------------------#
-
-# names of population-level ecological states returned by apply_ecology.
-# use NA if no ecological states are required.
-ecological_state_names <- NA
 
 # called for every site with all occurring species, this function calculates abundances 
 # and/or who survives for each sites.

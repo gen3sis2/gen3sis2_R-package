@@ -344,6 +344,7 @@ create_empty_config <- function() {
       "max_number_of_coexisting_species" = NA,
       "end_of_timestep_observer" = function(...) {},
       "trait_names" = list(),
+      "ecological_state_names" = NA,
       "environmental_ranges" = list(),
       "verbose" = FALSE,
       "config_name" = NULL
@@ -365,10 +366,7 @@ create_empty_config <- function() {
       "apply_within_site_speciation" = NA
     ),
     "trait_evolution" = list("apply_trait_evolution" = NULL),
-    "ecology" = list(
-      "apply_ecology" = NULL,
-      "ecological_state_names" = NA
-      ),
+    "ecology" = list("apply_ecology" = NULL),
     "space_modifier" = list("get_modifiers" = NULL, "apply_modifiers" = NULL)
   )
   config[["user"]] <- list()

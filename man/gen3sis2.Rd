@@ -2,7 +2,6 @@
 % Please edit documentation in R/gen3sis_main.R
 \docType{package}
 \name{gen3sis2}
-\alias{gen3sis2-package}
 \alias{gen3sis2}
 \title{gen3sis2: General Engine for Eco-Evolutionary Simulations}
 \description{
@@ -51,6 +50,7 @@ O. Hagen, B. Flück, F. Fopp, J.S. Cabral, F. Hartig, M. Pontarp, T.F. Rangel, L
 
 Authors:
 \itemize{
+  \item Oskar Hagen \email{oskar@hagen.bio} (space Ecology, WSL and ETH Zürich, Switzerland)
   \item Admir C. de O. Junior \email{admircjunior@gmail.com}
   \item Bouwe Reijenga \email{bouwe.reijenga@earth.ox.ac.uk}
   \item Benjamin Flück \email{benjamin.flueck@alumni.ethz.ch} (space Ecology, WSL and ETH Zürich, Switzerland)

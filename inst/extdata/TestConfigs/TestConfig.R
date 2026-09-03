@@ -4,9 +4,12 @@
 comb_vector <- list(seed = 28015, dispersal = 240, t_evo = 0.03) #
 
 random_seed <- comb_vector$seed #28015
-step_time <- list(x = 1, unit = "timestep")
-start_time <- NA
-end_time <- NA
+duration <- list(
+  from = NA,
+  to = NA,
+  by = 1,
+  unit = "timestep"
+)
 max_number_of_species <- 20000
 max_number_of_coexisting_species <- 20000
 initial_abundance <- 10
@@ -253,11 +256,11 @@ apply_ecology <- function(
 #------------------------------#
 ####      Modify space      ####
 #------------------------------#
-get_modifiers <- function(space, all_species) {
+get_modifiers <- function(space, config, all_species) {
   modifiers <- NULL
   return(modifiers)
 }
 
-apply_modifiers <- function(space, modifiers) {
+apply_modifiers <- function(space, config, modifiers) {
   return(space$environment)
 }

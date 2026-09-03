@@ -6,6 +6,10 @@
 [![Contributors](https://img.shields.io/github/contributors/gen3sis2/gen3sis2_R-package)](https://github.com/gen3sis2/gen3sis2_R-package/graphs/contributors)
 <!-- badges: end -->
 
+# Temporary Notice: "development" branch renamed to "main"
+
+We are moving to a main branch and release tag model. Local repo clones need to be updated. See the github pop-up or the [instructions here](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/renaming-a-branch).
+
 # General Engine for Eco-Evolutionary Simulations 2
 
 This is the repository for the R-package of the gen3sis engine [gen3sis2 git](https://github.com/gen3sis2/gen3sis2_R-package).
@@ -81,10 +85,10 @@ paste("gen3sis2 version:", packageVersion("gen3sis2"))
 ### How to contribute
 
 Great that you are considering contributing! We welcome contributions from the community, whether they are bug fixes, new features, documentation improvements, or anything else that can help improve the package. Feel free to also reach out over e-mail to discuss ideas.
-For guidelines on contributing to this project, please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file. In short, the main branches of this repo are:
+For guidelines on contributing to this project, please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file. In short, we use a simplified trunk based model with a main branch:
 
-- **master** – reflects the current CRAN release (if at all). Only hotfixes or release-ready changes are merged here, typically just before CRAN submission.
-- **development** – serves as the main working branch. All new features, improvements, and fixes should be merged here from separate feature or bugfix branches.
+- **main** – reflects the current head of development, and releases on CRAN are tagged here. Complete features are merged onto the main branch by PR or from feature branches
+- **feature_branches** – New and partial developments happen on separate feature branches, which will be merged into main after passing a review and testing.
 
 
 ### Credits
@@ -127,6 +131,9 @@ We thank the developers of the following methods and dependencies:
 
 
 
+
+
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -155,10 +162,10 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=benj919">benj919</a>
 </td>
 <td align="center">
-<a href="https://github.com/florianhartig">
-<img src="https://avatars.githubusercontent.com/u/5457753?v=4" width="100px;" alt=""/>
+<a href="https://github.com/bouwerutger">
+<img src="https://avatars.githubusercontent.com/u/44290366?v=4" width="100px;" alt=""/>
 </a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=florianhartig">florianhartig</a>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bouwerutger">bouwerutger</a>
 </td>
 <td align="center">
 <a href="https://github.com/LewisAJones">
@@ -171,16 +178,22 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 
 <tr>
 <td align="center">
+<a href="https://github.com/bethany-j-allen">
+<img src="https://avatars.githubusercontent.com/u/39991015?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bethany-j-allen">bethany-j-allen</a>
+</td>
+<td align="center">
+<a href="https://github.com/florianhartig">
+<img src="https://avatars.githubusercontent.com/u/5457753?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=florianhartig">florianhartig</a>
+</td>
+<td align="center">
 <a href="https://github.com/loic-pellissier">
 <img src="https://avatars.githubusercontent.com/u/62331405?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=loic-pellissier">loic-pellissier</a>
-</td>
-<td align="center">
-<a href="https://github.com/bouwerutger">
-<img src="https://avatars.githubusercontent.com/u/44290366?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bouwerutger">bouwerutger</a>
 </td>
 <td align="center">
 <a href="https://github.com/yihui">
@@ -194,16 +207,16 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=FFopp">FFopp</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/mmore500">
 <img src="https://avatars.githubusercontent.com/u/10763333?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=mmore500">mmore500</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/ZHG2017">
 <img src="https://avatars.githubusercontent.com/u/31282190?v=4" width="100px;" alt=""/>
@@ -228,11 +241,27 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=castroinsua">castroinsua</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
-<a href="https://github.com/bethany-j-allen">
-<img src="https://avatars.githubusercontent.com/u/39991015?u=174109d940f7a5292b435965308a8a7c6032f71d&v=4" width="100px;" alt=""/>
+<a href="https://github.com/adamkocsis">
+<img src="https://avatars.githubusercontent.com/u/13674799?u=881fb3d951a7530e4eaeb85a725a45a13c756404&v=4" width="100px;" alt=""/>
 </a><br>
-<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=bethany-j-allen">bethany-j-allen</a>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=adamkocsis">adamkocsis</a>
+</td>
+<td align="center">
+<a href="https://github.com/dromaeo">
+<img src="https://avatars.githubusercontent.com/u/146327980?u=f11a594d380974784276bf275cbe0351a79d64e0&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=dromaeo">dromaeo</a>
+</td>
+<td align="center">
+<a href="https://github.com/thomaskeggin">
+<img src="https://avatars.githubusercontent.com/u/38811866?u=61c0809c76bc9eb366afa8daf67ff08397b7e68f&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/gen3sis2/gen3sis2_R-package/commits?author=thomaskeggin">thomaskeggin</a>
 </td>
 </tr>
 
@@ -241,6 +270,9 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+
+
 
 
 

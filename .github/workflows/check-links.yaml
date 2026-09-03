@@ -2,9 +2,9 @@ name: Check links
 
 on:
   push:
-    branches: [master, main, development]
+    branches: [main]
   pull_request:
-    branches: [master, main, development]
+    branches: [main]
   schedule:
     # Check links every Monday at 08:00
     - cron: "0 8 * * 1"

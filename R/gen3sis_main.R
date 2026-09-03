@@ -130,7 +130,7 @@ run_simulation <- function(
   }
 
   if (!verify_config(config)) {
-    stop("config verification failed")
+    stop("Config verification failed.")
   } else {
     cat("\nUsing config:", config$gen3sis$general$config_name, "\n")
   }
@@ -150,8 +150,12 @@ run_simulation <- function(
   val <- setup_inputs(val$config, val$data, val$vars)
   val <- setup_variables(val$config, val$data, val$vars)
   val <- setup_space(val$config, val$data, val$vars)
+  # Check the time matching between config and space
+  check_time_match(val$config$gen3sis$general$duration, val$data$inputs$duration)
+
   # conceptually the result of the initialization is the "end" of a previous timestep
   val$data$space$id <- val$data$space$id + 1
+
 
   if (verbose >= 1) {
     cat("--- Initializing --- \n")
@@ -176,23 +180,23 @@ run_simulation <- function(
   ### when to call the observer
   if (is.na(call_observer)) {
     save_steps <- c(
-      val$config$gen3sis$general$start_time,
-      val$config$gen3sis$general$end_time
+      val$config$gen3sis$general$duration$from,
+      val$config$gen3sis$general$duration$to
     )
   } else if (call_observer == "all") {
-    save_steps <- val$config$gen3sis$general$start_time:val$config$gen3sis$general$end_time
+    save_steps <- val$config$gen3sis$general$duration$from:val$config$gen3sis$general$duration$to
   } else {
     steps <- as.integer(call_observer) + 2
     save_steps <- ceiling(seq(
-      val$config$gen3sis$general$start_time,
-      val$config$gen3sis$general$end_time,
+      val$config$gen3sis$general$duration$from,
+      val$config$gen3sis$general$duration$to,
       length.out = steps
     ))
   }
   # # when to save the species data. +1 is added to tf for matters of timeps jumps between ti and tn
   val$vars$save_steps <- save_steps
 
-  val$vars$steps <- val$config$gen3sis$general$start_time:val$config$gen3sis$general$end_time
+  val$vars$steps <- val$config$gen3sis$general$duration$from:val$config$gen3sis$general$duration$to
   #
   #
   #
@@ -228,6 +232,7 @@ run_simulation <- function(
     if (!is.null(val$data$space_modifiers)) {
       val$data$space$environment <- val$config$gen3sis$space_modifier$apply_modifiers(
         val$data$space,
+        val$config,
         val$data$space_modifiers
       )
     }
@@ -313,6 +318,7 @@ run_simulation <- function(
     # Environmental dynamics
     val$data$space_modifiers <- val$config$gen3sis$space_modifier$get_modifiers(
       val$data$space,
+      val$config,
       val$data$all_species
     )
 

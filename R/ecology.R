@@ -142,10 +142,9 @@ loop_ecology <- function(config, data, vars) {
         new_abundance[i]
       
       if(!is.null(new_ecological_states)){
-        # make sure this is correct
         data$all_species[[spi]][["ecological_states"]][
-          cell, config$gen3sis$general$ecological_state_names
-          ] <- new_ecological_states[,i]
+          cell, config$gen3sis$general$ecological_state_names] <- 
+          new_ecological_states[,i]
       }
     }
 

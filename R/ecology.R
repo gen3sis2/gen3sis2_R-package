@@ -79,15 +79,19 @@ loop_ecology <- function(config, data, vars) {
       )
     )
     
-    traits <- matrix(
-      NA,
-      nrow = length(config$gen3sis$general$ecological_state_names) + 1,
-      ncol = length(coo_sp),
-      dimnames = list(
-        c("abundance", config$gen3sis$general$trait_names),
-        as.character(coo_sp)
+    ecological_states <- NULL
+    
+    if (!anyNA(config$gen3sis$ecology$ecological_state_names)) {
+      ecological_states <- matrix(
+        NA,
+        nrow = length(config$gen3sis$ecology$ecological_state_names),
+        ncol = length(coo_sp),
+        dimnames = list(
+          config$gen3sis$ecology$ecological_state_names,
+          as.character(coo_sp)
+        )
       )
-    )
+    }
     
     # create a matrix here as well for the ecological indicators (per-population)
     
@@ -107,18 +111,13 @@ loop_ecology <- function(config, data, vars) {
       abundance[i] <-
         species[["abundance"]][cell]
       
-      ecological_states[i,] <-
-        species[["ecological_states"]][
-          cell,
-          config$gen3sis$general$ecological_state_names
-        ]
-      
-      ##### also add the names of the indicators to the config so that we can select them here
-      ##### just as was done for the traits table, and add it to the config handler
-      
+      if(!anyNA(config$gen3sis$ecology$ecological_state_names)){
+        ecological_states[, i] <-
+          species[["ecological_states"]][cell, 
+                                         config$gen3sis$general$ecological_state_names]
+      }
     }
 
-    
     ecological_result <-
       config$gen3sis$ecology$apply_ecology(
         abundance,
@@ -136,15 +135,13 @@ loop_ecology <- function(config, data, vars) {
         ecological_result[config$gen3sis$general$ecological_state_names,]
     }
     
-    #### EVALUATE FROM HERE #####
-    
     for (i in seq_along(coo_sp)) {
       spi <- coo_sp[i]
       
       data$all_species[[spi]][["abundance"]][cell] <-
         new_abundance[i]
       
-      if(nrow(ecological_result) > 1){
+      if(!is.null(new_ecological_states)){
         # make sure this is correct
         data$all_species[[spi]][["ecological_states"]][
           cell, config$gen3sis$general$ecological_state_names

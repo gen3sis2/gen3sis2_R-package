@@ -284,7 +284,7 @@ update_within_cluster_divergence <- function(
       space = space,
       config = config
     )
-  
+  # should we mask it here or not? Should the user pass a masked matrix already?
   within_cluster <- outer(cluster_indices, cluster_indices, "==")
   diag(within_cluster) <- FALSE
   

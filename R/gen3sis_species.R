@@ -60,6 +60,23 @@ create_species <- function(initial_cells, config) {
     "compressed_matrix" = compressed_matrix,
     "within_site" = within_site
   )
+  
+
+  if (!anyNA(config$gen3sis$ecology$ecological_state_names)) {
+    species[["ecological_states"]] <- matrix(
+      config$gen3sis$initialization$initial_ecological_state[
+        config$gen3sis$ecology$ecological_state_names
+        ],
+      nrow = num_cells,
+      ncol = length(config$gen3sis$ecology$ecological_state_names),
+      byrow = TRUE,
+      dimnames = list(
+        initial_cells,
+        config$gen3sis$ecology$ecological_state_names
+      )
+    )
+  }
+  
   class(species) <- "gen3sis_species"
   return(invisible(species))
 }
@@ -92,11 +109,19 @@ create_species_from_existing <- function(
     parent_species[["divergence"]],
     new_cells
   )
-
   # quick and dirty fix
   # if the cells belong to multiple genetic clusters those clusters are not collapsed if possible.
   new_species[["divergence"]] <- consolidate_divergence(divergence)
 
+  if (!is.null(parent_species[["ecological_states"]])) {
+    new_species[["ecological_states"]] <-
+      parent_species[["ecological_states"]][
+        new_cells,
+        ,
+        drop = FALSE
+      ]
+  }
+  
   return(invisible(new_species))
 }
 
@@ -134,9 +159,16 @@ create_species_within_site <- function(
   
   new_species[["traits"]][site, ] <-
     daughter_traits[trait_names]
+  
   # inherit within_state divergence from the parent (which can be set to zero in the config)
   new_species[["divergence"]][["within_site"]][site] <- 
     parent_species[["divergence"]][["within_site"]][site]
+  
+  # we're assuming inheritence of ecological states (if they are present)
+  if (!is.null(parent_species[["ecological_states"]])) {
+    new_species[["ecological_states"]][site, ] <-
+      parent_species[["ecological_states"]][site, ]
+  }
   
   return(invisible(new_species))
 }
@@ -179,7 +211,7 @@ get_divergence_matrix <- function(species) {
 #' @return the dispersed species
 #' @noRd
 disperse_species <- function(species, source, destination, config) {
-  # expand species to cover destianation cells
+  # expand species to cover destination cells
   # for every cell in destination, source indicates the origin cell
   index <- seq_along(species[["abundance"]])
   names(index) <- names(species[["abundance"]])
@@ -221,9 +253,32 @@ disperse_species <- function(species, source, destination, config) {
   species[["divergence"]][["index"]] <- index[sorted]
   
   within_site <- species[["divergence"]][["within_site"]]
-  # inheritence of within-site divergence from the source population
+  # inheritance of within-site divergence from the source population
   within_site[destination] <- within_site[source]
   species[["divergence"]][["within_site"]] <- within_site[sorted]
+  
+  # if ecological states are present, initialise new states for the new population
+  if (!is.null(species[["ecological_states"]])) {
+    new_states <- matrix(
+      config$gen3sis$initialization$initial_ecological_state[
+        config$gen3sis$ecology$ecological_state_names
+      ],
+      nrow = length(destination),
+      ncol = length(config$gen3sis$ecology$ecological_state_names),
+      byrow = TRUE,
+      dimnames = list(
+        destination,
+        config$gen3sis$ecology$ecological_state_names
+      )
+    )
+    
+    species[["ecological_states"]] <-
+      rbind(species[["ecological_states"]], new_states)[
+        sorted,
+        , 
+        drop = FALSE
+      ]
+  }
   
   return(invisible(species))
 }
@@ -253,6 +308,14 @@ limit_species_to_cells <- function(species, cells) {
     species[["divergence"]],
     limited_cells
   )
+  if (!is.null(species[["ecological_states"]])) {
+    species[["ecological_states"]] <-
+      species[["ecological_states"]][
+        limited_cells,
+        ,
+        drop = FALSE
+      ]
+  }
 
   return(invisible(species))
 }

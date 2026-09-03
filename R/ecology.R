@@ -10,6 +10,7 @@
 #'
 #' @param abundance a named vector of abundances with one abundance value per species
 #' @param traits a named matrix containing the species traits, one row per species
+#' @param ecological_states a named matrix containing the species ecological states, one row per species
 #' @param local_environment the environmental values for the given site
 #' @param config the config of the simulation
 #'

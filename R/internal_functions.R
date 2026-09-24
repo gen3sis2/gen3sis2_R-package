@@ -61,7 +61,6 @@ get_geo_richness <- function(species_list, space) {
 #' @param label a lable
 #' @param output_file the file path and name to store the result
 #'
-#' @importFrom stringr str_replace str_extract
 #' @importFrom utils write.table
 #' @noRd
 write_nex <- function(phy, label = "sp", output_file) {
@@ -105,69 +104,66 @@ write_nex <- function(phy, label = "sp", output_file) {
       String_final <- "0" # tree with only root that got extinct
     }
   } else {
-    Ancestral <- phy_no_root[, "Ancestor"]
-    Derived <- phy_no_root[, "Descendent"]
+    # Splitting a tip creates an event: continuing ancestor first, daughter
+    # second. Integer indices avoid searching or rebuilding serialized strings.
+    n <- nrow(phy)
+    left <- right <- integer(2L * n - 1L)
+    age <- branch_length <- numeric(2L * n - 1L)
+    species <- integer(2L * n - 1L)
+    tip <- integer(n)
+    ancestor <- match(phy$Ancestor, phy$Descendent)
+    tip[1L] <- 1L
+    species[1L] <- 1L
+    age[1L] <- phy$Speciation.Time[1L]
+    used <- 1L
 
-    #Time calibrated tree
-    root <- phy[phy$Speciation.Type == "ROOT", "Speciation.Time"]
-
-    String <- paste0(label, "1:", root)
-    Age <- c(root, phy_no_root[, "Speciation.Time"])
-    #Age_new<-Age
-    #unique(phy$Ancestor)
-
-    Ancestral_age <- phy[unique(phy$Ancestor), "Speciation.Time"]
-    names(Ancestral_age) <- phy[!duplicated(phy$Ancestor), "Ancestor"]
-
-    Extinction <- c(0, phy_no_root[, "Extinction.Time"])
-
-    for (i in 1:(max(phy_no_root[, "Descendent"]))) {
-      String <- str_replace(
-        String,
-        paste(
-          label,
-          Ancestral[i],
-          ":",
-          Ancestral_age[toString(Ancestral[i])],
-          sep = ""
-        ),
-        paste(
-          "(",
-          label,
-          Ancestral[i],
-          ":",
-          Age[i + 1],
-          ",",
-          label,
-          Derived[i],
-          ":",
-          Age[i + 1],
-          "):",
-          Ancestral_age[toString(Ancestral[i])] - Age[i + 1],
-          sep = ""
-        )
-      )
-
-      Ancestral_age[toString(Ancestral[i])] <- Age[i + 1]
-      # print("-------")
-      # print(String)
+    for (i in seq.int(2L, n)) {
+      parent <- tip[ancestor[i]]
+      continuing <- used + 1L
+      daughter <- used + 2L
+      event_time <- phy$Speciation.Time[i]
+      left[parent] <- continuing
+      right[parent] <- daughter
+      branch_length[parent] <- age[parent] - event_time
+      age[continuing] <- age[daughter] <- event_time
+      species[continuing] <- ancestor[i]
+      species[daughter] <- i
+      tip[ancestor[i]] <- continuing
+      tip[i] <- daughter
+      used <- daughter
     }
-    #adding ext times!
-    extsps <- phy[phy$Extinction.Time > 0, c("Descendent", "Extinction.Time")]
-    if (nrow(extsps) > 0) {
-      for (i in 1:nrow(extsps)) {
-        spi <- paste0(label, extsps$Descendent[i], ":")
-        # print("-------")
-        # print(spi)
-        splited <- strsplit(String, spi)[[1]]
-        oldnumb <- str_extract(splited[2], "\\-*\\d+\\.*\\d*")
-        newnumb <- as.numeric(oldnumb) - extsps$Extinction.Time[i]
-        #newnumb <- extsps$Extinction.Time[i]
-        splited[2] <- sub(oldnumb, newnumb, splited[2])
-        String <- paste0(splited[1], spi, splited[2])
+    # Preserve the convention that only positive extinction times shorten tips.
+    extinction <- phy$Extinction.Time
+    extinction[extinction <= 0] <- 0
+    branch_length[tip] <- age[tip] - extinction
+
+    # Emit newick_parts (tokens in serialization terminology) in one iterative 
+    # depth-first pass, including the root edge.
+    # Preallocation and a single join keep serialization linear in output size;
+    # an explicit stack also supports trees deeper than R's recursion limit.
+    newick_parts <- character(4L * n - 3L)
+    stack <- integer(3L * n)
+    stack[1L] <- 1L
+    top <- 1L
+    count <- 0L
+    while (top > 0L) {
+      node <- stack[top]
+      top <- top - 1L
+      count <- count + 1L
+      if (node == 0L) {
+        newick_parts[count] <- ","
+      } else if (node < 0L) {
+        newick_parts[count] <- paste0("):", branch_length[-node])
+      } else if (left[node] == 0L) {
+        newick_parts[count] <- paste0(label, phy$Descendent[species[node]],
+                                ":", branch_length[node])
+      } else {
+        newick_parts[count] <- "("
+        stack[top + seq_len(4L)] <- c(-node, right[node], 0L, left[node])
+        top <- top + 4L
       }
     }
-
+    String <- paste0(newick_parts, collapse = "")
     String_final <- paste("Tree tree = ", String, ";", sep = "")
     String_final <- (paste(
       "#NEXUS",

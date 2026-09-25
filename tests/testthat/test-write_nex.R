@@ -79,7 +79,9 @@ test_that("a deep tree serializes without recursion or lost tips", {
 })
 
 test_that("the saved simulation phylogeny matches its existing NEXUS output", {
-  fixture <- test_path("..", "..", "inst", "extdata", "TestOutputs", "geodyn_raster")
+  # Installed packages expose inst/extdata as extdata, outside the test folder.
+  fixture <- system.file("extdata", "TestOutputs", "geodyn_raster",
+                         package = "gen3sis2", mustWork = TRUE)
   phy <- read.table(file.path(fixture, "phy.txt"), header = TRUE)
   expect_identical(nex_output(phy, label = "species"),
                    readLines(file.path(fixture, "phy.nex")))

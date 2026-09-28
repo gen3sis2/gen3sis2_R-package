@@ -33,16 +33,17 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
 
 #' User-specified function determining the rules for within-cluster divergence of populations. 
 #'
-#' @param species the species of the current time step
-#' @param cells cells occupied by the species part of the meta-population
-#' @param divergence site by site divergence matrix for the meta-population
+#' @param abundance named vector of abundances per population
+#' @param traits matrix of traits by population
+#' @param divergence cell by cell divergence matrix for the metapopulation
+#' @param ecological_states matrix of ecological states by population
 #' @param space the space of the current time step
 #' @param config the config of the simulation
 #'
 #' @return a scalar or site by site matrix of within-metapopulation divergence
 #' @keywords user
 #' @export
-get_within_cluster_divergence_factor <- function(species, cells, divergence, space, config){
+get_within_cluster_divergence_factor <- function(abundance, traits, divergence, ecological_states, space, config){
   stop("this function documents the user function interface only, do not use it!")
 }
 
@@ -319,9 +320,10 @@ update_within_cluster_divergence <- function(
     
     divergence_update <- config$gen3sis$speciation$
       get_within_cluster_divergence_factor(
-        species = species,
-        cells = cluster_cells,
+        abundance = species$abundance[cluster_cells],
+        traits = species$traits[cluster_cells, , drop = FALSE],
         divergence = cluster_divergence,
+        ecological_states = species$ecological_states[cluster_cells, , drop = FALSE],
         space = space,
         config = config
       )

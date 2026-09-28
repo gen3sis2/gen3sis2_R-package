@@ -4,14 +4,23 @@
 \alias{get_within_cluster_divergence_factor}
 \title{User-specified function determining the rules for within-cluster divergence of populations.}
 \usage{
-get_within_cluster_divergence_factor(species, cells, divergence, space, config)
+get_within_cluster_divergence_factor(
+  abundance,
+  traits,
+  divergence,
+  ecological_states,
+  space,
+  config
+)
 }
 \arguments{
-\item{species}{the species of the current time step}
+\item{abundance}{named vector of abundances per population}
 
-\item{cells}{cells occupied by the species part of the meta-population}
+\item{traits}{matrix of traits by population}
 
-\item{divergence}{site by site divergence matrix for the meta-population}
+\item{divergence}{cell by cell divergence matrix for the metapopulation}
+
+\item{ecological_states}{matrix of ecological states by population}
 
 \item{space}{the space of the current time step}
 

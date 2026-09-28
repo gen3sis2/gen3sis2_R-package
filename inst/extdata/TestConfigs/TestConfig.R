@@ -13,7 +13,6 @@ duration <- list(
 max_number_of_species <- 20000
 max_number_of_coexisting_species <- 20000
 initial_abundance <- 10
-ecological_state_names <- "frequency_dependence"
 initial_ecological_state <- c("frequency_dependence" = 1)
 
 # ecological local equilibria variable J*
@@ -126,8 +125,8 @@ create_ancestor_species <- function(space, config) {
       "temperature"
     ]
     new_species[[i]]$traits[, "t_range"] <- 0.4
-    new_species[[i]]$ecological_states[, ecological_state_names] <- 
-      initial_ecological_state[ecological_state_names]
+    new_species[[i]]$ecological_states[,] <- 
+      config$gen3sis$initialization$initial_ecological_state
     #plot_species_presence(new_species[[i]], space)
   }
   return(new_species)

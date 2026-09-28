@@ -318,12 +318,17 @@ update_within_cluster_divergence <- function(
     
     cluster_divergence <- divergence[cluster_cells, cluster_cells, drop = FALSE]
     
+    ecological_states <- NULL
+    if(!is.null(species$ecological_states)){
+      ecological_states <- species$ecological_states[cluster_cells, , drop = FALSE]
+    }
+    
     divergence_update <- config$gen3sis$speciation$
       get_within_cluster_divergence_factor(
         abundance = species$abundance[cluster_cells],
         traits = species$traits[cluster_cells, , drop = FALSE],
         divergence = cluster_divergence,
-        ecological_states = species$ecological_states[cluster_cells, , drop = FALSE],
+        ecological_states = ecological_states,
         space = space,
         config = config
       )
@@ -352,12 +357,18 @@ update_within_cluster_divergence <- function(
 update_within_site_divergence <- function(divergence, species, space, config) {
   
   for (cell in names(divergence)) {
+    
+    ecological_states <- NULL
+    if(!is.null(species$ecological_states)){
+      ecological_states <- species$ecological_states[cell, , drop = FALSE]
+    }
+    
     divergence_update <- config$gen3sis$speciation$
       get_within_site_divergence_factor(
       abundance = species$abundance[cell],
       traits = species$traits[cell, , drop = FALSE],
       divergence = divergence[cell],
-      ecological_states = species$ecological_states[cell, , drop = FALSE],
+      ecological_states = ecological_states,
       local_environment = space$environment[cell, , drop = FALSE],
       config = config
     )

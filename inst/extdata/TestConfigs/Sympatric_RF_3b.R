@@ -24,7 +24,6 @@ trait_names = c("temp",  "dispersal")
 environmental_ranges <- list()
 
 initial_abundance <- 1
-ecological_state_names <- "frequency_dependence"
 initial_ecological_state <- c("frequency_dependence" = 1)
 
 #-------------------------#
@@ -62,8 +61,8 @@ create_ancestor_species <- function(space, config) {
     #set local adaptation to max optimal temp equals local temp
     new_species[[i]]$traits[ , "temp"] <- space$environment[initial_cells,"temp"]
     new_species[[i]]$traits[ , "dispersal"] <- 1
-    new_species[[i]]$ecological_states[, ecological_state_names] <- 
-      initial_ecological_state[ecological_state_names]
+    new_species[[i]]$ecological_states[,] <- 
+      config$gen3sis$initialization$initial_ecological_state
   }
   
   return(new_species)

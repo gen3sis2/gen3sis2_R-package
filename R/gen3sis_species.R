@@ -62,17 +62,14 @@ create_species <- function(initial_cells, config) {
   )
   
 
-  if (!anyNA(config$gen3sis$general$ecological_state_names)) {
+  if (!is.na(config$gen3sis$initialization$initial_ecological_state)) {
     species[["ecological_states"]] <- matrix(
-      config$gen3sis$initialization$initial_ecological_state[
-        config$gen3sis$general$ecological_state_names
-        ],
+      NA,
       nrow = num_cells,
-      ncol = length(config$gen3sis$general$ecological_state_names),
-      byrow = TRUE,
+      ncol = length(config$gen3sis$initialization$initial_ecological_state),
       dimnames = list(
         initial_cells,
-        config$gen3sis$general$ecological_state_names
+        names(config$gen3sis$initialization$initial_ecological_state)
       )
     )
   }
@@ -260,18 +257,15 @@ disperse_species <- function(species, source, destination, config) {
   # if ecological states are present, initialise new states for the new population
   if (!is.null(species[["ecological_states"]])) {
     new_states <- matrix(
-      config$gen3sis$initialization$initial_ecological_state[
-        config$gen3sis$general$ecological_state_names
-      ],
+      config$gen3sis$initialization$initial_ecological_state,
       nrow = length(destination),
-      ncol = length(config$gen3sis$general$ecological_state_names),
+      ncol = length(config$gen3sis$initialization$initial_ecological_state),
       byrow = TRUE,
       dimnames = list(
         destination,
-        config$gen3sis$general$ecological_state_names
+        names(config$gen3sis$initialization$initial_ecological_state)
       )
     )
-    
     species[["ecological_states"]] <-
       rbind(species[["ecological_states"]], new_states)[
         sorted,

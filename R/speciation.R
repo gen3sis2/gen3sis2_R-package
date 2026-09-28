@@ -46,18 +46,25 @@ get_within_cluster_divergence_factor <- function(species, cells, divergence, spa
   stop("this function documents the user function interface only, do not use it!")
 }
 
-#' User-specified function determining within-site divergence changes
+#' User-specified function determining within-site divergence change
 #'
-#' @param species the species of the current time step
-#' @param cell the focal cell
-#' @param divergence the current divergence within the cell
-#' @param space the space of the current time step
+#' @param abundance the abundance of the population
+#' @param traits the traits of the population
+#' @param divergence the current divergence within the population
+#' @param ecological_states the current ecological states of the population
+#' @param local_environment the current local environment of the cell
 #' @param config the config of the simulation
 #'
-#' @return a scalar of divergence change per occupied site
+#' @return an update of divergence of the population
 #' @keywords user
 #' @export
-get_within_site_divergence_factor <- function(species, cell, divergence, space, config) {
+get_within_site_divergence_factor <- function(abundance,
+                                              traits,
+                                              divergence,
+                                              ecological_states,
+                                              local_environment,
+                                              config
+                                              ) {
   stop("this function documents the user function interface only, do not use it!")
 }
 
@@ -341,13 +348,15 @@ update_within_cluster_divergence <- function(
 #' @return an updated within-site divergence vector
 #' @noRd
 update_within_site_divergence <- function(divergence, species, space, config) {
+  
   for (cell in names(divergence)) {
     divergence_update <- config$gen3sis$speciation$
       get_within_site_divergence_factor(
-      species = species,
-      cell = cell,
+      abundance = species$abundance[cell],
+      traits = species$traits[cell, , drop = FALSE],
       divergence = divergence[cell],
-      space = space,
+      ecological_states = species$ecological_states[cell, , drop = FALSE],
+      local_environment = space$environment[cell, , drop = FALSE],
       config = config
     )
     

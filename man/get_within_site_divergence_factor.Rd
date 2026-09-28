@@ -2,25 +2,34 @@
 % Please edit documentation in R/speciation.R
 \name{get_within_site_divergence_factor}
 \alias{get_within_site_divergence_factor}
-\title{User-specified function determining within-site divergence changes}
+\title{User-specified function determining within-site divergence change}
 \usage{
-get_within_site_divergence_factor(species, cell, divergence, space, config)
+get_within_site_divergence_factor(
+  abundance,
+  traits,
+  divergence,
+  ecological_states,
+  local_environment,
+  config
+)
 }
 \arguments{
-\item{species}{the species of the current time step}
+\item{abundance}{the abundance of the population}
 
-\item{cell}{the focal cell}
+\item{traits}{the traits of the population}
 
-\item{divergence}{the current divergence within the cell}
+\item{divergence}{the current divergence within the population}
 
-\item{space}{the space of the current time step}
+\item{ecological_states}{the current ecological states of the population}
+
+\item{local_environment}{the current local environment of the cell}
 
 \item{config}{the config of the simulation}
 }
 \value{
-a scalar of divergence change per occupied site
+an update of divergence of the population
 }
 \description{
-User-specified function determining within-site divergence changes
+User-specified function determining within-site divergence change
 }
 \keyword{user}

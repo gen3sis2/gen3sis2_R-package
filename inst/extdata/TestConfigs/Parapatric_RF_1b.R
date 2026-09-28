@@ -86,14 +86,15 @@ sigma_trait_gene_flow <- 0.25
 
 # new ecological implementation: divergence increases based on ecological distance
 get_within_cluster_divergence_factor <- function(
-    species,
-    cells,
+    abundance,
+    traits,
     divergence,
+    ecological_states,
     space,
     config
 ) {
   # temperature optima trait per-population within a species
-  temp <- species$traits[cells, "temp"]
+  temp <- traits[,"temp"]
   
   # distance between in trait value between the pops
   trait_distance <- abs(outer(temp, temp, "-"))

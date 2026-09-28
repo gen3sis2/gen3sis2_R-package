@@ -91,9 +91,10 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
 }
 
 get_within_cluster_divergence_factor <- function(
-    species,
-    cells,
+    abundance,
+    traits,
     divergence,
+    ecological_states,
     space,
     config
 ) {
@@ -104,7 +105,12 @@ daughter_fraction <- 0.5
 point_speciation_rate <- 5e-4
 
 get_within_site_divergence_factor <- function(
-    species, cell, divergence, space, config
+    abundance,
+    traits,
+    divergence,
+    ecological_states,
+    local_environment,
+    config
     ){
   divergence_update <- ifelse(runif(n = 1, min = 0, max = 1) <= point_speciation_rate, 
          config$gen3sis$speciation$divergence_threshold + 0.01, 

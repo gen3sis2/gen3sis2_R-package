@@ -295,6 +295,8 @@ disperse_species <- function(species, source, destination, config) {
 limit_species_to_cells <- function(species, cells) {
   limited_cells <- names(species[["abundance"]])
   limited_cells <- limited_cells[which(limited_cells %in% cells)]
+  if(identical(limited_cells, names(species[["abundance"]])))
+    return(invisible(species))
 
   species[["abundance"]] <- species[["abundance"]][limited_cells]
   species[["traits"]] <- species[["traits"]][limited_cells, , drop = FALSE]

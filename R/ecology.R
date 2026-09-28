@@ -158,18 +158,12 @@ loop_ecology <- function(config, data, vars) {
   data$all_species <- lapply(
     data$all_species,
     function(species) {
-      retained_cells <- names(species[["abundance"]])[
-        species[["abundance"]] > 0
-      ]
-      
-      if (length(retained_cells) < length(species[["abundance"]])) {
-        species <- limit_species_to_cells(
-          species,
-          retained_cells
-        )
-      }
-      
-      return(species)
+      limit_species_to_cells(
+        species,
+        names(species[["abundance"]])[
+          species[["abundance"]] > 0
+        ]
+      )
     }
   )
   

@@ -23,7 +23,21 @@ jobs:
 
       - name: Check formatting
         run: |
-          if ! air format . --check; then
-            echo "::error title=Formatting check failed::'air format . --check' found unformatted files (listed in the log above). To fix, run 'air format .' locally (or use Format Document in Positron/RStudio/VS Code), then commit and push."
+          if air format . --check; then
+            echo "::notice title=✅ Formatting check passed::All R code is formatted correctly. Nice work! ✨"
+            echo "### ✅ Formatting check passed" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "All R code is formatted correctly. Nice work! ✨" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error title=❌ Formatting check failed::'air format . --check' found unformatted files (listed in the log above). 🛠️ To fix, run 'air format .' locally (or use Format Document in Positron/RStudio/VS Code), then commit and push."
+            {
+              echo "### ❌ Formatting check failed"
+              echo ""
+              echo 'Air found R code that is not formatted correctly (see the log for the list of files).'
+              echo ""
+              echo '🛠️ **To fix:**'
+              echo '1. Run `air format .` locally (or use *Format Document* in Positron / RStudio / VS Code).'
+              echo '2. Commit and push the changes.'
+            } >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi

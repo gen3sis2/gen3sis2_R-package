@@ -79,13 +79,13 @@ loop_ecology <- function(config, data, vars) {
     
     ecological_states <- NULL
     
-    if (!anyNA(config$gen3sis$general$ecological_state_names)) {
+    if (!is.na(config$gen3sis$initialization$initial_ecological_state)) {
       ecological_states <- matrix(
         NA,
-        nrow = length(config$gen3sis$general$ecological_state_names),
+        nrow = length(config$gen3sis$initialization$initial_ecological_state),
         ncol = length(coo_sp),
         dimnames = list(
-          config$gen3sis$general$ecological_state_names,
+          names(config$gen3sis$initialization$initial_ecological_state),
           as.character(coo_sp)
         )
       )
@@ -109,10 +109,9 @@ loop_ecology <- function(config, data, vars) {
       abundance[i] <-
         species[["abundance"]][cell]
       
-      if(!anyNA(config$gen3sis$general$ecological_state_names)){
+      if(!is.na(config$gen3sis$initialization$initial_ecological_state)){
         ecological_states[, i] <-
-          species[["ecological_states"]][cell, 
-                                         config$gen3sis$general$ecological_state_names]
+          species[["ecological_states"]][cell, ]
       }
     }
 
@@ -133,7 +132,7 @@ loop_ecology <- function(config, data, vars) {
       
       if(nrow(ecological_result) > 1){
         new_ecological_states <-
-          ecological_result[config$gen3sis$general$ecological_state_names,
+          ecological_result[names(config$gen3sis$initialization$initial_ecological_state),
                             ,
                             drop = FALSE]
       }
@@ -148,7 +147,7 @@ loop_ecology <- function(config, data, vars) {
         new_abundance[i]
       if(!is.null(new_ecological_states)){
         data$all_species[[spi]][["ecological_states"]][
-          cell, config$gen3sis$general$ecological_state_names] <- 
+          cell, ] <- 
           new_ecological_states[,i]
       }
     }

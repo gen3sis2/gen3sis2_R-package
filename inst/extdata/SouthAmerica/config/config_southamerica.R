@@ -122,8 +122,6 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
 # mutate the traits of a species and return the new traits matrix
 
 apply_trait_evolution <- function(species, cluster_indices, space, config) {
- 
-
   trait_evolutionary_power <- 0.001
   traits <- species[["traits"]]
   cells <- rownames(traits)

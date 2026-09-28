@@ -109,7 +109,8 @@ restore_state <- function(val, timestep_restart) {
   .GlobalEnv$.Random.seed <- val$config$seed
 
   if (timestep > 0) {
-    val$vars$save_steps <- (timestep - 1):(val$config$gen3sis$general$duration$to)
+    val$vars$save_steps <- (timestep -
+      1):(val$config$gen3sis$general$duration$to)
     val$vars$steps <- (timestep - 1):(val$config$gen3sis$general$duration$to)
     message(paste("[!] Restarting at time-step:", timestep))
   } else {

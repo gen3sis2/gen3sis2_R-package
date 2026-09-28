@@ -1,19 +1,17 @@
-# This workflow runs Air for formatting. It stores the
-# outcome of each tool and the PR number.
-
 name: Format with Air
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   format-air:
@@ -22,22 +20,10 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Install Air
         uses: posit-dev/setup-air@f3a5b6aec110503f81b8d69439023308ebdf4874 # v1
-      - name: Check
-        id: check
-        run: air format . --check
-        continue-on-error: true
-      - name: Save results
-        if: github.event_name == 'pull_request'
+
+      - name: Check formatting
         run: |
-          echo "${{ steps.check.outcome }}" > /tmp/air-result.txt
-          echo "${{ github.event.pull_request.number }}" > /tmp/pr-number.txt
-      - name: Upload artifacts
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: air-results
-          path: |
-            /tmp/air-result.txt
-            /tmp/pr-number.txt
-      - if: steps.check.outcome == 'failure'
-        run: exit 1
+          if ! air format . --check; then
+            echo "::error title=Formatting check failed::'air format . --check' found unformatted files (listed in the log above). To fix, run 'air format .' locally (or use Format Document in Positron/RStudio/VS Code), then commit and push."
+            exit 1
+          fi

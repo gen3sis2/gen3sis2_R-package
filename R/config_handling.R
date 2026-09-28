@@ -7,7 +7,7 @@
 #' @param config_file path to the config file, if NA the default config will be used
 #' @param input_directory path to input directory, if NA it will be derived from the config file path
 #' @param output_directory path to output directory, if NA it will be derived from the config file path
-#' @return returns a named list with the paths for the input and output directories  
+#' @return returns a named list with the paths for the input and output directories
 #' @keywords config
 #' @importFrom tools file_path_sans_ext
 #' @example inst/examples/prepare_directories_help.R

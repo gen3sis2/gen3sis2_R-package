@@ -100,6 +100,7 @@ prepare_directories <- function(
 #' @example inst/examples/create_input_config_help.R
 #' @export
 create_input_config <- function(config_file = NA, config_name = NULL) {
+  
   # Verify config name
   if (!is.null(config_name)) {
     if (length(config_name) != 1) {
@@ -200,6 +201,12 @@ populate_config <- function(config, config_file) {
       config[["user"]][[i]] <- user_config_env[[i]]
     }
   }
+  
+  # ecological states (also in complete_config because this function can be skipped)
+  # when a config file is supplied in RAM
+  config[["gen3sis"]][["use_ecological_states"]] <-
+    !anyNA(config[["gen3sis"]][["initialization"]][["initial_ecological_state"]])
+  
   return(invisible(config))
 }
 
@@ -392,7 +399,8 @@ complete_config <- function(config) {
     "dispersal"
   ))
   
-  # ecological states
+  # ecological states (also in populate_config because this function may be skipped
+  # when create_input_config + create_empty_config is exported and used directly)
   config[["gen3sis"]][["use_ecological_states"]] <-
     !anyNA(config[["gen3sis"]][["initialization"]][["initial_ecological_state"]])
 

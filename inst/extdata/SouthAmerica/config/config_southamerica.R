@@ -114,6 +114,18 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
   return(1)
 }
 
+# Set within-cluster divergence to decay by 1 per time step (as was the default prior)
+# note that scale time is not present here as we will have to add this later
+get_within_cluster_divergence_factor <- function(
+    abundance,
+    traits,
+    divergence,
+    ecological_states,
+    space,
+    config
+) {
+  -1
+}
 
 ######################################
 ###            Evolution           ###

@@ -61,8 +61,7 @@ create_species <- function(initial_cells, config) {
     "within_site" = within_site
   )
   
-
-  if (!is.na(config$gen3sis$initialization$initial_ecological_state)) {
+  if (config$gen3sis$use_ecological_states) {
     species[["ecological_states"]] <- matrix(
       NA,
       nrow = num_cells,

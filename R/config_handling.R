@@ -379,6 +379,7 @@ create_empty_config <- function() {
 #' @param config the current config for this simulation run
 #' @noRd
 complete_config <- function(config) {
+  
   # random seed
   seed <- config[["gen3sis"]][["general"]][["random_seed"]]
   if (!is.null(seed) && !is.na(seed)) {
@@ -390,6 +391,10 @@ complete_config <- function(config) {
     config[["gen3sis"]][["general"]][["trait_names"]],
     "dispersal"
   ))
+  
+  # ecological states
+  config[["gen3sis"]][["use_ecological_states"]] <-
+    !anyNA(config[["gen3sis"]][["initialization"]][["initial_ecological_state"]])
 
   return(invisible(config))
 }

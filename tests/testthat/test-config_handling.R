@@ -207,7 +207,6 @@ test_that("verify_config: incomplete config", {
   config$gen3sis$general$config_name <- NULL
   config$gen3sis$initialization <- NULL
   config$gen3sis$speciation$divergence_threshold <- NULL
-  config$gen3sis$dispersal$max_dispersal <- NULL
 
   expect_false(verify_config(config))
 })
@@ -220,7 +219,6 @@ test_that("verify_config: config with missing values", {
   config$gen3sis$general$config_name <- NULL
   config$gen3sis$initialization <- NULL
   config$gen3sis$speciation$divergence_threshold <- NULL
-  config$gen3sis$dispersal$max_dispersal <- NULL
 
   expected_message <- paste0(
     "Missing settings in the configuration from the following categories:\n",
@@ -229,8 +227,6 @@ test_that("verify_config: config with missing values", {
     "initialization\n",
     "- initial_abundance\n",
     "- create_ancestor_species\n",
-    "dispersal\n",
-    "- max_dispersal\n",
     "speciation\n",
     "- divergence_threshold"
   )
@@ -252,7 +248,6 @@ test_that("verify_config: config with missing values", {
     "config_name",
     "initial_abundance",
     "create_ancestor_species",
-    "max_dispersal",
     "get_dispersal_values",
     "divergence_threshold",
     "get_divergence_factor",

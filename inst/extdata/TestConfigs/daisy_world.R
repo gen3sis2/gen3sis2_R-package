@@ -150,9 +150,6 @@ create_ancestor_species <- function(space, config) {
 #### Dispersal ####
 #-----------------#
 
-# the maximum range to consider when calculating the distances from local distance inputs.
-max_dispersal <- 99999
-
 # returns n dispersal values.
 get_dispersal_values <- function(n, species, space, config) {
   #stop("calculate dispersal values here")

@@ -459,8 +459,7 @@ setup_distance_matrix <- function(config, data, vars) {
       num_cells,
       distance_neighbours@p,
       distance_neighbours@i,
-      distance_neighbours@x,
-      config$gen3sis$dispersal$max_dispersal
+      distance_neighbours@x
     )
   }
 

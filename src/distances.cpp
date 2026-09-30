@@ -32,8 +32,7 @@ Rcpp::NumericMatrix get_distance_matrix(const IntegerVector habitable_cells,
                                         const int num_cells,
                                         const IntegerVector dist_p,
                                         const IntegerVector dist_i,
-                                        const NumericVector dist_x,
-                                        const double max_distance) {
+                                        const NumericVector dist_x) {
   int i,j;
   int n = habitable_cells.length();
   Rcpp::NumericMatrix distance_matrix(n, n);
@@ -71,7 +70,7 @@ Rcpp::NumericMatrix get_distance_matrix(const IntegerVector habitable_cells,
     // push initial cell with distance 0
     nodes[cell] = fib_heap.push(node(cell, 0.0));
 
-    while(!fib_heap.empty() && fib_heap.top().dist <= max_distance && neighbours_found < n){
+    while(!fib_heap.empty() && neighbours_found < n){
       node current = fib_heap.top();
       visited[current.id] = true;
       if(habitable_index[current.id] != -1){

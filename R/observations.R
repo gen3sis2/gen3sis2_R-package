@@ -775,7 +775,7 @@ get_space_subset <- function(space, site_vector) {
 # miscellaneous tools ----
 
 #' Diversification summary
-#' 
+#'
 #' This function constructs a matrix with speciation, extinction and diversification rate over timesteps
 #'
 #' @param gen3sis_output a simulation output object.

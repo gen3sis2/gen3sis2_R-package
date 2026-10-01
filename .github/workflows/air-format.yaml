@@ -1,0 +1,31 @@
+name: Format with Air
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  format-air:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install Air
+        uses: posit-dev/setup-air@f3a5b6aec110503f81b8d69439023308ebdf4874 # v1
+
+      - name: Check formatting
+        run: |
+          if air format . --check; then
+            echo "::notice title=✅ Formatting check passed::All R code is formatted correctly. Nice work! ✨"
+          else
+            echo "::error title=❌ Formatting check failed::'air format . --check' found unformatted files (listed in the log above). 🛠️ To fix, run 'air format .' locally (or use Format Document in Positron/RStudio/VS Code), then commit and push."
+            exit 1
+          fi

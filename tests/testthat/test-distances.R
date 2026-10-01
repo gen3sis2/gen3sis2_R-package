@@ -46,8 +46,7 @@ test_that("distance matrix creation works", {
     num_cells = prod(dim(ras)),
     dist_p = local_distance@p,
     dist_i = local_distance@i,
-    dist_x = local_distance@x,
-    max_distance = Inf
+    dist_x = local_distance@x
   )
 
   expect_true(isTRUE(all.equal(unname(dist_m), gdist_m)))

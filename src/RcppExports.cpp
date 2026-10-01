@@ -83,8 +83,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_distance_matrix
-Rcpp::NumericMatrix get_distance_matrix(const IntegerVector habitable_cells, const int num_cells, const IntegerVector dist_p, const IntegerVector dist_i, const NumericVector dist_x, const double max_distance);
-RcppExport SEXP _gen3sis2_get_distance_matrix(SEXP habitable_cellsSEXP, SEXP num_cellsSEXP, SEXP dist_pSEXP, SEXP dist_iSEXP, SEXP dist_xSEXP, SEXP max_distanceSEXP) {
+Rcpp::NumericMatrix get_distance_matrix(const IntegerVector habitable_cells, const int num_cells, const IntegerVector dist_p, const IntegerVector dist_i, const NumericVector dist_x);
+RcppExport SEXP _gen3sis2_get_distance_matrix(SEXP habitable_cellsSEXP, SEXP num_cellsSEXP, SEXP dist_pSEXP, SEXP dist_iSEXP, SEXP dist_xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -93,8 +93,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const IntegerVector >::type dist_p(dist_pSEXP);
     Rcpp::traits::input_parameter< const IntegerVector >::type dist_i(dist_iSEXP);
     Rcpp::traits::input_parameter< const NumericVector >::type dist_x(dist_xSEXP);
-    Rcpp::traits::input_parameter< const double >::type max_distance(max_distanceSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_distance_matrix(habitable_cells, num_cells, dist_p, dist_i, dist_x, max_distance));
+    rcpp_result_gen = Rcpp::wrap(get_distance_matrix(habitable_cells, num_cells, dist_p, dist_i, dist_x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -106,7 +105,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gen3sis2_is_any_f", (DL_FUNC) &_gen3sis2_is_any_f, 1},
     {"_gen3sis2_Tdbscan", (DL_FUNC) &_gen3sis2_Tdbscan, 3},
     {"_gen3sis2_Tdbscan_variable", (DL_FUNC) &_gen3sis2_Tdbscan_variable, 3},
-    {"_gen3sis2_get_distance_matrix", (DL_FUNC) &_gen3sis2_get_distance_matrix, 6},
+    {"_gen3sis2_get_distance_matrix", (DL_FUNC) &_gen3sis2_get_distance_matrix, 5},
     {NULL, NULL, 0}
 };
 

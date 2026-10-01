@@ -25,7 +25,7 @@ Tdbscan_variable <- function(D, distances, minPts) {
     .Call(`_gen3sis2_Tdbscan_variable`, D, distances, minPts)
 }
 
-get_distance_matrix <- function(habitable_cells, num_cells, dist_p, dist_i, dist_x, max_distance) {
-    .Call(`_gen3sis2_get_distance_matrix`, habitable_cells, num_cells, dist_p, dist_i, dist_x, max_distance)
+get_distance_matrix <- function(habitable_cells, num_cells, dist_p, dist_i, dist_x) {
+    .Call(`_gen3sis2_get_distance_matrix`, habitable_cells, num_cells, dist_p, dist_i, dist_x)
 }
 

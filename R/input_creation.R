@@ -186,8 +186,7 @@ create_spaces_raster <- function(
         length(habitable_mask[]),
         distance_local@p,
         distance_local@i,
-        distance_local@x,
-        Inf
+        distance_local@x
       )
       file_name <- paste0("distances_full_", as.character(nts - step), ".rds")
       saveRDS(

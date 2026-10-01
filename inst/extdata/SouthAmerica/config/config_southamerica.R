@@ -114,15 +114,25 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
   return(1)
 }
 
+# Set within-cluster divergence to decay by 1 per time step (as was the default prior)
+# note that scale time is not present here as we will have to add this later
+get_within_cluster_divergence_factor <- function(
+    abundance,
+    traits,
+    divergence,
+    ecological_states,
+    space,
+    config
+) {
+  -1
+}
 
 ######################################
 ###            Evolution           ###
 ######################################
 
 # mutate the traits of a species and return the new traits matrix
-
 apply_trait_evolution <- function(species, cluster_indices, space, config) {
- 
 
   trait_evolutionary_power <- 0.001
   traits <- species[["traits"]]
@@ -156,18 +166,18 @@ apply_trait_evolution <- function(species, cluster_indices, space, config) {
 # returns a vector of abundances
 # set the abundance to 0 for every species supposed to die
 
-apply_ecology <- function(abundance, traits, space, config) {
+apply_ecology <- function(abundance, traits, ecological_states, local_environment, config) {
   abundance_scale <- 10
   abundance_threshold <- 1
   #abundance threshold
   survive <- abundance >= abundance_threshold
   abundance[!survive] <- 0
-  abundance <- ((1 - abs(traits[, "temp"] - space[, "temp"])) *
+  abundance <- ((1 - abs(traits[, "temp"] - local_environment[, "temp"])) *
     abundance_scale) *
     as.numeric(survive)
   #abundance threshold
   abundance[abundance < abundance_threshold] <- 0
-  k <- ((space[, "area"] * (space[, "arid"] + 0.1) * (space[, "temp"] + 0.1)) *
+  k <- ((local_environment[, "area"] * (local_environment[, "arid"] + 0.1) * (local_environment[, "temp"] + 0.1)) *
     abundance_scale^2)
   total_ab <- sum(abundance)
   subtract <- total_ab - k

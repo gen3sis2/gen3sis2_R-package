@@ -100,6 +100,7 @@ prepare_directories <- function(
 #' @example inst/examples/create_input_config_help.R
 #' @export
 create_input_config <- function(config_file = NA, config_name = NULL) {
+  
   # Verify config name
   if (!is.null(config_name)) {
     if (length(config_name) != 1) {
@@ -200,6 +201,12 @@ populate_config <- function(config, config_file) {
       config[["user"]][[i]] <- user_config_env[[i]]
     }
   }
+  
+  # ecological states (also in complete_config because this function can be skipped)
+  # when a config file is supplied in RAM
+  config[["gen3sis"]][["use_ecological_states"]] <-
+    !anyNA(config[["gen3sis"]][["initialization"]][["initial_ecological_state"]])
+  
   return(invisible(config))
 }
 
@@ -346,12 +353,20 @@ create_empty_config <- function() {
     ),
     "initialization" = list(
       "initial_abundance" = NULL,
-      "create_ancestor_species" = NULL
+      "create_ancestor_species" = NULL,
+      "initial_ecological_state" = NA
     ),
-    "dispersal" = list("max_dispersal" = Inf, "get_dispersal_values" = NULL),
+    "dispersal" = list(
+      "max_dispersal" = Inf, 
+      "get_dispersal_values" = NULL,
+      "apply_dispersal_trait_inheritance" = NA
+      ),
     "speciation" = list(
       "divergence_threshold" = NULL,
-      "get_divergence_factor" = NULL
+      "get_divergence_factor" = NULL,
+      "get_within_cluster_divergence_factor" = NULL,
+      "get_within_site_divergence_factor" = NA,
+      "apply_within_site_speciation" = NA
     ),
     "trait_evolution" = list("apply_trait_evolution" = NULL),
     "ecology" = list("apply_ecology" = NULL),
@@ -371,6 +386,7 @@ create_empty_config <- function() {
 #' @param config the current config for this simulation run
 #' @noRd
 complete_config <- function(config) {
+  
   # random seed
   seed <- config[["gen3sis"]][["general"]][["random_seed"]]
   if (!is.null(seed) && !is.na(seed)) {
@@ -382,6 +398,11 @@ complete_config <- function(config) {
     config[["gen3sis"]][["general"]][["trait_names"]],
     "dispersal"
   ))
+  
+  # ecological states (also in populate_config because this function may be skipped
+  # when create_input_config + create_empty_config is exported and used directly)
+  config[["gen3sis"]][["use_ecological_states"]] <-
+    !anyNA(config[["gen3sis"]][["initialization"]][["initial_ecological_state"]])
 
   return(invisible(config))
 }

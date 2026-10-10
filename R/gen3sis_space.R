@@ -130,6 +130,28 @@ check_spaces <- function(spaces = NULL) {
   if (!is.null(error_report)) {
     stop(error_report)
   }
+
+  # check space duration
+  if(!spaces$meta$duration$unit %in% accepted$duration_unit){
+    stop(paste0("Accepted time units are: ", paste(accepted$duration_unit, collapse = ", ")))
+  }
+
+  if(spaces$meta$duration$by <= 0) {
+    stop("Spaces' duration$by must be positive.")
+  } 
+
+  is_numerical <- sapply(spaces$meta$duration[c("from","to","by")], function(x){
+    is.numeric(x)
+  }) |> all()
+  
+  if(!is_numerical){
+    stop("Spaces' duration$from, duration$to, and duration$by must be numerical.")
+  }
+
+  if(spaces$meta$duration$by > (spaces$meta$duration$to-spaces$meta$duration$from)){
+    stop("Spaces' duration$by cannot be greater than total spaces' time range.")
+  }
+
   return("gen3sis_spaces [OK]")
 }
 

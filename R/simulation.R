@@ -131,7 +131,7 @@ setup_variables <- function(config, data, vars) {
   zero_base_ts <- (length(data$inputs$timesteps) - 1):0 # actual timesteps ordered zero-base for the entire spaces
   zero_base_ts_included <- zero_base_ts[match(included_ts, data$inputs$timesteps)] # filtered given the config's duration
  
-  # Update config's duration otherwise things break
+  # Adjust simulation start and end timestep
   vars$start_timestep <- zero_base_ts_included[[1]]
   vars$end_timestep <- zero_base_ts_included[[length(zero_base_ts_included)]]
 

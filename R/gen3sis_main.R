@@ -363,7 +363,7 @@ run_simulation <- function(
     file = file.path(val$config$directories$output, "phy.txt"),
     sep = "\t"
   )
-
+  
   write_nex(
     phy = val$data$phy,
     label = "species",

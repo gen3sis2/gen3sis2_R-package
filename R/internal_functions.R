@@ -79,7 +79,7 @@ write_nex <- function(phy, label = "sp", output_file) {
       "0",
       "0",
       phy$Speciation.Time[1],
-      val$config$gen3sis$general$duration$to - 1,
+      val$vars$end_timestep - 1,
       "ROOT"
     )
     names(addroot) <- colnames(phy)
@@ -99,7 +99,7 @@ write_nex <- function(phy, label = "sp", output_file) {
 
   if (nrow(phy_no_root) == 0) {
     #following TreeSimGM and TreeSim convertion
-    if (phy[1, "Extinction.Time"] == val$config$gen3sis$general$duration$to - 1) {
+    if (phy[1, "Extinction.Time"] == val$vars$end_timestep - 1) {
       String_final <- "1" # tree with only root
     } else {
       String_final <- "0" # tree with only root that got extinct
@@ -201,9 +201,6 @@ write_nex <- function(phy, label = "sp", output_file) {
 #' @returns The numerical values in "to" unit
 #' @noRd
 conv_unit <- function(x, from, to) {
-  if (from == "timestep" || to == "timestep") {
-    return(x)
-  }
   exponents <- c(yr = 0, kyr = 3, Myr = 6, Gyr = 9)
   factor <- 10^(exponents[from] - exponents[to])
   return(x * factor[[1]])
@@ -232,11 +229,11 @@ check_time_match <- function(config_duration, space_duration){
   
   # harmonize time units
   if(xor(config_duration$unit == "timestep", space_duration$unit == "timestep")){
-    stop("Cannot interpretate timeframe. Both config's and spaces' duration$unit must be 'timestep'.")
+    stop("If duration$unit is 'timestep' in either config or spaces, it must be 'timestep' in the other as well.")
   } 
 
   if (config_duration$unit != space_duration$unit){
-    warning("Config's and spaces' duration$by are different. Config's duration by will be converted.")
+    warning("Config's and spaces' duration$unit are different. Config's duration by will be converted.")
     config_duration[c("from","to","by")] <- lapply(config_duration[c("from","to","by")], function(x){
       conv_unit(x, config_duration$unit, space_duration$unit)
     })

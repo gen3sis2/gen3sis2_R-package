@@ -32,6 +32,48 @@ get_dispersal_values <- function(num_draws, species, space, config) {
   )
 }
 
+# TODO same as in evolution
+# Longest processing time first
+order_lpt <- function(cost) {
+  workers <- future::nbrOfWorkers()
+  
+  # If all species fit into workers, pass them as is
+  if (length(cost) <= workers) {
+    return(1)
+  }
+  
+  assigned_worker <- integer(length(cost))
+  worker_load <- numeric(workers)
+  # Split jobs equally across workers
+  jobs_per_worker <- lengths(parallel::splitIndices(length(cost), workers))
+  
+  # Order by species count (more species means more work that needs to be done # TODO das beweisen da prinizip darauf basiert, dass species job länge ensprechen)
+  for (i in order(cost, decreasing = TRUE, method = "radix")) {
+    # Get all workers that have space for jobs
+    workers_with_space <- which(jobs_per_worker > 0)
+    # Select worker with smalles load
+    worker <- workers_with_space[which.min(worker_load[workers_with_space])]
+    
+    # Add cost to worker
+    worker_load[worker] <- worker_load[worker] + cost[i]
+    
+    # Assign species to selected worker
+    assigned_worker[i] <- worker
+    
+    # Remove a slot of selected worker
+    jobs_per_worker[worker] <- jobs_per_worker[worker] - 1
+  }
+  
+  return(structure(1, ordering = order(assigned_worker)))
+}
+
+# Same as num_draws in disperse
+# Cost is number of draws: one draw for each (occupied, free_cell) pair
+estimate_cost <- function(species, cells) {
+  occupied_cells <- as.numeric(lengths(lapply(species, "[[", "abundance")))
+  occupied_cells * (cells - occupied_cells)
+}
+
 #' The top level loop for dispersal
 #'
 #' @details orchestrates the dispersal of all species.
@@ -47,19 +89,42 @@ loop_dispersal <- function(config, data, vars) {
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering dispersal module \n"))
   }
+  
+  if (future::nbrOfWorkers() > 1) {
+    # Estimate cost per species
+    cost <- estimate_cost(data$all_species, nrow(data$space$coordinates))
 
-  data$all_species <- lapply(
-    data$all_species,
-    disperse,
-    data$space,
-    data$distance_matrix,
-    config
-  )
+    # Share data
+    species <- mori::share(data$all_species)
+    space <- mori::share(data$space)
 
+    data$all_species <- dynamic_lapply(
+      species,
+      disperse_duplicate,
+      space,
+      data$shared_distance,
+      config,
+      future.scheduling = order_lpt(cost)
+    )
+  } else {
+    data$all_species <- dynamic_lapply(
+      data$all_species,
+      disperse,
+      data$space,
+      data$distance_matrix,
+      config
+    )
+  }
+  
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("exiting dispersal module \n"))
   }
   return(list(config = config, data = data, vars = vars))
+}
+
+# Ensure saveRDS works properly
+disperse_duplicate <- function(species, space, distance_matrix, config) {
+  rlang::duplicate(disperse(species, space, distance_matrix, config), shallow = FALSE)
 }
 
 
@@ -78,6 +143,11 @@ loop_dispersal <- function(config, data, vars) {
 disperse <- function(species, space, distance_matrix, config) {
   if (!length(species[["abundance"]])) {
     return(species)
+  }
+
+  # Use shared distance matrix
+  if (inherits(distance_matrix, "big.matrix.descriptor")) {
+    distance_matrix <- bigmemory::attach.big.matrix(distance_matrix, readonly = TRUE)
   }
 
   presence_spi_ti <- names(species[["abundance"]])

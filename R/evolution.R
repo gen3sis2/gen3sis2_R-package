@@ -21,23 +21,83 @@ apply_trait_evolution <- function(species, cluster_indices, space, config) {
 }
 
 
+# TODO same as in disperal, define once, avoid duplicate, fine for now
+# Longest processing time first
+order_lpt <- function(cost) {
+  workers <- future::nbrOfWorkers()
+  
+  # If all species fit into workers, pass them as is
+  if (length(cost) <= workers) {
+    return(1)
+  }
+  
+  assigned_worker <- integer(length(cost))
+  worker_load <- numeric(workers)
+  # Split jobs equally across workers
+  jobs_per_worker <- lengths(parallel::splitIndices(length(cost), workers))
+  
+  # Order by species count (more species means more work that needs to be done)
+  for (i in order(cost, decreasing = TRUE, method = "radix")) {
+    # Get all workers that have space for jobs
+    workers_with_space <- which(jobs_per_worker > 0)
+    # Select worker with smallest load
+    worker <- workers_with_space[which.min(worker_load[workers_with_space])]
+    
+    # Add cost to worker
+    worker_load[worker] <- worker_load[worker] + cost[i]
+    
+    # Assign species to selected worker
+    assigned_worker[i] <- worker
+    
+    # Remove a slot of selected worker
+    jobs_per_worker[worker] <- jobs_per_worker[worker] - 1
+  }
+  
+  return(structure(1, ordering = order(assigned_worker)))
+}
+
+
 loop_evolution <- function(config, data, vars) {
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering trait evolution module \n"))
   }
+  
+  if (future::nbrOfWorkers() > 1) {
+    # Estimate cost per species
+    # Tdbscan_variable accounts for most of the work, cost is calculated with its input size
+    cost <- lengths(lapply(data$all_species, "[[", "abundance"))^2
+    
+    # Share data
+    species <- mori::share(data$all_species)
+    space <- mori::share(data$space)
 
-  data$all_species <- lapply(
-    data$all_species,
-    evolve,
-    data$space,
-    data$distance,
-    config
-  )
-
+    data$all_species <- dynamic_lapply(
+      species,
+      evolve_duplicate,
+      space,
+      data$shared_distance,
+      config,
+      future.scheduling = order_lpt(cost)
+    )
+  } else {
+    data$all_species <- dynamic_lapply(
+      data$all_species,
+      evolve,
+      data$space,
+      data$distance_matrix,
+      config
+    )
+  }
+  
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("exiting trait evolution module \n"))
   }
   return(list(config = config, data = data, vars = vars))
+}
+
+# Ensure saveRDS works properly (See Persistence https://cran.r-project.org/web/packages/mori/refman/mori.html#share)
+evolve_duplicate <- function(species, space, distance_matrix, config) {
+  rlang::duplicate(evolve(species, space, distance_matrix, config), shallow = FALSE)
 }
 
 
@@ -45,6 +105,12 @@ evolve <- function(species, space, distance_matrix, config) {
   if (!length(species[["abundance"]])) {
     return(species)
   }
+
+  # Use shared distance matrix
+  if (inherits(distance_matrix, "big.matrix.descriptor")) {
+    distance_matrix <- bigmemory::attach.big.matrix(distance_matrix, readonly = TRUE)
+  }
+
   species_presence <- names(species[["abundance"]])
 
   distances <- config$gen3sis$dispersal$get_dispersal_values(

@@ -37,6 +37,7 @@ save_val <- function(val, save_state = NA) {
     # Save current Random Number Generator (seed) state
     val$config$seed <- .GlobalEnv$.Random.seed
     val$data$distance_matrix <- NULL
+    val$data$shared_distance <- NULL
     state_file <- file.path(state_dir, paste0("val_t_", val$vars$ti, ".rds")) # saving path
     saveRDS(val, state_file) # save the state
     if (identical(save_state, "last")) {

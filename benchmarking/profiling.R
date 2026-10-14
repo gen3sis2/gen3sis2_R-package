@@ -1,31 +1,56 @@
+# This file only serves as a helper for testing and is irrelevant for the actual implementation
+# should be removed before merging
+
+
 # #----------------------------------------#
 # #####           Setup                #####
 # #----------------------------------------#
-# devtools::load_all()
+# preclean: necessary to force a clean build
+# without-keep.source: ensure future workers start efficently
+install.packages(".", repos = NULL, type = "source", INSTALL_opts = c("--preclean", "--without-keep.source"))
 library(gen3sis2)
-library(terra)
+source(file.path("implementations", "dynamic_lapply.R"))
+
+# Added to description
+#library(rlang)
+#library(bigmemory)
+#library(mori)
+
+library(bench)
+Sys.setenv(TZ = "Europe/Berlin")
 
 # ---- Log level -------
 #' 0: write logs to log file only
 #' 1: write to log file and print to console
-LOG_LEVEL <- 1
+LOG_LEVEL <- 0
 
 # ---- Parameters ------------
-SPACE_RASTER <- file.path("benchmarking", "spaces_raster")
-
+SPACE_RASTER <- file.path("benchmarking", "spaces", "global_2deg")
 CONFIG_DIR <- file.path("benchmarking", "configs")
 
-#' Add all configs that should be analyzed in this run
+# Configs that should be analyzed in this run
 CONFIGS <- c(
-    "config_southamerica"
+    "config_globe_2deg"
 )
 
 #' Interval of analysis
-SAMPLE_INTERVAL <- 0.05
+SAMPLE_INTERVAL <- 0.1
+
+# Cores to benchmark on
+# First entry is the baseline for the speedup
+CORES <- c(
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64
+)
 
 
 run_id <- format(Sys.time(), "Run_%Y-%m-%d_%H-%M")
-out <- file.path("benchmarking", "output", run_id)
+out <- file.path("results", run_id)
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
 
@@ -34,58 +59,14 @@ dir.create(out, recursive = TRUE, showWarnings = FALSE)
 # #----------------------------------------#
 
 # ----- Logging ----------------
-log <- file.path(out, "log.txt")
-
 log_msg <- function(...) {
     msg <- paste0("[", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "] ", ...)
-    cat(msg, "\n", file = log, append = TRUE)
+    cat(msg, "\n", file = log_file, append = TRUE)
     if (LOG_LEVEL == 1) {
         cat(msg, "\n")
         flush.console()
     }
 }
-
-
-# ---- Build spaces if none are available -------------------------------------
-if (!file.exists(file.path(SPACE_RASTER, "spaces.rds"))) {
-    log_msg("Space not found, starting to build ...")
-    datapath <- file.path("Simulations", "input_rasters", "SouthAmerica")
-
-    temperature_raster <- rast(file.path(datapath, "temperature_rasters.grd"))
-    aridity_raster <- rast(file.path(datapath, "aridity_rasters.grd"))
-    area_raster <- rast(file.path(datapath, "area_rasters.grd"))
-
-    # Sort rasters
-    temperature_raster <- temperature_raster[[order(names(temperature_raster), decreasing = T)]]
-    aridity_raster <- aridity_raster[[order(names(aridity_raster), decreasing = T)]]
-    area_raster <- area_raster[[order(names(area_raster), decreasing = T)]]
-
-    spaces_list <- list(
-        temp = temperature_raster,
-        arid = aridity_raster,
-        area = area_raster
-    )
-
-    cost_function <- function(source, dest) {
-        return(1 / 1000)
-    }
-
-    create_spaces_raster(
-        raster_list = spaces_list,
-        cost_function = cost_function,
-        output_directory = SPACE_RASTER,
-        directions = 8,
-        duration = list(from = -65, to = 0, by = 1, unit = "Ma"),
-        full_dists = TRUE,
-        overwrite_output = TRUE,
-        crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
-        geodynamic = TRUE,
-        verbose = TRUE
-    )
-} else {
-    log_msg("Space found at: ", SPACE_RASTER)
-}
-
 
 # ---- Validate configs -------
 for (config in CONFIGS) {
@@ -96,7 +77,7 @@ for (config in CONFIGS) {
     }
     input_config <- create_input_config(config_path)
     if (!verify_config(input_config)) {
-        log_msg("Config not found: ", config_path)
+        log_msg("Config not valid: ", config_path)
         stop("Ivalid config: ", input_config)
     }
 }
@@ -105,10 +86,12 @@ for (config in CONFIGS) {
 # --- Profiling run ------
 run_profiling <- function(config) {
     config_path <- file.path(CONFIG_DIR, paste0(config, ".R"))
-    dir.create(out, recursive = TRUE, showWarnings = FALSE)
+    prof_dir <- file.path(out, paste0("profile_", config))
+    dir.create(prof_dir, recursive = TRUE, showWarnings = FALSE)
     prof_out <- file.path(out, paste0(config, ".Rprof"))
     log_msg("Start profiling for: ", config)
 
+    define_cores(cores = 1, log_msg = log_msg)
 
     error_occured <- FALSE
     error_message <- NA_character_
@@ -123,11 +106,10 @@ run_profiling <- function(config) {
                 gc.profiling = TRUE,
                 line.profiling = TRUE
             )
-            # run_simulation(
-            gen3sis2::run_simulation(
+            run_simulation(
                 config = config_path,
                 space = SPACE_RASTER,
-                output_directory = out,
+                output_directory = prof_dir,
                 verbose = 0
             )
         },
@@ -152,11 +134,57 @@ run_profiling <- function(config) {
 }
 
 
-# --- Start profiling -----
+# --- Benchmarking run ------------
+# Use the same config for all given core counts
+run_benchmark <- function(config, cores) {
+    config_path <- file.path(CONFIG_DIR, paste0(config, ".R"))
+    bench_out <- file.path(out, sprintf("%s_cores%02d", config, cores))
+    dir.create(bench_out, recursive = TRUE, showWarnings = FALSE)
+
+    log_msg("Start benchmarking for: ", config, " with cores: ", cores)
+    define_cores(cores = cores, log_msg = log_msg)
+
+    run_simulation(
+        config = config_path,
+        space = SPACE_RASTER,
+        output_directory = bench_out,
+        verbose = 0
+    )
+}
+
+
+# --- Start profiling and benchmarking-----
+
+# TODO Unload terra if it was laoded, may be nice to have for later before simulation starts
+
 for (config in CONFIGS) {
+    log_msg("---- Profiling ----")
     run_profiling(config)
+
+    log_msg("---- Benchmarking ----")
+
+    seconds <- vapply(CORES, function(k) {
+        future::plan(future::sequential) # Reset workers
+        s <- system.time(
+            run_benchmark(config, k)
+        )[["elapsed"]]
+        return (s)
+    }, numeric(1))
+
+    res <- data.frame(
+        config = config, 
+        cores = CORES, 
+        seconds = seconds, 
+        hours = seconds / 3600
+    )
+    res$speedup <- res$seconds[1] / res$seconds
+
+    utils::write.csv(res, file.path(out, paste0(config, "_benchmark.csv")),
+        row.names = FALSE
+    )
+    saveRDS(res, file.path(out, paste0(config, "_bench_mark.rds")))
 }
 
 
 # --- Final message ----
-message("Finished profiling, check logs")
+message("Finished, check logs")

@@ -210,6 +210,18 @@ run_simulation <- function(
 
   if (!val$data$space$geodynamic) {
     val <- setup_distance_matrix(val$config, val$data, val$vars)
+
+    # Skip in sequential runs
+    if (future::nbrOfWorkers() > 1) {
+      # Share distance matrix
+      share_file <- basename(tempfile("shared_distance_", fileext = ".bin")) # Without backingfile, Rprof profiling can result in an error
+      x <- bigmemory::as.big.matrix(
+        val$data$distance_matrix, 
+        backingfile = share_file,
+        backingpath = tempdir()
+      )
+      val$data$shared_distance <- bigmemory::describe(x)
+    }
   }
 
   for (ti in val$vars$steps) {
@@ -242,6 +254,11 @@ run_simulation <- function(
     #val <- loop_setup_geo_dist_m_ti(val$config, val$data, val$vars)
     if (val$data$space$geodynamic) {
       val <- setup_distance_matrix(val$config, val$data, val$vars)
+
+      # Skip if sequential
+      if (future::nbrOfWorkers() > 1) {
+        # TODO update bigmemory shared matrix each timestep
+      }
     }
     #val <- setup_distance_matrix(val$config, val$data, val$vars)
 
@@ -285,6 +302,9 @@ run_simulation <- function(
     # #     #-------------------------------------------------------------------#
     # #     ######## end of time-step loop variable update (simulation.R) #######
     # #     #-------------------------------------------------------------------#
+
+    # Run garbage collection, removes moris shared objects
+    if (future::nbrOfWorkers() > 1) gc()
 
     if (verbose >= 2) {
       cat("end of loop updates \n")

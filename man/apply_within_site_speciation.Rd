@@ -4,12 +4,14 @@
 \alias{apply_within_site_speciation}
 \title{User-specified function determining within-site speciation outcome}
 \usage{
-apply_within_site_speciation(abundance, traits, config)
+apply_within_site_speciation(abundance, traits, ecological_states, config)
 }
 \arguments{
 \item{abundance}{abundance of the parental population}
 
 \item{traits}{traits of the parental population}
+
+\item{ecological_states}{parental ecological states}
 
 \item{config}{the config of the simulation}
 }

@@ -73,12 +73,13 @@ get_within_site_divergence_factor <- function(abundance,
 #'
 #' @param abundance abundance of the parental population
 #' @param traits traits of the parental population
+#' @param ecological_states parental ecological states
 #' @param config the config of the simulation
 #'
 #' @return a list of parent and daughter abundance and traits
 #' @keywords user
 #' @export
-apply_within_site_speciation <- function(abundance, traits, config) {
+apply_within_site_speciation <- function(abundance, traits, ecological_states, config) {
   stop("this function documents the user function interface only, do not use it!")
 }
 
@@ -319,7 +320,7 @@ update_within_cluster_divergence <- function(
     cluster_divergence <- divergence[cluster_cells, cluster_cells, drop = FALSE]
     
     ecological_states <- NULL
-    if(!is.null(species$ecological_states)){
+    if(config$gen3sis$use_ecological_states){
       ecological_states <- species$ecological_states[cluster_cells, , drop = FALSE]
     }
     
@@ -359,7 +360,7 @@ update_within_site_divergence <- function(divergence, species, space, config) {
   for (cell in names(divergence)) {
     
     ecological_states <- NULL
-    if(!is.null(species$ecological_states)){
+    if(config$gen3sis$use_ecological_states){
       ecological_states <- species$ecological_states[cell, , drop = FALSE]
     }
     
@@ -426,20 +427,26 @@ loop_within_site_speciation <- function(config, data, vars) {
     for (site in speciation_sites) {
       ecological_states <- NULL
       
-      if (!is.null(species$ecological_states)) {
-        ecological_states <- species$ecological_states[site, ]
+      if (config$gen3sis$use_ecological_states) {
+        ecological_states <- as.vector(species$ecological_states[site, , drop = FALSE])
+        ecological_state_names <- colnames(species$ecological_states)
+        ecological_states <- setNames(ecological_states, ecological_state_names)
       }
-      
-      split <- config$gen3sis$speciation$apply_within_site_speciation(
-        abundance = as.numeric(species$abundance[site]),
-        traits = species$traits[site, ],
-        config = config
-      )
       
       trait_names <- colnames(species$traits)
       
+      split <- config$gen3sis$speciation$apply_within_site_speciation(
+        abundance = as.numeric(species$abundance[site]),
+        traits = setNames(as.vector(species$traits[site, , drop = FALSE]), trait_names),
+        ecological_states = ecological_states,
+        config = config
+      )
+      
       species$abundance[site] <- split$parent["abundance"]
       species$traits[site, ] <- split$parent[trait_names]
+      if (config$gen3sis$use_ecological_states){
+        species$ecological_states[site, ] <- split$parent[ecological_state_names]
+      }
       
       # the offspring will inherit this in "create_species_within_site"
       species$divergence$within_site[site] <- 0
@@ -452,6 +459,7 @@ loop_within_site_speciation <- function(config, data, vars) {
         site = site,
         daughter_abundance = split$daughter["abundance"],
         daughter_traits = split$daughter[trait_names],
+        daughter_ecological_states = split$daughter[ecological_state_names],
         config = config
       )
       

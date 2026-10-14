@@ -131,6 +131,7 @@ create_species_from_existing <- function(
 #' @param site focal site where within-site speciation occurs
 #' @param daughter_abundance initial abundance of the daughter population
 #' @param daughter_traits named vector of daughter trait values
+#' @param daughter_traits named vector of daughter ecological states
 #' @param config simulation configuration
 #'
 #' @return a one-site daughter species
@@ -141,6 +142,7 @@ create_species_within_site <- function(
     site,
     daughter_abundance,
     daughter_traits,
+    daughter_ecological_states,
     config
 ) {
   new_species <- create_species(
@@ -161,9 +163,9 @@ create_species_within_site <- function(
     parent_species[["divergence"]][["within_site"]][site]
   
   # we're assuming inheritence of ecological states (if they are present)
-  if (!is.null(parent_species[["ecological_states"]])) {
+  if (config$gen3sis$use_ecological_states) {
     new_species[["ecological_states"]][site, ] <-
-      parent_species[["ecological_states"]][site, ]
+      daughter_ecological_states[colnames(parent_species[["ecological_states"]])]
   }
   
   return(invisible(new_species))

@@ -121,13 +121,13 @@ get_within_site_divergence_factor <- function(
 # does this even need "config"?
 # simple proportional split & traits are inherited faithfully
 apply_within_site_speciation <- function(
-    abundance, traits, config
+    abundance, traits, ecological_states, config
 ) {
   
   return(
     list(
-      parent = c(abundance = abundance * (1 - config$user$daughter_fraction), traits),
-      daughter = c(abundance = abundance * config$user$daughter_fraction, traits)
+      parent = c(abundance = abundance * (1 - config$user$daughter_fraction), traits, ecological_states),
+      daughter = c(abundance = abundance * config$user$daughter_fraction, traits, ecological_states)
     )
   )
 

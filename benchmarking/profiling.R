@@ -59,6 +59,8 @@ dir.create(out, recursive = TRUE, showWarnings = FALSE)
 # #----------------------------------------#
 
 # ----- Logging ----------------
+log_file <- file.path(out, "log.txt")
+
 log_msg <- function(...) {
     msg <- paste0("[", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "] ", ...)
     cat(msg, "\n", file = log_file, append = TRUE)

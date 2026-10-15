@@ -15,6 +15,7 @@
 setup_inputs <- function(config, data, vars) {
   data[["inputs"]] <- list()
   spaces_rds <- readRDS(file.path(config$directories$input, "spaces.rds"))
+  check_spaces(spaces_rds)
   spaces <- spaces_rds$env # TODO correct cascade of names... attention to s i.e. space is contained in spaces
   space_names <- names(spaces)
 

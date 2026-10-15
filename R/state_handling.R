@@ -99,18 +99,19 @@ restore_state <- function(val, timestep_restart) {
   } else {
     timestep <- as.integer(timestep_restart)
   }
-
+  
   state_file <- file.path(state_dir, paste0("val_t_", timestep, ".rds"))
   if (!file.exists(state_file)) {
     stop("State file not found. Can't restart the simulation.")
   }
-
+  
   val <- readRDS(state_file)
   .GlobalEnv$.Random.seed <- val$config$seed
 
   if (timestep > 0) {
-    val$vars$save_steps <- (timestep - 1):(val$config$gen3sis$general$duration$to)
-    val$vars$steps <- (timestep - 1):(val$config$gen3sis$general$duration$to)
+    # subset the vectors to allow the simulation to start runing on the next intended timestep
+    val$vars$save_steps <- val$vars$save_steps[which(val$vars$save_steps < timestep)]
+    val$vars$steps <- val$vars$steps[which(val$vars$steps < timestep)]
     message(paste("[!] Restarting at time-step:", timestep))
   } else {
     val$vars$save_steps <- NULL

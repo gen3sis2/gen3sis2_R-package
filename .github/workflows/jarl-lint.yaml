@@ -1,0 +1,36 @@
+# This workflow runs Jarl for linting.
+
+name: Format with Jarl
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint-jarl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Check
+        id: check
+        uses: etiennebacher/setup-jarl@eabf7e572f2991d165059007531b9bbe2987e39c # v0.1.1
+        continue-on-error: true
+
+      - name: Report lint result
+        run: |
+          if [ "${{ steps.check.outcome }}" = "success" ]; then
+            echo "::notice title=✅ Lint check passed::Jarl found no lint issues. Nice work! ✨"
+          else
+            echo "::error title=❌ Lint check failed::Jarl found lint issues (listed in the 'Check' step log above). 🛠️ To fix, run 'jarl check .' locally, address the issues, then commit and push."
+            exit 1
+          fi

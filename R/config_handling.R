@@ -94,7 +94,7 @@ prepare_directories <- function(
 #'
 #' @param config_file the path to a valid configuration file. if NA it creates an empty config
 #' @param config_name the name of the configuration. if NULL it will be set to a random name, if a empty config is created, or use the file name
-#' @return list of configuration elements, similar generated from reading a config_file.R. The internal elements 
+#' @return list of configuration elements, similar generated from reading a config_file.R. The internal elements
 #' of this list are: "general", "initialization", "dispersal", "speciation", "mutation" and "ecology"
 #' @keywords config
 #' @example inst/examples/create_input_config_help.R
@@ -176,9 +176,12 @@ internal_categories <- c(
 #' @noRd
 populate_config <- function(config, config_file) {
   user_config_env <- new.env()
-  source(config_file, chdir=TRUE, local=user_config_env)
-  for ( category in internal_categories) {
-    config[["gen3sis"]][[category]] <- populate_settings_list(config[["gen3sis"]][[category]], user_config_env)
+  source(config_file, chdir = TRUE, local = user_config_env)
+  for (category in internal_categories) {
+    config[["gen3sis"]][[category]] <- populate_settings_list(
+      config[["gen3sis"]][[category]],
+      user_config_env
+    )
   }
 
   # Populate config_name variable from file name if it has not been
@@ -194,9 +197,9 @@ populate_config <- function(config, config_file) {
     presence <- presence |
       (user_settings %in% names(config[["gen3sis"]][[category]]))
   }
-  
-  if(!all(presence)){
-    for( i in user_settings[which(!presence)] ) {
+
+  if (!all(presence)) {
+    for (i in user_settings[which(!presence)]) {
       config[["user"]][[i]] <- user_config_env[[i]]
     }
   }
@@ -292,11 +295,14 @@ verify_config <- function(config) {
     return(FALSE)
   }
 
-  # check if time_unit is accepted 
+  # check if time_unit is accepted
   # time_unit_check() returns a logical when a time unit is provided
   # and a character vector of accepted units when called with NULL.
   tu <- NULL
-  if (!is.null(config$gen3sis$general$duration) && !is.null(config$gen3sis$general$duration$unit)) {
+  if (
+    !is.null(config$gen3sis$general$duration) &&
+      !is.null(config$gen3sis$general$duration$unit)
+  ) {
     tu <- config$gen3sis$general$duration$unit
   }
   accepted <- time_unit_check(tu)
@@ -444,10 +450,10 @@ write_config_skeleton <- function(
 #'   # return FALSE
 #'   time_unit_check("eons")
 #' }
-time_unit_check <- function(time_unit=NULL){
-  accepted_timeunits <- c("yr","kyr", "Myr", "Gyr","timestep")
-  
-  if(is.null(time_unit)){
+time_unit_check <- function(time_unit = NULL) {
+  accepted_timeunits <- c("yr", "kyr", "Myr", "Gyr", "timestep")
+
+  if (is.null(time_unit)) {
     return(accepted_timeunits)
   } else {
     is.accepted <- time_unit %in% accepted_timeunits

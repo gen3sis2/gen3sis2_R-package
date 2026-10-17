@@ -13,9 +13,9 @@
 #'      and goes until the future 300 kya at every 100 mil years.
 #' @param area list containing information on the 2D spacial dimension: list(extent, total_area, n_sites, unit)
 #' *extent* is a named vector with (xmin, xmax, ymin, ymax) \code{terra::ext},
-#' *total_area* is the covered area by the points, raster or h3 grid, 
-#' *n_sites* is the number of sites and 
-#' *unit* is the unit  of the area, accepted units are square meter (m2) and square kilometer (km2) 
+#' *total_area* is the covered area by the points, raster or h3 grid,
+#' *n_sites* is the number of sites and
+#' *unit* is the unit  of the area, accepted units are square meter (m2) and square kilometer (km2)
 #' \code{check_spaces()$area}
 #' @param crs Coordinate Reference Systems, as string and PROJ.4 format. Default is,
 #' WGS 84 -- WGS84 - World Geodetic System 1984 crs="+proj=longlat +datum=WGS84 +no_defs"

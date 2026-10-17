@@ -187,7 +187,10 @@ test_that("returns the correct object", {
     file.path(base_dir, "TestConfig.R")
   ))
 
-  y <- gen3sis2:::populate_config(new_config, file.path(base_dir, "TestConfig.R"))
+  y <- gen3sis2:::populate_config(
+    new_config,
+    file.path(base_dir, "TestConfig.R")
+  )
   expect_s3_class(y, "gen3sis_config")
 })
 

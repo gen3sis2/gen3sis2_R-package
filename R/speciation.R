@@ -40,7 +40,7 @@ get_divergence_factor <- function(species, cluster_indices, space, config) {
 #' @return an expanded species list including all newly created species
 #' @noRd
 loop_speciation <- function(config, data, vars) {
-  if (config$gen3sis$general$verbose >= 3){
+  if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering speciation module \n"))
   }
   for (spi in 1:vars$n_sp) {
@@ -84,8 +84,17 @@ loop_speciation <- function(config, data, vars) {
 
     gen_dist_spi <- decompress_divergence(species[["divergence"]])
     # update genetic distances
-    ifactor <- config$gen3sis$speciation$get_divergence_factor(species, clu_geo_spi_ti, data[["space"]], config)
-    gen_dist_spi <- update_divergence(gen_dist_spi, clu_geo_spi_ti, ifactor = ifactor )
+    ifactor <- config$gen3sis$speciation$get_divergence_factor(
+      species,
+      clu_geo_spi_ti,
+      data[["space"]],
+      config
+    )
+    gen_dist_spi <- update_divergence(
+      gen_dist_spi,
+      clu_geo_spi_ti,
+      ifactor = ifactor
+    )
 
     gen_dist_spi <- compress_divergence(gen_dist_spi)
 

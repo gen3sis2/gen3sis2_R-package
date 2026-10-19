@@ -358,8 +358,7 @@ create_empty_config <- function() {
     ),
     "dispersal" = list(
       "max_dispersal" = Inf, 
-      "get_dispersal_values" = NULL,
-      "apply_dispersal_trait_inheritance" = NA
+      "get_dispersal_values" = NULL
       ),
     "speciation" = list(
       "divergence_threshold" = NULL,

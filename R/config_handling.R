@@ -373,6 +373,7 @@ create_empty_config <- function() {
   )
   config[["user"]] <- list()
   config[["directories"]] <- list()
+  config[["flags"]] <- list()
   class(config) <- "gen3sis_config"
   return(config)
 }

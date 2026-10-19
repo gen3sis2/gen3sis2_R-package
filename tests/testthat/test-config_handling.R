@@ -110,7 +110,7 @@ test_that("properly create input config", {
   config <- create_input_config(
     config_file = file.path(base_dir, "TestConfig.R")
   )
-  expect_in(names(config), c("gen3sis", "user", "directories"))
+  expect_in(names(config), c("gen3sis", "user", "directories", "flags"))
 })
 
 ## Test if function correctly atributes the config name

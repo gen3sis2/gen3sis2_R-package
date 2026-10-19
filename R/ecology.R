@@ -79,7 +79,7 @@ loop_ecology <- function(config, data, vars) {
     
     ecological_states <- NULL
     
-    if (config$gen3sis$use_ecological_states) {
+    if (config$flags$ecological_states_enabled) {
       ecological_states <- matrix(
         NA,
         nrow = length(config$gen3sis$initialization$initial_ecological_state),
@@ -109,7 +109,7 @@ loop_ecology <- function(config, data, vars) {
       abundance[i] <-
         species[["abundance"]][cell]
       
-      if(config$gen3sis$use_ecological_states){
+      if(config$flags$ecological_states_enabled){
         ecological_states[, i] <-
           species[["ecological_states"]][cell, ]
       }

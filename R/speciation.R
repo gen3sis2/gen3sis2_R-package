@@ -320,7 +320,7 @@ update_within_cluster_divergence <- function(
     cluster_divergence <- divergence[cluster_cells, cluster_cells, drop = FALSE]
     
     ecological_states <- NULL
-    if(config$gen3sis$use_ecological_states){
+    if(config$flags$ecological_states_enabled){
       ecological_states <- species$ecological_states[cluster_cells, , drop = FALSE]
     }
     
@@ -360,7 +360,7 @@ update_within_site_divergence <- function(divergence, species, space, config) {
   for (cell in names(divergence)) {
     
     ecological_states <- NULL
-    if(config$gen3sis$use_ecological_states){
+    if(config$flags$ecological_states_enabled){
       ecological_states <- species$ecological_states[cell, , drop = FALSE]
     }
     
@@ -427,7 +427,7 @@ loop_within_site_speciation <- function(config, data, vars) {
     for (site in speciation_sites) {
       ecological_states <- NULL
       
-      if (config$gen3sis$use_ecological_states) {
+      if (config$flags$ecological_states_enabled) {
         ecological_states <- as.vector(species$ecological_states[site, , drop = FALSE])
         ecological_state_names <- colnames(species$ecological_states)
         ecological_states <- setNames(ecological_states, ecological_state_names)
@@ -444,7 +444,7 @@ loop_within_site_speciation <- function(config, data, vars) {
       
       species$abundance[site] <- split$parent["abundance"]
       species$traits[site, ] <- split$parent[trait_names]
-      if (config$gen3sis$use_ecological_states){
+      if (config$flags$ecological_states_enabled){
         species$ecological_states[site, ] <- split$parent[ecological_state_names]
       }
       

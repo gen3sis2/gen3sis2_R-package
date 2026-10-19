@@ -61,7 +61,7 @@ create_species <- function(initial_cells, config) {
     "within_site" = within_site
   )
   
-  if (config$gen3sis$use_ecological_states) {
+  if (config$flags$ecological_states_enabled) {
     species[["ecological_states"]] <- matrix(
       NA,
       nrow = num_cells,
@@ -163,7 +163,7 @@ create_species_within_site <- function(
     parent_species[["divergence"]][["within_site"]][site]
   
   # we're assuming inheritence of ecological states (if they are present)
-  if (config$gen3sis$use_ecological_states) {
+  if (config$flags$ecological_states_enabled) {
     new_species[["ecological_states"]][site, ] <-
       daughter_ecological_states[colnames(parent_species[["ecological_states"]])]
   }

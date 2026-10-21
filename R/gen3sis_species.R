@@ -131,7 +131,7 @@ create_species_from_existing <- function(
 #' @param site focal site where within-site speciation occurs
 #' @param daughter_abundance initial abundance of the daughter population
 #' @param daughter_traits named vector of daughter trait values
-#' @param daughter_traits named vector of daughter ecological states
+#' @param daughter_ecological_states named vector of daughter ecological states
 #' @param config simulation configuration
 #'
 #' @return a one-site daughter species

@@ -119,6 +119,7 @@ loop_speciation <- function(config, data, vars) {
         n_new_sp_ti = vars$n_new_sp_ti, 
         n_sp_added_ti = vars$n_sp_added_ti, 
         ti = vars$ti, 
+        space = data$space,
         config = config
       )
       species <- result$species
@@ -532,16 +533,17 @@ update_within_site_divergence <- function(divergence, species, space, config) {
 #' @param n_new_sp_ti current vars$n_new_sp_ti counter
 #' @param n_sp_added_ti current vars$n_sp_added_ti counter
 #' @param ti current time step
+#' @param space current space object
 #' @param config current config object
 #'
 #' @return updated species, new species, n_new_sp_ti, and n_sp_added_ti
 #' @noRd
-process_within_site_speciation <- function(species, n_sp, n_new_sp_ti, n_sp_added_ti, ti, config) {
+process_within_site_speciation <- function(species, n_sp, n_new_sp_ti, n_sp_added_ti, ti, space, config) {
   
   species$divergence$within_site <- update_within_site_divergence(
     divergence = species$divergence$within_site,
     species = species,
-    space = data$space,
+    space = space,
     config = config
   )
   

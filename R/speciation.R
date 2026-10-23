@@ -118,7 +118,8 @@ loop_speciation <- function(config, data, vars) {
         n_sp = vars$n_sp, 
         n_new_sp_ti = vars$n_new_sp_ti, 
         n_sp_added_ti = vars$n_sp_added_ti, 
-        ti = vars$ti, 
+        ti = vars$ti,
+        space = data$space,
         config = config
       )
       species <- result$species
@@ -386,26 +387,22 @@ update_within_cluster_divergence <- function(
 #' @noRd
 update_within_site_divergence <- function(divergence, species, space, config) {
   
-  for (cell in names(divergence)) {
-    
-    ecological_states <- NULL
-    if(config$flags$ecological_states_enabled){
-      ecological_states <- species$ecological_states[cell, , drop = FALSE]
-    }
-    
-    divergence_update <- config$gen3sis$speciation$
-      get_within_site_divergence_factor(
-      abundance = species$abundance[cell],
-      traits = species$traits[cell, , drop = FALSE],
-      divergence = divergence[cell],
-      ecological_states = ecological_states,
-      local_environment = space$environment[cell, , drop = FALSE],
-      config = config
-    )
-    
-    divergence[cell] <- divergence[cell] + divergence_update
+  ecological_states <- NULL
+  if(config$flags$ecological_states_enabled){
+    ecological_states <- species$ecological_states
   }
   
+  divergence_update <- config$gen3sis$speciation$
+    get_within_site_divergence_factor(
+      abundance = species$abundance,
+      traits = species$traits,
+      divergence = divergence,
+      ecological_states = ecological_states,
+      local_environment = space$environment[names(divergence), , drop = FALSE],
+      config = config
+    )
+  
+  divergence <- divergence + divergence_update
   divergence[divergence < 0] <- 0
   
   return(divergence)
@@ -536,12 +533,12 @@ update_within_site_divergence <- function(divergence, species, space, config) {
 #'
 #' @return updated species, new species, n_new_sp_ti, and n_sp_added_ti
 #' @noRd
-process_within_site_speciation <- function(species, n_sp, n_new_sp_ti, n_sp_added_ti, ti, config) {
+process_within_site_speciation <- function(species, n_sp, n_new_sp_ti, n_sp_added_ti, ti, space, config) {
   
   species$divergence$within_site <- update_within_site_divergence(
     divergence = species$divergence$within_site,
     species = species,
-    space = data$space,
+    space = space,
     config = config
   )
   

@@ -111,7 +111,7 @@ get_within_site_divergence_factor <- function(
     local_environment,
     config
     ){
-  divergence_update <- ifelse(runif(n = 1, min = 0, max = 1) <= point_speciation_rate, 
+  divergence_update <- ifelse(runif(n = length(divergence), min = 0, max = 1) <= point_speciation_rate, 
          config$gen3sis$speciation$divergence_threshold + 0.01, 
          0
          )

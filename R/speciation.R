@@ -84,17 +84,23 @@ apply_within_site_speciation <- function(abundance, traits, ecological_states, c
 }
 
 #' Orchestrates the speciation of any species alive in the simulation
-#'
+#' 
 #' @param config the current config object
 #' @param data the current data object
 #' @param vars the current vars object
-#'
+#' 
 #' @return an expanded species list including all newly created species
 #' @noRd
 loop_speciation <- function(config, data, vars) {
   if (config$gen3sis$general$verbose >= 3){
     cat(paste("entering speciation module \n"))
   }
+  
+  ### check if within-cell speciation is considered
+  within_site_enabled <- is.function(
+    config$gen3sis$speciation$get_within_site_divergence_factor
+  )
+  
   for (spi in 1:vars$n_sp) {
     # loop over existing species
     # get compressed genetic distance for spi
@@ -105,7 +111,30 @@ loop_speciation <- function(config, data, vars) {
     }
     # define occupied cells by species
     species_presence <- names(species[["abundance"]])
-
+    # determine within_site divergence & speciation
+    if (within_site_enabled) {
+      result <- process_within_site_speciation(
+        species = species, 
+        n_sp = vars$n_sp, 
+        n_new_sp_ti = vars$n_new_sp_ti, 
+        n_sp_added_ti = vars$n_sp_added_ti, 
+        ti = vars$ti, 
+        config = config
+      )
+      species <- result$species
+      vars$n_new_sp_ti <- result$n_new_sp_ti
+      vars$n_sp_added_ti <- result$n_sp_added_ti
+      if(length(result$new_species) > 0){
+        data$all_species <- append(data$all_species, result$new_species)
+        data$phy <- do.call(rbind, c(list(data$phy), result$phy_new_species))
+      }
+    }
+    
+    if(!length(species[["abundance"]])){
+      data$all_species[[spi]] <- species
+      next
+    }
+    
     ##calling RCPP function to define physical clusters
     if (length(species_presence) == 1) {
       #check if only one cell is occupied
@@ -383,111 +412,216 @@ update_within_site_divergence <- function(divergence, species, space, config) {
 }
 
 
+#' #' Orchestrates within-site speciation
+#' #'
+#' #' Only species that existed at the start of the current time step are
+#' #' evaluated. Species created by spatial or within-site speciation during
+#' #' this time step are not evaluated again.
+#' #'
+#' #' @param config current config object
+#' #' @param data current data object
+#' #' @param vars current vars object
+#' #'
+#' #' @return updated config, data and vars
+#' #' @noRd
+#' loop_within_site_speciation <- function(config, data, vars) {
+#'   if (!is.function(config$gen3sis$speciation$get_within_site_divergence_factor)) {
+#'     return(list(config = config, data = data, vars = vars))
+#'   }
+#'   
+#'   if (config$gen3sis$general$verbose >= 3) {
+#'     cat("entering within-site speciation module\n")
+#'   }
+#'   
+#'   # browser()
+#'   
+#'   for (spi in seq_len(vars$n_sp)) {
+#'     species <- data$all_species[[spi]]
+#'     
+#'     if (!length(species$abundance)) {
+#'       next
+#'     }
+#'     
+#'     # User determines divergence accumulation.
+#'     species$divergence$within_site <- update_within_site_divergence(
+#'       divergence = species$divergence$within_site,
+#'       species = species,
+#'       space = data$space,
+#'       config = config
+#'     )
+#'     
+#'     speciation_sites <- names(species$divergence$within_site)[
+#'       species$divergence$within_site > 
+#'         config$gen3sis$speciation$divergence_threshold
+#'     ]
+#'     
+#'     for (site in speciation_sites) {
+#'       ecological_states <- NULL
+#'       
+#'       if (config$flags$ecological_states_enabled) {
+#'         ecological_states <- as.vector(species$ecological_states[site, , drop = FALSE])
+#'         ecological_state_names <- colnames(species$ecological_states)
+#'         ecological_states <- setNames(ecological_states, ecological_state_names)
+#'       }
+#'       
+#'       trait_names <- colnames(species$traits)
+#'       
+#'       split <- config$gen3sis$speciation$apply_within_site_speciation(
+#'         abundance = as.numeric(species$abundance[site]),
+#'         traits = setNames(as.vector(species$traits[site, , drop = FALSE]), trait_names),
+#'         ecological_states = ecological_states,
+#'         config = config
+#'       )
+#'       
+#'       species$abundance[site] <- split$parent["abundance"]
+#'       species$traits[site, ] <- split$parent[trait_names]
+#'       if (config$flags$ecological_states_enabled){
+#'         species$ecological_states[site, ] <- split$parent[ecological_state_names]
+#'       }
+#'       
+#'       # the offspring will inherit this in "create_species_within_site"
+#'       species$divergence$within_site[site] <- 0
+#'       
+#'       new_id <- vars$n_sp + vars$n_sp_added_ti + 1
+#'       
+#'       daughter <- create_species_within_site(
+#'         parent_species = species,
+#'         new_id = new_id,
+#'         site = site,
+#'         daughter_abundance = split$daughter["abundance"],
+#'         daughter_traits = split$daughter[trait_names],
+#'         daughter_ecological_states = split$daughter[ecological_state_names],
+#'         config = config
+#'       )
+#'       
+#'       data$all_species <- append(data$all_species, list(daughter))
+#'       
+#'       data$phy <- rbind(
+#'         data$phy,
+#'         data.frame(
+#'           Ancestor = spi,
+#'           Descendent = new_id,
+#'           Speciation.Time = vars$ti,
+#'           Extinction.Time = vars$ti,
+#'           Speciation.Type = "Sympatric"
+#'         )
+#'       )
+#'       
+#'       vars$n_new_sp_ti <- vars$n_new_sp_ti + 1
+#'       vars$n_sp_added_ti <- vars$n_sp_added_ti + 1
+#'     }
+#'     # add species back after the loop (e.g. modifications to traits)
+#'     data$all_species[[spi]] <- species
+#'   }
+#'   
+#'   if (config$gen3sis$general$verbose >= 3) {
+#'     cat("exiting within-site speciation module\n")
+#'   }
+#'   
+#'   return(list(config = config, data = data, vars = vars))
+#' }
+
 #' Orchestrates within-site speciation
 #'
 #' Only species that existed at the start of the current time step are
 #' evaluated. Species created by spatial or within-site speciation during
 #' this time step are not evaluated again.
 #'
+#' @param species current focal species object
+#' @param n_sp current vars$n_sp counter
+#' @param n_new_sp_ti current vars$n_new_sp_ti counter
+#' @param n_sp_added_ti current vars$n_sp_added_ti counter
+#' @param ti current time step
 #' @param config current config object
-#' @param data current data object
-#' @param vars current vars object
 #'
-#' @return updated config, data and vars
+#' @return updated species, new species, n_new_sp_ti, and n_sp_added_ti
 #' @noRd
-loop_within_site_speciation <- function(config, data, vars) {
-  if (!is.function(config$gen3sis$speciation$get_within_site_divergence_factor)) {
-    return(list(config = config, data = data, vars = vars))
+process_within_site_speciation <- function(species, n_sp, n_new_sp_ti, n_sp_added_ti, ti, config) {
+  
+  species$divergence$within_site <- update_within_site_divergence(
+    divergence = species$divergence$within_site,
+    species = species,
+    space = data$space,
+    config = config
+  )
+  
+  sites <- names(species$divergence$within_site)[
+    species$divergence$within_site > config$gen3sis$speciation$divergence_threshold
+  ]
+  
+  if(length(sites) == 0){
+    return(list(species = species, new_species = list(), phy_new_species = list(), n_new_sp_ti = n_new_sp_ti, n_sp_added_ti = n_sp_added_ti))
   }
   
-  if (config$gen3sis$general$verbose >= 3) {
-    cat("entering within-site speciation module\n")
-  }
+  trait_names <- colnames(species$traits)
   
-  for (spi in seq_len(vars$n_sp)) {
-    species <- data$all_species[[spi]]
+  new_species <- phy_new_species <- list()
+  
+  for (site in sites) {
+    ecological_states <- NULL
     
-    if (!length(species$abundance)) {
-      next
+    # can this be reduced or removed from the loop?
+    if (config$flags$ecological_states_enabled) {
+      ecological_states <- as.vector(species$ecological_states[site, , drop = FALSE])
+      ecological_state_names <- colnames(species$ecological_states)
+      ecological_states <- setNames(ecological_states, ecological_state_names)
     }
     
-    # User determines divergence accumulation.
-    species$divergence$within_site <- update_within_site_divergence(
-      divergence = species$divergence$within_site,
-      species = species,
-      space = data$space,
+    split <- config$gen3sis$speciation$apply_within_site_speciation(
+      abundance = as.numeric(species$abundance[site]),
+      traits = setNames(as.vector(species$traits[site, , drop = FALSE]), trait_names),
+      ecological_states = ecological_states,
       config = config
     )
     
-    speciation_sites <- names(species$divergence$within_site)[
-      species$divergence$within_site > 
-        config$gen3sis$speciation$divergence_threshold
-    ]
+    species$abundance[site] <- split$parent["abundance"]
+    species$traits[site, ] <- split$parent[trait_names]
+    if (config$flags$ecological_states_enabled){
+      species$ecological_states[site, ] <- split$parent[ecological_state_names]
+    }
     
-    for (site in speciation_sites) {
-      ecological_states <- NULL
-      
-      if (config$flags$ecological_states_enabled) {
-        ecological_states <- as.vector(species$ecological_states[site, , drop = FALSE])
-        ecological_state_names <- colnames(species$ecological_states)
-        ecological_states <- setNames(ecological_states, ecological_state_names)
-      }
-      
-      trait_names <- colnames(species$traits)
-      
-      split <- config$gen3sis$speciation$apply_within_site_speciation(
-        abundance = as.numeric(species$abundance[site]),
-        traits = setNames(as.vector(species$traits[site, , drop = FALSE]), trait_names),
-        ecological_states = ecological_states,
-        config = config
-      )
-      
-      species$abundance[site] <- split$parent["abundance"]
-      species$traits[site, ] <- split$parent[trait_names]
-      if (config$flags$ecological_states_enabled){
-        species$ecological_states[site, ] <- split$parent[ecological_state_names]
-      }
-      
-      # the offspring will inherit this in "create_species_within_site"
-      species$divergence$within_site[site] <- 0
-      
-      new_id <- vars$n_sp + vars$n_sp_added_ti + 1
-      
-      daughter <- create_species_within_site(
-        parent_species = species,
-        new_id = new_id,
-        site = site,
-        daughter_abundance = split$daughter["abundance"],
-        daughter_traits = split$daughter[trait_names],
-        daughter_ecological_states = split$daughter[ecological_state_names],
-        config = config
-      )
-      
-      data$all_species <- append(data$all_species, list(daughter))
-      
-      data$phy <- rbind(
-        data$phy,
+    # the offspring will inherit this in "create_species_within_site"
+    species$divergence$within_site[site] <- 0
+    
+    new_id <- n_sp + n_sp_added_ti + 1
+    
+    daughter <- create_species_within_site(
+      parent_species = species,
+      new_id = new_id,
+      site = site,
+      daughter_abundance = split$daughter["abundance"],
+      daughter_traits = split$daughter[trait_names],
+      daughter_ecological_states = split$daughter[ecological_state_names],
+      config = config
+    )
+    
+    new_species <- append(new_species, list(daughter))
+    
+    phy_new_species <- append(
+      phy_new_species,
+      list(
         data.frame(
-          Ancestor = spi,
+          Ancestor = species$id, # species has an ID right?
           Descendent = new_id,
-          Speciation.Time = vars$ti,
-          Extinction.Time = vars$ti,
+          Speciation.Time = ti,
+          Extinction.Time = ti,
           Speciation.Type = "Sympatric"
         )
       )
-      
-      vars$n_new_sp_ti <- vars$n_new_sp_ti + 1
-      vars$n_sp_added_ti <- vars$n_sp_added_ti + 1
-    }
-    # add species back after the loop (e.g. modifications to traits)
-    data$all_species[[spi]] <- species
+    )
+    
+    n_new_sp_ti <- n_new_sp_ti + 1
+    n_sp_added_ti <- n_sp_added_ti + 1
   }
   
-  if (config$gen3sis$general$verbose >= 3) {
-    cat("exiting within-site speciation module\n")
-  }
+  # depending on the configuration, species may be completely or partially 
+  # replaced due to anagenetic speciation (instead of sympatric speciation)
+  species <- limit_species_to_cells(
+    species,
+    names(species$abundance)[species$abundance > 0]
+  )
   
-  return(list(config = config, data = data, vars = vars))
+  return(list(species = species, new_species = new_species, phy_new_species = phy_new_species, n_new_sp_ti = n_new_sp_ti, n_sp_added_ti = n_sp_added_ti))
 }
 
 #' Updates the total number of species

@@ -252,7 +252,7 @@ run_simulation <- function(
       cat("speciation \n")
     }
     # the within-site speciation loop
-    val <- loop_within_site_speciation(val$config, val$data, val$vars)
+    # val <- loop_within_site_speciation(val$config, val$data, val$vars)
     
     # note that we're not taking into account the new within-site species for the 
     # next loop (although they wouldn't be able to speciate or accumulate between-cluster)

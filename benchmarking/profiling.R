@@ -9,13 +9,6 @@
 # without-keep.source: ensure future workers start efficently
 install.packages(".", repos = NULL, type = "source", INSTALL_opts = c("--preclean", "--without-keep.source"))
 library(gen3sis2)
-source(file.path("implementations", "dynamic_lapply.R"))
-
-# Added to description
-#library(rlang)
-#library(bigmemory)
-#library(mori)
-
 library(bench)
 Sys.setenv(TZ = "Europe/Berlin")
 
@@ -26,11 +19,13 @@ LOG_LEVEL <- 0
 
 # ---- Parameters ------------
 SPACE_RASTER <- file.path("benchmarking", "spaces", "global_2deg")
+#SPACE_RASTER <- file.path("benchmarking", "spaces", "rstb", "distance")
 CONFIG_DIR <- file.path("benchmarking", "configs")
 
 # Configs that should be analyzed in this run
 CONFIGS <- c(
     "config_globe_2deg"
+    #"M0"
 )
 
 #' Interval of analysis
@@ -45,7 +40,7 @@ CORES <- c(
     8,
     16,
     32,
-    64
+    63
 )
 
 
@@ -80,7 +75,7 @@ for (config in CONFIGS) {
     input_config <- create_input_config(config_path)
     if (!verify_config(input_config)) {
         log_msg("Config not valid: ", config_path)
-        stop("Ivalid config: ", input_config)
+        stop("Invalid config: ", config_path)
     }
 }
 
@@ -93,7 +88,10 @@ run_profiling <- function(config) {
     prof_out <- file.path(out, paste0(config, ".Rprof"))
     log_msg("Start profiling for: ", config)
 
-    define_cores(cores = 1, log_msg = log_msg)
+    # Set profiling to TRUE in the config, 
+    # irrelevant curently because profiling is done on 1 core only which does not share the matrix
+    profiling_config <- create_input_config(config_path)
+    profiling_config$gen3sis$general$profiling <- TRUE
 
     error_occured <- FALSE
     error_message <- NA_character_
@@ -109,10 +107,11 @@ run_profiling <- function(config) {
                 line.profiling = TRUE
             )
             run_simulation(
-                config = config_path,
+                config = profiling_config,
                 space = SPACE_RASTER,
                 output_directory = prof_dir,
-                verbose = 0
+                verbose = 0,
+                cores = 1
             )
         },
         error = function(e) {
@@ -131,7 +130,7 @@ run_profiling <- function(config) {
     if (error_occured) {
         log_msg("Failed run: ", error_message)
     } else {
-        log_msg("Finished successfully in ", total_runtime, "hours")
+        log_msg("Finished successfully in ", total_runtime, " hours")
     }
 }
 
@@ -144,21 +143,18 @@ run_benchmark <- function(config, cores) {
     dir.create(bench_out, recursive = TRUE, showWarnings = FALSE)
 
     log_msg("Start benchmarking for: ", config, " with cores: ", cores)
-    define_cores(cores = cores, log_msg = log_msg)
 
     run_simulation(
         config = config_path,
         space = SPACE_RASTER,
         output_directory = bench_out,
-        verbose = 0
+        verbose = 0,
+        cores = cores
     )
 }
 
 
 # --- Start profiling and benchmarking-----
-
-# TODO Unload terra if it was laoded, may be nice to have for later before simulation starts
-
 for (config in CONFIGS) {
     log_msg("---- Profiling ----")
     run_profiling(config)

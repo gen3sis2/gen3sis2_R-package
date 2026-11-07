@@ -24,8 +24,7 @@ apply_ecology <- function(abundance, traits, local_environment, config) {
   )
 }
 
-# TODO docstring
-#' @export
+
 cell_ecology <- function(cell, environment, all_species_presence, species, config) {
     # strat loop over ids with at least one species...
     local_environment <- environment[cell, , drop = FALSE]
@@ -103,7 +102,19 @@ loop_ecology <- function(config, data, vars) {
     return(list(config = config, data = data, vars = vars))
   }
 
+  use_sequential <- TRUE
+
   if (future::nbrOfWorkers() > 1) {
+    cost <- number_of_species[occupied_cells]
+    use_sequential <- decide_execution("ecology", cost, vars$sigma$ecology, is.null(data$shared_distance), vars$delta_p$ecology)
+  }
+
+  if (!use_sequential) {
+    vars$parallel_execution_ti <- TRUE
+
+    # Time the parallel call
+    parallel_timing <- proc.time()
+
     # Share input
     env <- mori::share(data$space[["environment"]])
     presence <- mori::share(all_species_presence)
@@ -115,26 +126,33 @@ loop_ecology <- function(config, data, vars) {
       env,
       presence,
       species,
-      config
+      config,
+      ordering = order_lpt(cost)
     )
+    vars$delta_p$ecology <- adjust_delta_p("ecology", vars$delta_p$ecology, (proc.time() - parallel_timing)[["elapsed"]], cost, vars$sigma$ecology)
   } else {
+    sigma_timing <- proc.time()
     NEW_abd <- dynamic_lapply(
       occupied_cells,
       cell_ecology,
       data$space[["environment"]],
       all_species_presence,
       data$all_species,
-      config
+      config,
+      sequential = TRUE
     )
+    if (future::nbrOfWorkers() > 1) {
+      vars$sigma$ecology <- adjust_sigma(vars$sigma$ecology, (proc.time() - sigma_timing)[["elapsed"]], cost)
+    }
   }
 
-  # TODO nested for loop takes a long time, omptimize (more total % than speciation)
-  for (i in seq_along(occupied_cells)) {
-    # Row of the i-th occupied cell (row i is only the same cell when every cell is occupied)
-    coo_sp <- which(all_species_presence[occupied_cells[i], ])
-    for (spi in coo_sp) {
-      data$all_species[[spi]][["abundance"]][occupied_cells[i]] <- NEW_abd[[i]][[toString(spi)]]
-    }
+  cell <- rep(occupied_cells, lengths(NEW_abd)) # Cell of each (cell, species) pair
+  spi <- as.integer(unlist(lapply(NEW_abd, names), use.names = FALSE)) # species of each (cell, species) pair
+  abundance  <- unlist(NEW_abd, use.names = FALSE) # Abundance of each (cell, species) pair
+  
+  for (idx in split(seq_along(spi), spi)) {
+    sp_id <- spi[idx[1]]
+    data$all_species[[sp_id]][["abundance"]][cell[idx]] <- abundance[idx]
   }
   
   species_list <- lapply(data$all_species, function(i) {

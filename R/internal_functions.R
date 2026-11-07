@@ -258,3 +258,187 @@ check_time_match <- function(config_duration, space_duration){
     message(text_warn)
   }
 }
+
+
+#' Order elements using a longest processing time first algorithm
+#' 
+#' @details assigns each element to a worker to balance the load.
+#' future.apply uses parallel::splitIndices() to assign the work to the workers,
+#' padding is added to avoid uneven distribution.
+#'
+#' @param cost numeric vector of estimated work.
+#'
+#' @returns Ordering attribute for future.scheduling.
+#' NULL if there are less or equal elements as workers
+#' @noRd
+order_lpt <- function(cost) {
+  workers <- future::nbrOfWorkers()
+  
+  # If all species fit into workers, pass them as is
+  if (length(cost) <= workers) {
+    return(NULL)
+  }
+  
+  assigned_worker <- integer(length(cost))
+  worker_load <- numeric(workers) # sum of work assigned to each worker
+  
+  # Assign work
+  for (i in order(cost, decreasing = TRUE, method = "radix")) {
+    # Select worker with smallest load
+    worker <- which.min(worker_load)
+    
+    # Add cost to worker
+    worker_load[worker] <- worker_load[worker] + cost[i]
+    
+    # Assign work to selected worker
+    assigned_worker[i] <- worker
+  }
+  
+  # Add padding to balance load
+  jobs_per_worker <- tabulate(assigned_worker, workers) # Count jobs per worker
+  necessary_number_of_jobs <- workers * max(jobs_per_worker)
+  
+  # Grow chunk sizes so it matches what future.apply will cut
+  while (any(lengths(parallel::splitIndices(necessary_number_of_jobs, workers)) < jobs_per_worker)) {
+    necessary_number_of_jobs <- necessary_number_of_jobs + 1
+  }
+  
+  # Fill chunks with padding
+  padding <- lengths(parallel::splitIndices(necessary_number_of_jobs, workers)) - jobs_per_worker
+  assigned_worker <- c(assigned_worker, rep(seq_len(workers), padding))
+  
+  return(order(assigned_worker))
+}
+
+
+# Environment for the shared distance matrix
+shared_data <- new.env(parent = emptyenv())
+
+
+#' Share distance matrix across workers
+#' 
+#' @details with profiling=TRUE, uses a backingfile to store the matrix in a file
+#' because otherwise it can lead to errors on certain operating systems
+#' 
+#' @param distance_matrix matrix to be shared.
+#' @param profiling TRUE if the simulation is profiled, FALSE otherwise.
+#'
+#' @return the descriptor of the shared matrix
+#' @noRd
+share_distance <- function(distance_matrix, profiling = FALSE) {
+    if (profiling) {
+      share_file <- basename(tempfile("shared_distance_", fileext = ".bin"))
+      x <- bigmemory::as.big.matrix(
+        distance_matrix,
+        backingfile = share_file, # Without backingfile, Rprof profiling can result in an error
+        backingpath = tempdir(),
+        descriptorfile = paste0(share_file, ".desc") # Prevents warning message
+      )
+      return (bigmemory::describe(x))
+    } 
+
+    # Save to global state, otherwise reference is deleted after return
+    shared_data$distance <- bigmemory::as.big.matrix(distance_matrix)
+    return(bigmemory::describe(shared_data$distance))  
+}
+
+
+#' Set the plan for the given number of cores
+#'
+#' @param cores integer value or NULL, number of cores to be used
+#' If cores=1, use sequential plan.
+#' If cores=x with x greater than 1, use multisession with x cores.
+#' If cores=NULL, use all but one core.
+#' @param verbose integer value.
+#' If verbose=0, no printed statement.
+#' If verbose=1 (default), print selected plan.
+#' @noRd
+define_cores <- function(cores, verbose = 1) {
+  available_cores <- parallel::detectCores()
+  
+  # Select amount of cores used for run
+  if (is.null(cores)) {
+    cores <- max(1, (available_cores - 1))
+    if (verbose >= 1) {
+      cat("No cores specified: ", available_cores, " available, using ", cores, "\n")
+    }
+  } else {
+    # Ensure input is a positive integer
+    if (!is.numeric(cores) || cores %% 1 != 0 || as.integer(cores) <= 0) {
+      stop("Cores must be a positive integer or NULL, aborting simulation.")
+    }
+    # Use all cores if input exceeds available cores
+    cores <- min(cores, available_cores)
+    if (verbose >= 1) {
+      cat("Using ", cores, " cores", "\n")
+    }
+  }
+  
+  # Select plan
+  if (cores == 1) {
+    future::plan(future::sequential)
+    used_plan <- "sequential"
+  } 
+  else {
+    future::plan(future::multisession, workers = cores)
+    used_plan <- "multisession"
+  }
+  
+  if (verbose >= 1) cat("Running: ", used_plan, "\n")
+}
+
+
+#' Helper function to skip padding
+#'
+#' @param x element of X, NULL if padding
+#' @param f The function applied to x
+#' @param ... additional arguments
+#'
+#' @returns NULL if padding, otherwise the result of f(x, ...)
+#' @noRd
+skip_padding <- function(x, f, ...) {
+  if (is.null(x)) {
+    return(NULL)
+  }
+  return(f(x, ...))
+}
+
+
+#' Apply a function to each element in parallel or sequentially
+#' 
+#' @details calls future_lapply() using the pre-defined plan.
+#' sequential = TRUE sets the plan to sequential for this call, keeping the workers alive. 
+#' 
+#' @param X list or vector of elements
+#' @param FUN function applied to each X
+#' @param ... additional arguments to be passed to FUN
+#' @param ordering ordering calculated from order_lpt or NULL
+#' @param sequential TRUE to run sequentially
+#'
+#' @return a list of the results of function FUN on inputs X
+#' @noRd
+dynamic_lapply <- function(X, FUN, ..., ordering = NULL, sequential = FALSE) {
+  # Set plan to sequential
+  if (sequential && future::nbrOfWorkers() > 1) {
+    parallel_plan <- future::plan() # Save current plan
+    future::plan(future::sequential, .cleanup = FALSE)
+    on.exit(future::plan(parallel_plan, .cleanup = FALSE), add = TRUE)
+  }
+  
+  input_length <- length(X)
+  
+  # Add padding to the end of the input
+  if (length(ordering) > input_length) {
+    X <- c(X, vector("list", length(ordering) - input_length))
+  }
+  
+  results <- future.apply::future_lapply(
+    X, skip_padding, FUN, ...,
+    future.seed = TRUE,
+    future.globals = FALSE,
+    future.scheduling = structure(1, ordering = ordering)
+  )
+  
+  # Drop the padding
+  return(results[seq_len(input_length)])
+}

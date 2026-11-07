@@ -292,6 +292,12 @@ verify_config <- function(config) {
     return(FALSE)
   }
 
+  # check if profiling is set
+  if (!isTRUE(config$gen3sis$general$profiling) && !isFALSE(config$gen3sis$general$profiling)) {
+    message("profiling must be TRUE or FALSE")
+    return(FALSE)
+  }
+
   # check if time_unit is accepted 
   # time_unit_check() returns a logical when a time unit is provided
   # and a character vector of accepted units when called with NULL.
@@ -342,6 +348,7 @@ create_empty_config <- function() {
       "trait_names" = list(),
       "environmental_ranges" = list(),
       "verbose" = FALSE,
+      "profiling" = FALSE,
       "config_name" = NULL
     ),
     "initialization" = list(

@@ -32,46 +32,19 @@ get_dispersal_values <- function(num_draws, species, space, config) {
   )
 }
 
-# TODO same as in evolution
-# Longest processing time first
-order_lpt <- function(cost) {
-  workers <- future::nbrOfWorkers()
-  
-  # If all species fit into workers, pass them as is
-  if (length(cost) <= workers) {
-    return(1)
-  }
-  
-  assigned_worker <- integer(length(cost))
-  worker_load <- numeric(workers)
-  # Split jobs equally across workers
-  jobs_per_worker <- lengths(parallel::splitIndices(length(cost), workers))
-  
-  # Order by species count (more species means more work that needs to be done # TODO das beweisen da prinizip darauf basiert, dass species job länge ensprechen)
-  for (i in order(cost, decreasing = TRUE, method = "radix")) {
-    # Get all workers that have space for jobs
-    workers_with_space <- which(jobs_per_worker > 0)
-    # Select worker with smalles load
-    worker <- workers_with_space[which.min(worker_load[workers_with_space])]
-    
-    # Add cost to worker
-    worker_load[worker] <- worker_load[worker] + cost[i]
-    
-    # Assign species to selected worker
-    assigned_worker[i] <- worker
-    
-    # Remove a slot of selected worker
-    jobs_per_worker[worker] <- jobs_per_worker[worker] - 1
-  }
-  
-  return(structure(1, ordering = order(assigned_worker)))
-}
 
-# Same as num_draws in disperse
-# Cost is number of draws: one draw for each (occupied, free_cell) pair
+#' Estimates the dispersal cost for each species
+#'
+#' @details dispersal compares cells occupied by a species with free cells
+#'
+#' @param species list of species
+#' @param cells number of cells of the space
+#'
+#' @return numeric vector of cost per species
+#' @noRd
 estimate_cost <- function(species, cells) {
   occupied_cells <- as.numeric(lengths(lapply(species, "[[", "abundance")))
-  occupied_cells * (cells - occupied_cells)
+  return(occupied_cells * (cells - occupied_cells))
 }
 
 #' The top level loop for dispersal
@@ -89,10 +62,27 @@ loop_dispersal <- function(config, data, vars) {
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering dispersal module \n"))
   }
-  
+
+  use_sequential <- TRUE
+
   if (future::nbrOfWorkers() > 1) {
-    # Estimate cost per species
+    # Estimate cost
     cost <- estimate_cost(data$all_species, nrow(data$space$coordinates))
+
+    use_sequential <- decide_execution("dispersal", cost, vars$sigma$dispersal, is.null(data$shared_distance), vars$delta_p$dispersal)
+  }
+
+  if (!use_sequential) {
+    vars$parallel_execution_ti <- TRUE
+
+    if (is.null(data$shared_distance)) {
+      data$shared_distance <- share_distance(
+        data$distance_matrix, 
+        config$gen3sis$general$profiling
+      )
+    }
+
+    parallel_timing <- proc.time()
 
     # Share data
     species <- mori::share(data$all_species)
@@ -104,16 +94,24 @@ loop_dispersal <- function(config, data, vars) {
       space,
       data$shared_distance,
       config,
-      future.scheduling = order_lpt(cost)
+      ordering = order_lpt(cost)
     )
+    vars$delta_p$dispersal <- adjust_delta_p("dispersal", vars$delta_p$dispersal, (proc.time() - parallel_timing)[["elapsed"]], cost, vars$sigma$dispersal)
+
   } else {
+    sigma_timing <- proc.time()
+
     data$all_species <- dynamic_lapply(
       data$all_species,
       disperse,
       data$space,
       data$distance_matrix,
-      config
+      config,
+      sequential = TRUE
     )
+    if (future::nbrOfWorkers() > 1) {
+      vars$sigma$dispersal <- adjust_sigma(vars$sigma$dispersal, (proc.time() - sigma_timing)[["elapsed"]], cost)
+    }
   }
   
   if (config$gen3sis$general$verbose >= 3) {
@@ -122,7 +120,15 @@ loop_dispersal <- function(config, data, vars) {
   return(list(config = config, data = data, vars = vars))
 }
 
-# Ensure saveRDS works properly
+#' Ensures saving RDS files works when working on shared data
+#'
+#' @param species the shared species
+#' @param space the shared space of the current time-step
+#' @param distance_matrix the descriptor of the shared distance matrix
+#' @param config the current config for this simulation run
+#'
+#' @return the species as a regular R object
+#' @noRd
 disperse_duplicate <- function(species, space, distance_matrix, config) {
   rlang::duplicate(disperse(species, space, distance_matrix, config), shallow = FALSE)
 }

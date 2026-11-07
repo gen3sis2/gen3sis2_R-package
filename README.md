@@ -65,6 +65,47 @@ sim <- run_simulation(
 
 A summary statistics is stored at 'sim' more data can be save using the observer function
 
+
+#### Shorten runtime
+
+Larger simulations may be able to run faster if multiple cores are used.
+To check how many cores your machine has available you can run:
+
+```
+parallel::detectCores()
+```
+
+Set cores to the number of cores to be used, or NULL to use all but one of the available cores.
+
+```
+sim <- run_simulation(
+  config = config_file, 
+  space = spaces,
+  output_directory = tempdir(),
+  verbose = 0,
+  cores = 8
+)
+```
+
+If seeded, the results remain the same regardless of the number of cores used.  
+The simulation makes predictions on whether to use sequnetial or parallel execution for specific sections,
+it uses pre-calibrated values to do so. In some cases, it may be beneficial to update these base values to 
+be more in tune with what your machine can provide.  
+To do so you can run
+
+```
+calibrate_granularity(
+  workers = c(4, 8),
+  iterations = 6
+)
+```
+
+`workers` is a list of the numbers of cores you intend to use  
+`iterations` is the number of repetitions for every measurement to increase their accuracy.  
+Be aware that calibration may take some time, depending on how many cores and iterations you chose.
+The constants are saved in `tools::R_user_dir("gen3sis2", "data")` and used by all later simulations on this machine.
+To use the base values again, delete the created `granularity_constants.rds`.
+
 ####  Visualize a simulation
 
 Plot the summary statistics of a simulation

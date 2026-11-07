@@ -67,6 +67,10 @@ trait_names = c("dispersal")
 # listed with a given range r: the environmental variable will be scaled from [r1, r2] to [0, 1]
 environmental_ranges = list( )
 
+# set to TRUE if this simulation is being profiled
+# otherwise it can lead to errors on certain operating systems
+profiling = FALSE
+
 
 #-------------------------#
 #### Observer Function ####

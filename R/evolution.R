@@ -21,52 +21,32 @@ apply_trait_evolution <- function(species, cluster_indices, space, config) {
 }
 
 
-# TODO same as in disperal, define once, avoid duplicate, fine for now
-# Longest processing time first
-order_lpt <- function(cost) {
-  workers <- future::nbrOfWorkers()
-  
-  # If all species fit into workers, pass them as is
-  if (length(cost) <= workers) {
-    return(1)
-  }
-  
-  assigned_worker <- integer(length(cost))
-  worker_load <- numeric(workers)
-  # Split jobs equally across workers
-  jobs_per_worker <- lengths(parallel::splitIndices(length(cost), workers))
-  
-  # Order by species count (more species means more work that needs to be done)
-  for (i in order(cost, decreasing = TRUE, method = "radix")) {
-    # Get all workers that have space for jobs
-    workers_with_space <- which(jobs_per_worker > 0)
-    # Select worker with smallest load
-    worker <- workers_with_space[which.min(worker_load[workers_with_space])]
-    
-    # Add cost to worker
-    worker_load[worker] <- worker_load[worker] + cost[i]
-    
-    # Assign species to selected worker
-    assigned_worker[i] <- worker
-    
-    # Remove a slot of selected worker
-    jobs_per_worker[worker] <- jobs_per_worker[worker] - 1
-  }
-  
-  return(structure(1, ordering = order(assigned_worker)))
-}
-
-
 loop_evolution <- function(config, data, vars) {
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering trait evolution module \n"))
   }
-  
-  if (future::nbrOfWorkers() > 1) {
-    # Estimate cost per species
-    # Tdbscan_variable accounts for most of the work, cost is calculated with its input size
-    cost <- lengths(lapply(data$all_species, "[[", "abundance"))^2
+
+  use_sequential <- TRUE
     
+  if (future::nbrOfWorkers() > 1) {
+    # Estimate cost
+    cost <- lengths(lapply(data$all_species, "[[", "abundance"))^2
+    use_sequential <- decide_execution("evolution", cost, vars$sigma$evolution, is.null(data$shared_distance), vars$delta_p$evolution)
+  }
+
+  if (!use_sequential) {
+    vars$parallel_execution_ti <- TRUE
+
+    # Share distance matrix if it has not been shared already
+    if (is.null(data$shared_distance)) {
+      data$shared_distance <- share_distance(
+        data$distance_matrix, 
+        config$gen3sis$general$profiling
+      )
+    }
+
+    parallel_timing <- proc.time()
+
     # Share data
     species <- mori::share(data$all_species)
     space <- mori::share(data$space)
@@ -77,16 +57,22 @@ loop_evolution <- function(config, data, vars) {
       space,
       data$shared_distance,
       config,
-      future.scheduling = order_lpt(cost)
+      ordering = order_lpt(cost)
     )
+    vars$delta_p$evolution <- adjust_delta_p("evolution", vars$delta_p$evolution, (proc.time() - parallel_timing)[["elapsed"]], cost, vars$sigma$evolution)
   } else {
+    sigma_timing <- proc.time()
     data$all_species <- dynamic_lapply(
       data$all_species,
       evolve,
       data$space,
       data$distance_matrix,
-      config
+      config,
+      sequential = TRUE
     )
+    if (future::nbrOfWorkers() > 1) {
+      vars$sigma$evolution <- adjust_sigma(vars$sigma$evolution, (proc.time() - sigma_timing)[["elapsed"]], cost)
+    }
   }
   
   if (config$gen3sis$general$verbose >= 3) {
@@ -95,7 +81,15 @@ loop_evolution <- function(config, data, vars) {
   return(list(config = config, data = data, vars = vars))
 }
 
-# Ensure saveRDS works properly (See Persistence https://cran.r-project.org/web/packages/mori/refman/mori.html#share)
+#' Ensures saving RDS files works when working on shared data
+#'
+#' @param species the shared species
+#' @param space the shared space of the current time-step
+#' @param distance_matrix the descriptor of the shared distance matrix
+#' @param config the current config for this simulation run
+#'
+#' @return the species as a regular R object
+#' @noRd
 evolve_duplicate <- function(species, space, distance_matrix, config) {
   rlang::duplicate(evolve(species, space, distance_matrix, config), shallow = FALSE)
 }

@@ -69,6 +69,13 @@
 #' If verbose=1 (default), print time-step progress.
 #' If verbose=2, enable additional progress outputs regarding current time-step.
 #' If verbose=3, enable additional information from within modules
+#' @param cores integer value or NULL. The number of cores the simulation uses.
+#' If cores=1 (default), runs sequentially.
+#' If cores=x with x being a number greater than 1, x additional sessions are started in the background
+#' and sections of the code run in parallel if it is estimated to be beneficial to the runtime.
+#' If cores=NULL, all but one of the cores available are used.
+#' Inputs above the available number of cores use all available cores instead.
+#' If seeded, the results are the same, regardless of the number of cores chosen.
 #'
 #' @return a summary object containing a minimal summary on simulation and dynamics progress (alive, speciations, extinctions) as well as useful simulation data
 #'
@@ -77,7 +84,7 @@
 #' @importFrom utils packageVersion write.table
 #'
 #' @example inst/examples/run_simulation_help.R
-#' @seealso \code{\link{plot_summary}}   \code{\link{create_input_config}}   \code{\link{create_spaces_raster}}
+#' @seealso \code{\link{plot_summary}}   \code{\link{create_input_config}}   \code{\link{create_spaces_raster}}   \code{\link{calibrate_granularity}}
 #' @export
 run_simulation <- function(
   config = NA,
@@ -87,7 +94,8 @@ run_simulation <- function(
   save_state = NA,
   call_observer = "all",
   enable_gc = FALSE,
-  verbose = 1
+  verbose = 1,
+  cores = 1
 ) {
   #----------------------------------------------------#
   ####### User defined variables (config.R) ############
@@ -162,6 +170,21 @@ run_simulation <- function(
   }
   val <- init_attribute_ancestor_distribution(val$config, val$data, val$vars)
 
+  # Prepare plan for parallelized execution
+  define_cores(cores, verbose)
+  on.exit(future::plan(future::sequential), add = TRUE) # Close sessions after the simulation ends
+  on.exit(shared_data$distance <- NULL, add = TRUE) # Clear shared data
+  
+  # Load R environment into workers so dynamic estimations of granularity control are not skewed
+  if (future::nbrOfWorkers() > 1) {
+    future.apply::future_lapply(
+      rep("gen3sis2", future::nbrOfWorkers()),
+      requireNamespace, 
+      quietly=TRUE, 
+      future.seed=NULL 
+    )
+  }
+
   # #---------------------------------------------------#
   # #####               SIMULATION START            #####
   # #---------------------------------------------------#
@@ -213,15 +236,21 @@ run_simulation <- function(
 
     # Skip in sequential runs
     if (future::nbrOfWorkers() > 1) {
-      # Share distance matrix
-      share_file <- basename(tempfile("shared_distance_", fileext = ".bin")) # Without backingfile, Rprof profiling can result in an error
-      x <- bigmemory::as.big.matrix(
+      val$data$shared_distance <- share_distance(
         val$data$distance_matrix, 
-        backingfile = share_file,
-        backingpath = tempdir()
+        val$config$gen3sis$general$profiling
       )
-      val$data$shared_distance <- bigmemory::describe(x)
     }
+  }
+
+  # Initialize start values that are updated throughout the simulation for granulartiy control
+  if (future::nbrOfWorkers() > 1) {
+    val$vars$sigma <- list(
+      dispersal = granularity_constants("dispersal", future::nbrOfWorkers())$sigma,
+      evolution = granularity_constants("evolution", future::nbrOfWorkers())$sigma,
+      ecology = granularity_constants("ecology", future::nbrOfWorkers())$sigma
+    )
+    val$vars$delta_p <- list(dispersal = 0, evolution = 0, ecology = 0)
   }
 
   for (ti in val$vars$steps) {
@@ -230,6 +259,7 @@ run_simulation <- function(
     val$vars$n_new_sp_ti <- 0
     val$vars$n_ext_sp_ti <- 0
     val$vars$n_sp_added_ti <- 0
+    val$vars$parallel_execution_ti <- FALSE # True as soon as any loop ran in parallel this timestep
     # update ti inside val$vars
     val$vars$ti <- ti
     #     #----------------------------------------#
@@ -254,11 +284,7 @@ run_simulation <- function(
     #val <- loop_setup_geo_dist_m_ti(val$config, val$data, val$vars)
     if (val$data$space$geodynamic) {
       val <- setup_distance_matrix(val$config, val$data, val$vars)
-
-      # Skip if sequential
-      if (future::nbrOfWorkers() > 1) {
-        # TODO update bigmemory shared matrix each timestep
-      }
+      val$data$shared_distance <- NULL # mark distance as not having been shared this timestep yet
     }
     #val <- setup_distance_matrix(val$config, val$data, val$vars)
 
@@ -303,8 +329,8 @@ run_simulation <- function(
     # #     ######## end of time-step loop variable update (simulation.R) #######
     # #     #-------------------------------------------------------------------#
 
-    # Run garbage collection, removes moris shared objects
-    if (future::nbrOfWorkers() > 1) gc()
+    # Run garbage collection, if anything was shared this timestep
+    if (val$vars$parallel_execution_ti) gc()
 
     if (verbose >= 2) {
       cat("end of loop updates \n")

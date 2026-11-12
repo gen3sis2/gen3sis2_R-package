@@ -386,27 +386,17 @@ update_within_cluster_divergence <- function(
 #' @return an updated within-site divergence vector
 #' @noRd
 update_within_site_divergence <- function(divergence, species, space, config) {
-  
-  for (cell in names(divergence)) {
-    
-    ecological_states <- NULL
-    if(config$flags$ecological_states_enabled){
-      ecological_states <- species$ecological_states[cell, , drop = FALSE]
-    }
-    
-    divergence_update <- config$gen3sis$speciation$
+  divergence <- divergence + vapply(names(divergence), function(i) {
+    config$gen3sis$speciation$
       get_within_site_divergence_factor(
-      abundance = species$abundance[cell],
-      traits = species$traits[cell, , drop = FALSE],
-      divergence = divergence[cell],
-      ecological_states = ecological_states,
-      local_environment = space$environment[cell, , drop = FALSE],
-      config = config
-    )
-    
-    divergence[cell] <- divergence[cell] + divergence_update
-  }
-  
+        abundance = species$abundance[i],
+        traits = species$traits[i, , drop = FALSE],
+        divergence = divergence[i],
+        ecological_states = species$ecological_states[i, ],
+        local_environment = space$environment[i, , drop = FALSE],
+        config = config
+      )
+  }, numeric(1))
   divergence[divergence < 0] <- 0
   
   return(divergence)

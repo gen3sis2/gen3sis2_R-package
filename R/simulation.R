@@ -153,6 +153,16 @@ setup_variables <- function(config, data, vars) {
   # flag
   vars$flag <- "OK"
   vars$steps <- zero_base_ts_included
+  
+  # create the time table for translating internal time steps to absolute time
+  all_steps <- rev(seq_along(data$inputs$timesteps) - 1L)
+  absolute_times <- with(data$inputs$duration, seq(from, to, by))
+  
+  data$time_step_lookup <- data.frame(
+    time_step = all_steps,
+    absolute_time = absolute_times,
+    unit = data$inputs$duration$unit
+  )
 
   return(list(config = config, data = data, vars = vars))
 }

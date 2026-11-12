@@ -150,6 +150,13 @@ run_simulation <- function(
   val <- setup_inputs(val$config, val$data, val$vars)
   val <- setup_variables(val$config, val$data, val$vars)
   val <- setup_space(val$config, val$data, val$vars)
+  
+  # save the time step lookup table
+  saveRDS(
+    val$data$time_step_lookup,
+    file.path(val$config$directories$output, "time_step_lookup.rds"),
+    compress = "xz"
+  )
 
   # conceptually the result of the initialization is the "end" of a previous timestep
   val$data$space$id <- val$data$space$id + 1

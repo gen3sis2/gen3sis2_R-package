@@ -339,6 +339,11 @@ update_within_cluster_divergence <- function(
     config
 ) {
   
+  ecological_states <- NULL
+  if(config$flags$ecological_states_enabled){
+    ecological_states <- species$ecological_states
+  }
+  
   for(cluster in unique(cluster_indices)){
     
     cluster_cells <- species_presence[cluster_indices == cluster]
@@ -349,17 +354,12 @@ update_within_cluster_divergence <- function(
     
     cluster_divergence <- divergence[cluster_cells, cluster_cells, drop = FALSE]
     
-    ecological_states <- NULL
-    if(config$flags$ecological_states_enabled){
-      ecological_states <- species$ecological_states[cluster_cells, , drop = FALSE]
-    }
-    
     divergence_update <- config$gen3sis$speciation$
       get_within_cluster_divergence_factor(
         abundance = species$abundance[cluster_cells],
         traits = species$traits[cluster_cells, , drop = FALSE],
         divergence = cluster_divergence,
-        ecological_states = ecological_states,
+        ecological_states = ecological_states[cluster_cells, , drop = FALSE],
         space = space,
         config = config
       )

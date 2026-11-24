@@ -202,10 +202,13 @@ populate_config <- function(config, config_file) {
     }
   }
   
-  # ecological states (also in complete_config because this function can be skipped)
+  # ecological states & within-site speciation (also in complete_config because this function can be skipped)
   # when a config file is supplied in RAM
   config[["flags"]][["ecological_states_enabled"]] <-
     !anyNA(config[["gen3sis"]][["initialization"]][["initial_ecological_state"]])
+  config[["flags"]][["within_site_speciation_enabled"]] <-
+    is.function(config[["gen3sis"]][["speciation"]][["get_within_site_divergence_factor"]]) &
+    is.function(config[["gen3sis"]][["speciation"]][["apply_within_site_speciation"]])
   
   return(invisible(config))
 }
@@ -403,6 +406,9 @@ complete_config <- function(config) {
   # when create_input_config + create_empty_config is exported and used directly)
   config[["flags"]][["ecological_states_enabled"]] <-
     !anyNA(config[["gen3sis"]][["initialization"]][["initial_ecological_state"]])
+  config[["flags"]][["within_site_speciation_enabled"]] <-
+    is.function(config[["gen3sis"]][["speciation"]][["get_within_site_divergence_factor"]]) &
+    is.function(config[["gen3sis"]][["speciation"]][["apply_within_site_speciation"]])
 
   return(invisible(config))
 }

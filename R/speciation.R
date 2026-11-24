@@ -96,11 +96,6 @@ loop_speciation <- function(config, data, vars) {
     cat(paste("entering speciation module \n"))
   }
   
-  ### check if within-cell speciation is considered
-  within_site_enabled <- is.function(
-    config$gen3sis$speciation$get_within_site_divergence_factor
-  )
-  
   for (spi in 1:vars$n_sp) {
     # loop over existing species
     # get compressed genetic distance for spi
@@ -112,7 +107,7 @@ loop_speciation <- function(config, data, vars) {
     # define occupied cells by species
     species_presence <- names(species[["abundance"]])
     # determine within_site divergence & speciation
-    if (within_site_enabled) {
+    if (config$flags$within_site_speciation_enabled) {
       result <- process_within_site_speciation(
         species = species, 
         n_sp = vars$n_sp, 
